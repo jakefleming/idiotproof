@@ -24,6 +24,9 @@
 .t__center {
   text-align: center; }
 
+.t__uppercase {
+  text-transform: uppercase; }
+
 .u__flex {
   display: flex; }
 
