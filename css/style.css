@@ -9,6 +9,9 @@
   page-break-inside: avoid;
   clear: both; }
 
+.section__proofing {
+  display: block; }
+
 .h6, .h3 {
   font-family: "monospaced", "Courier"; }
 
