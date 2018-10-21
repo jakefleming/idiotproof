@@ -1,0 +1,33 @@
+@CHARSET "UTF-8";
+.page-break {
+	page-break-after: always;
+	page-break-inside: avoid;
+	clear:both;
+}
+.page-break-before {
+	page-break-before: always;
+	page-break-inside: avoid;
+	clear:both;
+}
+
+// Typography
+.h6, .h3 {
+	font-family: "monospaced", "Courier";
+}
+.t__left {
+	text-align: left;
+}
+.t__right {
+	text-align: right;
+}
+.t__center {
+	text-align: center;
+}
+
+//Utility Classes
+.u__flex {
+	display: flex;
+}
+.u__flex-grow-1 {
+	flex-grow: 1;
+}
