@@ -88,6 +88,21 @@ function setStage(stage) {
     document.getElementById('section__proofing-trio').innerHTML = text[ stage ].trio;
 }
 
+function addTypeSettingTools() {
+    var testarea = document.getElementsByClassName("testarea");
+    for(var i = 0; i < testarea.length; i++) {
+        var span = document.createElement('span');
+        var testAreaID = testarea[i].id.trim();
+        var sliderID = testAreaID+'-slider';
+        span.innerHTML = '<input id="'+sliderID+'" class="font-size-slider" type="range" min="10" max="160" value="48" oninput="passFontSizeValue(\''+testAreaID+'\', this.value)">';
+
+        testarea[i].parentNode.insertBefore(span, testarea[i]);
+    }
+}
+function passFontSizeValue(id,value) {
+    document.getElementById(id).style.fontSize = value+"px";
+}
+
 function displayFontData() {
     var tablename, table, property, value, tag;
     var styles = '';
@@ -147,9 +162,9 @@ function displayFontData() {
                             if (tag === "aalt" || tag === "ccmp") {
                                 continue;
                             } else if (textFeature[tag]) {
-                                featuresHtml += '<h3 class="h3">'+tag+'</h3><div contenteditable="true" class="t__importedfontfamily proofing__feature-'+tag+'">'+textFeature[tag]+'</div>';
+                                featuresHtml += '<h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textFeature[tag]+'</div>';
                             } else {
-                                featuresHtml += '<h3 class="h3">'+tag+'</h3><div contenteditable="true" class="t__importedfontfamily proofing__feature-'+tag+'">'+textLetters+'</div>';
+                                featuresHtml += '<h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div>';
                             }
                         }
                     }
@@ -159,6 +174,7 @@ function displayFontData() {
         }
     }
     appendStyle(styles);
+    addTypeSettingTools();
 }
 
 function onFontLoaded(font) {
