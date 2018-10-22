@@ -219,7 +219,6 @@ function uint8ToBase64(buffer) {
 }
 
 function onReadFile(e) {
-    document.getElementById('font-name').innerHTML = '';
     var file = e.target.files[0];
     var reader = new FileReader();
     reader.onload = function(e) {
