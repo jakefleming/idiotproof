@@ -49,15 +49,46 @@ var textLetters = 'Aardvark Ablution Acrimonious Adventures Aeolian Africa Agame
 var textFurniture = '$12 $23 $34 $45 $56 $67 $78 $89 $90 $01 €12 €23 €34 €45 €56 €67 €78 €89 €90 €01 £12 £23 £34 £45 £56 £67 £78 £89 £90 £01 ¥12 ¥23 ¥34 ¥45 ¥56 ¥67 ¥78 ¥89 ¥90 ¥01 12¢ 23¢ 34¢ 45¢ 56¢ 67¢ 78¢ 89¢ 90¢ 01¢ ¿A? ¿B? ¿C? ¿D? ¿E? ¿F? ¿G? ¿H? ¿I? ¿J? ¿K? ¿L? ¿M? ¿N? ¿O? ¿P? ¿Q? ¿R? ¿S? ¿T? ¿U? ¿V? ¿W? ¿X? ¿Y? ¿Z? ¿a? ¿b? ¿c? ¿d? ¿e? ¿f? ¿g? ¿h? ¿i? ¿j? ¿k? ¿l? ¿m? ¿n? ¿o? ¿p? ¿q? ¿r? ¿s? ¿t? ¿u? ¿v? ¿w? ¿x? ¿y? ¿z? ¡a! ¡b! ¡c! ¡d! ¡e! ¡f! ¡g! ¡h! ¡i! ¡j! ¡k! ¡l! ¡m! ¡n! ¡o! ¡p! ¡q! ¡r! ¡s! ¡t! ¡u! ¡v! ¡w! ¡x! ¡y! ¡z! ¡A! ¡B! ¡C! ¡D! ¡E! ¡F! ¡G! ¡H! ¡I! ¡J! ¡K! ¡L! ¡M! ¡N! ¡O! ¡P! ¡Q! ¡R! ¡S! ¡T! ¡U! ¡V! ¡W! ¡X! ¡Y! ¡Z! “A” “B” “C” “D” “E” “F” “G” “H” “I” “J” “K” “L” “M” “N” “O” “P” “Q” “R” “S” “T” “U” “V” “W” “X” “Y” “Z” “a” “b” “c” “d” “e” “f” “g” “h” “i” “j” “k” “l” “m” “n” “o” “p” “q” “r” “s” “t” “u” “v” “w” “x” “y” “z” ‘A’ ‘B’ ‘C’ ‘D’ ‘E’ ‘F’ ‘G’ ‘H’ ‘I’ ‘J’ ‘K’ ‘L’ ‘M’ ‘N’ ‘O’ ‘P’ ‘Q’ ‘R’ ‘S’ ‘T’ ‘U’ ‘V’ ‘W’ ‘X’ ‘Y’ ‘Z’ ‘a’ ‘b’ ‘c’ ‘d’ ‘e’ ‘f’ ‘g’ ‘h’ ‘i’ ‘j’ ‘k’ ‘l’ ‘m’ ‘n’ ‘o’ ‘p’ ‘q’ ‘r’ ‘s’ ‘t’ ‘u’ ‘v’ ‘w’ ‘x’ ‘y’ ‘z’';
 // Features
 var textFeature = {
-    case: '(Aardvark) [Ablution] 1980-1920 Acrimonious@gmail.com Adventures/Misadventures',
-    frac: '⅟½↉⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒',
-    onum: 'J. C. Bradshaw, who embodied many of the tested and unchanged virtues of the 19th-century English organist and choirmaster. In 1936, while in the midst of studies, Lilburn won a composition prize offered by the visiting pianist and composer Percy Grainger, with Forest, a tone poem, praised by the judges in terms which were soon to be proved prophetic and performed by the Wellington Symphony Orchestra under Leon de Mauny in 1937. By now Lilburn had decided upon music as his profession, rather than literature, for which he was equally qualified, and went to the Royal College of Music in London to study under Vaughan Williams. In 1939 his Fantasy Quartet won the Cobbett Prize. The following year his Aotearoa Overture opened the historic Centennial Matinee at His Majesty’s Theatre in the Haymarket, conducted by Warwick Braithwaite with the Sadler’s Wells Orchestra. It had been written for the occasion in two weeks. When Lilburn returned to New Zealand in 1940, the year of the Centennial celebrations, he learned that he had won three out of the four prizes offered for musical compositions to mark the occasion. His significant Landfall in Unknown Seat. incidental music to Allen Curnow’s poem to commemorate the tercentenary of the discovery of New Zealand by Abel Tasman, followed in 1942.',
-    ordn: 'J. C. Bradshaw, who embodied many of the tested and unchanged virtues of the 19th-century English organist and choirmaster. In 1936, while in the midst of studies, Lilburn won a composition prize offered by the visiting pianist and composer Percy Grainger, with Forest, a tone poem, praised by the judges in terms which were soon to be proved prophetic and performed by the Wellington Symphony Orchestra under Leon de Mauny in 1937. By now Lilburn had decided upon music as his profession, rather than literature, for which he was equally qualified, and went to the Royal College of Music in London to study under Vaughan Williams. In 1939 his Fantasy Quartet won the Cobbett Prize. The following year his Aotearoa Overture opened the historic Centennial Matinee at His Majesty’s Theatre in the Haymarket, conducted by Warwick Braithwaite with the Sadler’s Wells Orchestra. It had been written for the occasion in two weeks. When Lilburn returned to New Zealand in 1940, the year of the Centennial celebrations, he learned that he had won three out of the four prizes offered for musical compositions to mark the occasion. His significant Landfall in Unknown Seat. incidental music to Allen Curnow’s poem to commemorate the tercentenary of the discovery of New Zealand by Abel Tasman, followed in 1942.',
-    numr: '0123456789',
-    dnom: '0123456789',
-    lnum: '0123456789',
-    smcp: 'Aardvark Ablution Acrimonious Adventures Aeolian Africa Agamemnon Ahoy Aileron Ajax Akimbo Altruism America Anecdote Aorta Aptitude Aquarium Arcade Aspartame Athens Aurelius Avuncular Awning Axminster Ayers Azure Banishment Benighted Bhagavad Biblical Bjorn Blancmange Bolton Brusque Burnish Bwana Byzantium Cabbala Cetacean Charlemagne Cicero Clamorous Cnidarian Conifer Crustacean Ctenoid Culled Cynosure Czarina Dalmatian Delphi Dhurrie Dinner Djinn Document Drill Dunleary Dvorak Dwindle Dynamo Eames Ebullient Echo Edify Eels Eftsoons Egress Ehrlich Eindhoven Eject Ekistics Elzevir Eminence Ennoble Eocene Ephemeral Equator Erstwhile Estienne Etiquette Eucalyptus Everyman Ewen Exeter Eyelet Ezekiel Fanfare Ferocious Ffestiniog Finicky Fjord Flanders Forestry Frills Furniture Fylfot Garrulous Generous Ghastly Gimlet Glorious Gnomon Golfer Grizzled Gumption Gwendolyn Gymkhana Harrow Heifer Hindemith Horace Hsi Hubris Hybrid Iambic Ibarra Ichthyology Identity Ievgeny Ifritignite Ihre Ikon Iliad Imminent Innovation Iolanthe Ipanema Irascible Island Italic Ivory Iwis Ixtapa Iyar Izzard Janacek Jenson Jitter Joinery Jr. Jungian Kaiser Kenilworth Khaki Kindred Klondike Knowledge Kohlrabi Kraken Kudzu Kvetch Kwacha Kyrie Labrador Lent Lhasa Liniment Llama Longboat Luddite Lyceum Mandarin Mbandaka Mcintyre Mdina Mendacious Mfg. Mg Millinery Mlle. Mme. Mnemonic Moribund Mr. Ms. Mtn. Munitions Myra Narragansett Nefarious Nguyen Nile Nkoso Nnenna Nonsense Nr. Nunnery Nyack Oarsman Oblate Ocular Odessa Oedipus Often Ogre Ohms Oilers Okra Olfactory Ominous Onerous Oogamous Opine Ornate Ossified Othello Oubliette Ovens Owlish Oxen Oyster Ozymandias Parisian Pb Pd. Penrose Pfennig Pg. Pharmacy Pirouette Pleistocene Pneumatic Porridge Pp. Principle Psaltery Ptarmigan Pundit Pyrrhic Qaid Qed Qibris Qom Quill Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Salacious Sbeitla Scherzo Serpentine Sforza Shackles Sinful Sjoerd Skull Slalom Smelting Snipe Sorbonne Spartan Squire Sri Stultified Summoner Svelte Swarthy Sykes Szentendre Tarragon Tblisi Tcherny Tennyson Thaumaturge Tincture Tlaloc Toreador Treacherous Tsunami Turkey Twine Tyrolean Tzara Ubiquitous Ucello Udder Ufology Ugric Uhlan Uitlander Ukulele Ulster Umber Unguent Uomo Uplift Ursine Usurious Utrecht Uvula Uxorious Uzbek Vanished Vd. Venomous Vindicate Voracious Vrillier Vs. Vt. Vulnerable Vying Washington Wendell Wharf Window Wm. Worth Wrung Wt. Wunderman Wyes Xanthan Xenon Xiao Xmas Xonen Xray Xuxa Xylem Yarrow Ybarra Ycair Yds. Yellowstone Yggdrasil Yin Ylang Yours Ypsilanti Yquem Yrs. Ys. Ytterbium Yunnan Yvonne Zanzibar Zero Zhora Zinfandel Zone Zuni Zwieback Zygote',
-    c2sc: 'Aardvark Ablution Acrimonious Adventures Aeolian Africa Agamemnon Ahoy Aileron Ajax Akimbo Altruism America Anecdote Aorta Aptitude Aquarium Arcade Aspartame Athens Aurelius Avuncular Awning Axminster Ayers Azure Banishment Benighted Bhagavad Biblical Bjorn Blancmange Bolton Brusque Burnish Bwana Byzantium Cabbala Cetacean Charlemagne Cicero Clamorous Cnidarian Conifer Crustacean Ctenoid Culled Cynosure Czarina Dalmatian Delphi Dhurrie Dinner Djinn Document Drill Dunleary Dvorak Dwindle Dynamo Eames Ebullient Echo Edify Eels Eftsoons Egress Ehrlich Eindhoven Eject Ekistics Elzevir Eminence Ennoble Eocene Ephemeral Equator Erstwhile Estienne Etiquette Eucalyptus Everyman Ewen Exeter Eyelet Ezekiel Fanfare Ferocious Ffestiniog Finicky Fjord Flanders Forestry Frills Furniture Fylfot Garrulous Generous Ghastly Gimlet Glorious Gnomon Golfer Grizzled Gumption Gwendolyn Gymkhana Harrow Heifer Hindemith Horace Hsi Hubris Hybrid Iambic Ibarra Ichthyology Identity Ievgeny Ifritignite Ihre Ikon Iliad Imminent Innovation Iolanthe Ipanema Irascible Island Italic Ivory Iwis Ixtapa Iyar Izzard Janacek Jenson Jitter Joinery Jr. Jungian Kaiser Kenilworth Khaki Kindred Klondike Knowledge Kohlrabi Kraken Kudzu Kvetch Kwacha Kyrie Labrador Lent Lhasa Liniment Llama Longboat Luddite Lyceum Mandarin Mbandaka Mcintyre Mdina Mendacious Mfg. Mg Millinery Mlle. Mme. Mnemonic Moribund Mr. Ms. Mtn. Munitions Myra Narragansett Nefarious Nguyen Nile Nkoso Nnenna Nonsense Nr. Nunnery Nyack Oarsman Oblate Ocular Odessa Oedipus Often Ogre Ohms Oilers Okra Olfactory Ominous Onerous Oogamous Opine Ornate Ossified Othello Oubliette Ovens Owlish Oxen Oyster Ozymandias Parisian Pb Pd. Penrose Pfennig Pg. Pharmacy Pirouette Pleistocene Pneumatic Porridge Pp. Principle Psaltery Ptarmigan Pundit Pyrrhic Qaid Qed Qibris Qom Quill Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Salacious Sbeitla Scherzo Serpentine Sforza Shackles Sinful Sjoerd Skull Slalom Smelting Snipe Sorbonne Spartan Squire Sri Stultified Summoner Svelte Swarthy Sykes Szentendre Tarragon Tblisi Tcherny Tennyson Thaumaturge Tincture Tlaloc Toreador Treacherous Tsunami Turkey Twine Tyrolean Tzara Ubiquitous Ucello Udder Ufology Ugric Uhlan Uitlander Ukulele Ulster Umber Unguent Uomo Uplift Ursine Usurious Utrecht Uvula Uxorious Uzbek Vanished Vd. Venomous Vindicate Voracious Vrillier Vs. Vt. Vulnerable Vying Washington Wendell Wharf Window Wm. Worth Wrung Wt. Wunderman Wyes Xanthan Xenon Xiao Xmas Xonen Xray Xuxa Xylem Yarrow Ybarra Ycair Yds. Yellowstone Yggdrasil Yin Ylang Yours Ypsilanti Yquem Yrs. Ys. Ytterbium Yunnan Yvonne Zanzibar Zero Zhora Zinfandel Zone Zuni Zwieback Zygote',
+    case: {
+          sample: '(Aardvark) [Ablution] 1980-1920 Acrimonious@gmail.com Adventures/Misadventures',
+          definition: 'Case-Sensitive Forms',
+    },
+    frac: {
+          sample: '⅟½↉⅓⅔¼¾⅕⅖⅗⅘⅙⅚⅐⅛⅜⅝⅞⅑⅒',
+          definition: 'Fractions',
+    },
+    onum: {
+          sample: 'J. C. Bradshaw, who embodied many of the tested and unchanged virtues of the 19th-century English organist and choirmaster. In 1936, while in the midst of studies, Lilburn won a composition prize offered by the visiting pianist and composer Percy Grainger, with Forest, a tone poem, praised by the judges in terms which were soon to be proved prophetic and performed by the Wellington Symphony Orchestra under Leon de Mauny in 1937. By now Lilburn had decided upon music as his profession, rather than literature, for which he was equally qualified, and went to the Royal College of Music in London to study under Vaughan Williams. In 1939 his Fantasy Quartet won the Cobbett Prize. The following year his Aotearoa Overture opened the historic Centennial Matinee at His Majesty’s Theatre in the Haymarket, conducted by Warwick Braithwaite with the Sadler’s Wells Orchestra. It had been written for the occasion in two weeks. When Lilburn returned to New Zealand in 1940, the year of the Centennial celebrations, he learned that he had won three out of the four prizes offered for musical compositions to mark the occasion. His significant Landfall in Unknown Seat. incidental music to Allen Curnow’s poem to commemorate the tercentenary of the discovery of New Zealand by Abel Tasman, followed in 1942.',
+          definition: 'Oldstyle Figures',
+    },
+    ordn: {
+          sample: 'J. C. Bradshaw, who embodied many of the tested and unchanged virtues of the 19th-century English organist and choirmaster. In 1936, while in the midst of studies, Lilburn won a composition prize offered by the visiting pianist and composer Percy Grainger, with Forest, a tone poem, praised by the judges in terms which were soon to be proved prophetic and performed by the Wellington Symphony Orchestra under Leon de Mauny in 1937. By now Lilburn had decided upon music as his profession, rather than literature, for which he was equally qualified, and went to the Royal College of Music in London to study under Vaughan Williams. In 1939 his Fantasy Quartet won the Cobbett Prize. The following year his Aotearoa Overture opened the historic Centennial Matinee at His Majesty’s Theatre in the Haymarket, conducted by Warwick Braithwaite with the Sadler’s Wells Orchestra. It had been written for the occasion in two weeks. When Lilburn returned to New Zealand in 1940, the year of the Centennial celebrations, he learned that he had won three out of the four prizes offered for musical compositions to mark the occasion. His significant Landfall in Unknown Seat. incidental music to Allen Curnow’s poem to commemorate the tercentenary of the discovery of New Zealand by Abel Tasman, followed in 1942.',
+          definition: '',
+    },
+    numr: {
+          sample: '0123456789',
+          definition: '',
+    },
+    dnom: {
+          sample: '0123456789',
+          definition: '',
+    },
+    lnum: {
+          sample: '0123456789',
+          definition: '',
+    },
+    zero: {
+          sample: '0123456789',
+          definition: '',
+    },
+    smcp: {
+          sample: 'Aardvark Ablution Acrimonious Adventures Aeolian Africa Agamemnon Ahoy Aileron Ajax Akimbo Altruism America Anecdote Aorta Aptitude Aquarium Arcade Aspartame Athens Aurelius Avuncular Awning Axminster Ayers Azure Banishment Benighted Bhagavad Biblical Bjorn Blancmange Bolton Brusque Burnish Bwana Byzantium Cabbala Cetacean Charlemagne Cicero Clamorous Cnidarian Conifer Crustacean Ctenoid Culled Cynosure Czarina Dalmatian Delphi Dhurrie Dinner Djinn Document Drill Dunleary Dvorak Dwindle Dynamo Eames Ebullient Echo Edify Eels Eftsoons Egress Ehrlich Eindhoven Eject Ekistics Elzevir Eminence Ennoble Eocene Ephemeral Equator Erstwhile Estienne Etiquette Eucalyptus Everyman Ewen Exeter Eyelet Ezekiel Fanfare Ferocious Ffestiniog Finicky Fjord Flanders Forestry Frills Furniture Fylfot Garrulous Generous Ghastly Gimlet Glorious Gnomon Golfer Grizzled Gumption Gwendolyn Gymkhana Harrow Heifer Hindemith Horace Hsi Hubris Hybrid Iambic Ibarra Ichthyology Identity Ievgeny Ifritignite Ihre Ikon Iliad Imminent Innovation Iolanthe Ipanema Irascible Island Italic Ivory Iwis Ixtapa Iyar Izzard Janacek Jenson Jitter Joinery Jr. Jungian Kaiser Kenilworth Khaki Kindred Klondike Knowledge Kohlrabi Kraken Kudzu Kvetch Kwacha Kyrie Labrador Lent Lhasa Liniment Llama Longboat Luddite Lyceum Mandarin Mbandaka Mcintyre Mdina Mendacious Mfg. Mg Millinery Mlle. Mme. Mnemonic Moribund Mr. Ms. Mtn. Munitions Myra Narragansett Nefarious Nguyen Nile Nkoso Nnenna Nonsense Nr. Nunnery Nyack Oarsman Oblate Ocular Odessa Oedipus Often Ogre Ohms Oilers Okra Olfactory Ominous Onerous Oogamous Opine Ornate Ossified Othello Oubliette Ovens Owlish Oxen Oyster Ozymandias Parisian Pb Pd. Penrose Pfennig Pg. Pharmacy Pirouette Pleistocene Pneumatic Porridge Pp. Principle Psaltery Ptarmigan Pundit Pyrrhic Qaid Qed Qibris Qom Quill Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Salacious Sbeitla Scherzo Serpentine Sforza Shackles Sinful Sjoerd Skull Slalom Smelting Snipe Sorbonne Spartan Squire Sri Stultified Summoner Svelte Swarthy Sykes Szentendre Tarragon Tblisi Tcherny Tennyson Thaumaturge Tincture Tlaloc Toreador Treacherous Tsunami Turkey Twine Tyrolean Tzara Ubiquitous Ucello Udder Ufology Ugric Uhlan Uitlander Ukulele Ulster Umber Unguent Uomo Uplift Ursine Usurious Utrecht Uvula Uxorious Uzbek Vanished Vd. Venomous Vindicate Voracious Vrillier Vs. Vt. Vulnerable Vying Washington Wendell Wharf Window Wm. Worth Wrung Wt. Wunderman Wyes Xanthan Xenon Xiao Xmas Xonen Xray Xuxa Xylem Yarrow Ybarra Ycair Yds. Yellowstone Yggdrasil Yin Ylang Yours Ypsilanti Yquem Yrs. Ys. Ytterbium Yunnan Yvonne Zanzibar Zero Zhora Zinfandel Zone Zuni Zwieback Zygote',
+          definition: '',
+    },
+    c2sc: {
+          sample: 'Aardvark Ablution Acrimonious Adventures Aeolian Africa Agamemnon Ahoy Aileron Ajax Akimbo Altruism America Anecdote Aorta Aptitude Aquarium Arcade Aspartame Athens Aurelius Avuncular Awning Axminster Ayers Azure Banishment Benighted Bhagavad Biblical Bjorn Blancmange Bolton Brusque Burnish Bwana Byzantium Cabbala Cetacean Charlemagne Cicero Clamorous Cnidarian Conifer Crustacean Ctenoid Culled Cynosure Czarina Dalmatian Delphi Dhurrie Dinner Djinn Document Drill Dunleary Dvorak Dwindle Dynamo Eames Ebullient Echo Edify Eels Eftsoons Egress Ehrlich Eindhoven Eject Ekistics Elzevir Eminence Ennoble Eocene Ephemeral Equator Erstwhile Estienne Etiquette Eucalyptus Everyman Ewen Exeter Eyelet Ezekiel Fanfare Ferocious Ffestiniog Finicky Fjord Flanders Forestry Frills Furniture Fylfot Garrulous Generous Ghastly Gimlet Glorious Gnomon Golfer Grizzled Gumption Gwendolyn Gymkhana Harrow Heifer Hindemith Horace Hsi Hubris Hybrid Iambic Ibarra Ichthyology Identity Ievgeny Ifritignite Ihre Ikon Iliad Imminent Innovation Iolanthe Ipanema Irascible Island Italic Ivory Iwis Ixtapa Iyar Izzard Janacek Jenson Jitter Joinery Jr. Jungian Kaiser Kenilworth Khaki Kindred Klondike Knowledge Kohlrabi Kraken Kudzu Kvetch Kwacha Kyrie Labrador Lent Lhasa Liniment Llama Longboat Luddite Lyceum Mandarin Mbandaka Mcintyre Mdina Mendacious Mfg. Mg Millinery Mlle. Mme. Mnemonic Moribund Mr. Ms. Mtn. Munitions Myra Narragansett Nefarious Nguyen Nile Nkoso Nnenna Nonsense Nr. Nunnery Nyack Oarsman Oblate Ocular Odessa Oedipus Often Ogre Ohms Oilers Okra Olfactory Ominous Onerous Oogamous Opine Ornate Ossified Othello Oubliette Ovens Owlish Oxen Oyster Ozymandias Parisian Pb Pd. Penrose Pfennig Pg. Pharmacy Pirouette Pleistocene Pneumatic Porridge Pp. Principle Psaltery Ptarmigan Pundit Pyrrhic Qaid Qed Qibris Qom Quill Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Salacious Sbeitla Scherzo Serpentine Sforza Shackles Sinful Sjoerd Skull Slalom Smelting Snipe Sorbonne Spartan Squire Sri Stultified Summoner Svelte Swarthy Sykes Szentendre Tarragon Tblisi Tcherny Tennyson Thaumaturge Tincture Tlaloc Toreador Treacherous Tsunami Turkey Twine Tyrolean Tzara Ubiquitous Ucello Udder Ufology Ugric Uhlan Uitlander Ukulele Ulster Umber Unguent Uomo Uplift Ursine Usurious Utrecht Uvula Uxorious Uzbek Vanished Vd. Venomous Vindicate Voracious Vrillier Vs. Vt. Vulnerable Vying Washington Wendell Wharf Window Wm. Worth Wrung Wt. Wunderman Wyes Xanthan Xenon Xiao Xmas Xonen Xray Xuxa Xylem Yarrow Ybarra Ycair Yds. Yellowstone Yggdrasil Yin Ylang Yours Ypsilanti Yquem Yrs. Ys. Ytterbium Yunnan Yvonne Zanzibar Zero Zhora Zinfandel Zone Zuni Zwieback Zygote',
+          definition: '',
+    },
 };
 // pulled from http://www.urtd.net/x/cod/source/words_language
 var textDiacritics = {
@@ -170,15 +201,23 @@ function displayFontData() {
                     value = table[property];
                     if (Array.isArray(value) && typeof value[0] === 'object') {
                         featuresHtml += '<h2 class="h2">Font Features</h2>';
+                        var taglist = [];
                         for (var i in value) {
                             var tag = value[i].tag;
+                            taglist.push(value[i].tag);
+                        }
+                        taglist = preserveUnique(taglist)
+                        for (var i in taglist) {
+                            var tag = taglist[i];
                             styles += '.proofing__feature-'+tag+' { font-feature-settings: "'+tag+'" 1;}';
                             if (tag === "aalt" || tag === "ccmp") {
-                                continue;
+                               continue;
                             } else if (textFeature[tag]) {
-                                featuresHtml += '<h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textFeature[tag]+'</div>';
+                               featuresHtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textFeature[tag].sample+'</div>';
+                            } else if (tag.includes("ss")) {
+                               featuresHtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div>';
                             } else {
-                                featuresHtml += '<h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div>';
+                               featuresHtml += '<h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div>';
                             }
                         }
                     }
@@ -191,18 +230,33 @@ function displayFontData() {
     addTypeSettingTools();
 }
 
+function preserveUnique(a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for(var i = 0; i < len; i++) {
+         var item = a[i];
+         if(seen[item] !== 1) {
+               seen[item] = 1;
+               out[j++] = item;
+         }
+    }
+    return out;
+}
+
 function onFontLoaded(font) {
     window.font = font;
     var binaryData = [];
     binaryData.push(font);
     window.URL.createObjectURL(new Blob(binaryData, {type: "application/zip"}));
-    
+
     // Do the actual proofing build
     displayFontData();
 
     // Prepare pdf export details
     var fileName = utcNoSlash+'_'+window.fontFamily+'.pdf';
-    
+
     window.opt = {
       margin:       1,
       filename:     fileName,
