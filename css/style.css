@@ -32,3 +32,22 @@
 
 .u__flex-grow-1 {
   flex-grow: 1; }
+
+.item:hover .sliders, .item:active .sliders, .item:focus .sliders {
+  opacity: 1; }
+
+.sliders {
+  opacity: 0; }
+
+.h3 {
+  position: relative; }
+  .h3 .tooltip {
+    display: none; }
+  .h3:hover {
+    text-indent: -1000em; }
+    .h3:hover .tooltip {
+      text-indent: 0;
+      display: block;
+      position: absolute;
+      left: 0px;
+      top: 0px; }
