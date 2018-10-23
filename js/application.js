@@ -1,5 +1,4 @@
 //To Do
-// * Test if variable font, provide sliders at the top for each axis. Steal from axis praxis for that??
 // * Diacritics proofing. Maybe phase 4?
 // * Drag and drop?
 // * Select multiple fonts, add tabs or drop down
