@@ -1,0 +1,71 @@
+@CHARSET "UTF-8";
+
+@import 'test';
+
+.page-break {
+	page-break-after: always;
+	page-break-inside: avoid;
+	clear:both;
+}
+.page-break-before {
+	page-break-before: always;
+	page-break-inside: avoid;
+	clear:both;
+}
+
+.section__proofing {
+	display: block;
+}
+
+// Typography
+.h6, .h3 {
+	font-family: "monospaced", "Courier";
+}
+.t__left {
+	text-align: left;
+}
+.t__right {
+	text-align: right;
+}
+.t__center {
+	text-align: center;
+}
+.t__uppercase {
+	text-transform: uppercase;
+}
+
+//Utility Classes
+.u__flex {
+	display: flex;
+}
+.u__flex-grow-1 {
+	flex-grow: 1;
+}
+
+// Hiding a couple things
+.item {
+	&:hover, &:active, &:focus {
+		.sliders {
+			opacity: 1;
+		}
+	}
+}
+.sliders {
+	opacity: 0;
+}
+.h3 {
+	position: relative;
+	.tooltip {
+		display: none;
+	}
+	&:hover {
+		text-indent: -1000em;
+		.tooltip {
+			text-indent: 0;
+			display: block;
+			position: absolute;
+			left: 0px;
+			top: 0px;
+		}
+	}
+}
