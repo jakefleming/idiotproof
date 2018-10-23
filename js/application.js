@@ -168,7 +168,7 @@ function addTypeSettingTools(isVariableFont) {
         //font size
         html += '<input id="'+sliderID+'-fontSize" type="range" min="2" max="160" step="4" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<input id="'+sliderID+'-LineHeight" type="range" min="0.6" max="5.0" step="0.1" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<input id="'+sliderID+'-LineHeight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
