@@ -13,7 +13,7 @@ The Font Testing Page is a tool primarily intended for type designers to 'Drag a
 
 This entire thing is built on the work of other people!
 
-* Most thanks to Pablo Impallari's [Font Testing Page](https://github.com/impallari/Font-Testing-Page/) which has been down for several months and forced us to come up with a replacement. 
+* Most thanks to Pablo Impallari's [Font Testing Page](https://github.com/impallari/Font-Testing-Page/) which has been down for several months and forced us to come up with a replacement.
 * [Axis Praxis](http://axis-praxis.org), which kindly uses very readable javascript in their source.
 * Latin02 Diacritics tabs from [Context of Diacritics](http://urtd.net/projects/cod)
 
@@ -21,4 +21,7 @@ This entire thing is built on the work of other people!
 
 Code is available under the MIT License, see [license.md](license.md) for full details
 
-
+## How To Install Locally
+* Clone this repository
+* `npm install`
+* `npm start`

@@ -10,7 +10,7 @@ window.fontSize = 16;
 window.lineHeight = 1.3;
 
 // Level 1
-var text = {
+var text = {  
     1: {
         overview: 'HAMBURGEDFONTSIVhamburgedfontsiv',
         spacing: 'HHAHOAOO HHBHOBOO HHDHODOO HHEHOEOO HHFHOFOO HHGHOGOO HHHHOHOO HHIHOIOO HHMHOMOO HHNHONOO HHOHOOOO HHRHOROO HHSHOSOO HHTHOTOO HHUHOUOO HHVHOVOO hhahoaoo hhbhoboo hhdhodoo hhehoeoo hhfhofoo hhghogoo hhhhohoo hhihoioo hhlholoo hhmhomoo hhnhonoo hhohoooo hhrhoroo hhshosoo hhthotoo hhuhouoo hhvhovoo',
@@ -164,7 +164,7 @@ function removeElementsByClass(className){
 function addTypeSettingTools(isVariableFont) {
     var testarea = document.getElementsByClassName("testarea");
     removeElementsByClass("sliders");
-    
+
     for(var i = 0; i < testarea.length; i++) {
         var testAreaID = testarea[i].id;
         var sliderID = testAreaID.trim()+'-slider';
