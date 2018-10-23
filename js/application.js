@@ -135,15 +135,30 @@ function setStage(stage) {
 
 function addTypeSettingTools() {
     var testarea = document.getElementsByClassName("testarea");
-    for(var i = 0; i < testarea.length; i++) {
-        var span = document.createElement('span');
-        var testAreaID = testarea[i].id.trim();
-        var sliderID = testAreaID+'-slider';
-        span.innerHTML = '<input id="'+sliderID+'" class="font-size-slider" type="range" min="10" max="160" value="48" oninput="passFontSizeValue(\''+testAreaID+'\', this.value)">';
 
-        testarea[i].parentNode.insertBefore(span, testarea[i]);
+    for(var i = 0; i < testarea.length; i++) {
+        if (testarea[i].classList.contains("has-font-size-slider")) {
+             continue;
+        } else {
+              var span = document.createElement('span');
+              span.classList.add("font-size-slider");
+              var testAreaID = testarea[i].id.trim();
+              var sliderID = testAreaID+'-slider';
+              span.innerHTML = '<input id="'+sliderID+'" type="range" min="10" max="160" value="48" oninput="passFontSizeValue(\''+testAreaID+'\', this.value)">';
+              testarea[i].classList.add("has-font-size-slider");
+              testarea[i].parentNode.insertBefore(span, testarea[i]);
+        }
     }
 }
+
+var fieldcount = 0;
+function insertField() {
+    fieldcount += 1;
+    document.getElementById("draggable-overview").insertAdjacentHTML('beforebegin',
+    '<div id="draggable--'+fieldcount+'" class="draggable"><div id="section__proofing-'+fieldcount+'" class="page-break-before t__importedfontfamily testarea" contenteditable="true">Insert your own content</div></div>');
+    addTypeSettingTools();
+}
+
 function passFontSizeValue(id,value) {
     document.getElementById(id).style.fontSize = value+"px";
 }
@@ -213,11 +228,11 @@ function displayFontData() {
                             if (tag === "aalt" || tag === "ccmp") {
                                continue;
                             } else if (textFeature[tag]) {
-                               featuresHtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textFeature[tag].sample+'</div>';
+                               featuresHtml += '<div id="draggable--'+tag+'" class="draggable"><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textFeature[tag].sample+'</div></div>';
                             } else if (tag.includes("ss")) {
-                               featuresHtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div>';
+                               featuresHtml += '<div id="draggable--'+tag+'" class="draggable"><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
                             } else {
-                               featuresHtml += '<h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div>';
+                               featuresHtml += '<div id="draggable--'+tag+'" class="draggable"><h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
                             }
                         }
                     }
