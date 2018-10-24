@@ -14,7 +14,7 @@ Idiot Proofed was made so we'd never have to open InDesign again. It works best 
 
 ## How To Install Locally
 Clone this repository. If you have node installed and gulp installed go ahead and get the party started:
-* 'cd' into repository
+* `cd` to repository
 * `npm install`
 * `npm start`
 
