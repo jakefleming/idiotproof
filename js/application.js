@@ -170,29 +170,31 @@ function addTypeSettingTools(isVariableFont) {
         var sliderID = testAreaID.trim()+'-slider';
         var html = '<span class="sliders">';
         //font size
-        html += '<input id="'+sliderID+'-fontSize" type="range" min="2" max="160" step="4" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<input id="'+sliderID+'-LineHeight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<label for="'+sliderID+'-lineheight">Line Height</label><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
                 var min = font.tables.fvar.axes[b].minValue;
                 var max = font.tables.fvar.axes[b].maxValue;
                 var tag = font.tables.fvar.axes[b].tag;
-                html += '<input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+tag+'" oninput="passStyleValue(\''+testAreaID+'\', \''+tag+'\', this.value)">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+tag+'</label><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+tag+'" oninput="passStyleValue(\''+testAreaID+'\', \''+tag+'\', this.value)">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
         }
+        var testAreaParent = document.getElementById(testAreaID).parentNode.id;
+        html += '<button onclick="insertField(\''+testAreaParent+'\')">+</button>';
         html += '</span>';
         testarea[i].insertAdjacentHTML('beforebegin', html);
     }
 }
 
 var fieldcount = 0;
-function insertField() {
+function insertField(aboveHere) {
     fieldcount += 1;
-    document.getElementById("item-overview").insertAdjacentHTML('beforebegin',
+    document.getElementById(aboveHere).insertAdjacentHTML('beforebegin',
     '<div id="item--'+fieldcount+'" class="item"><div id="section__proofing-'+fieldcount+'" class="page-break-before t__importedfontfamily testarea" contenteditable="true">Insert your own content</div></div>');
     addTypeSettingTools(isVariableFont());
 }
