@@ -160,7 +160,9 @@ function removeElementsByClass(className){
         elements[0].parentNode.removeChild(elements[0]);
     }
 }
-
+function removeElementsByID(IDName){
+    document.getElementById(IDName).outerHTML = "";
+}
 function addTypeSettingTools(isVariableFont) {
     var testarea = document.getElementsByClassName("testarea");
     removeElementsByClass("sliders");
@@ -186,6 +188,7 @@ function addTypeSettingTools(isVariableFont) {
         }
         var testAreaParent = document.getElementById(testAreaID).parentNode.id;
         html += '<button onclick="insertField(\''+testAreaParent+'\')">+</button>';
+        html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
         html += '</span>';
         testarea[i].insertAdjacentHTML('beforebegin', html);
     }
