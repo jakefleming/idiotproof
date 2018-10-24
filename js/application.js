@@ -191,9 +191,6 @@ function addTypeSettingTools(isVariableFont) {
                 html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
-                // Haven't figured out how to get the display to start on defaults
-                // This is my attempt
-                // passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
             }
 
         }
@@ -202,6 +199,13 @@ function addTypeSettingTools(isVariableFont) {
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
         html += '</span>';
         testarea[i].insertAdjacentHTML('beforebegin', html);
+        if (isVariableFont) {
+            for (var b in font.tables.fvar.axes) {
+                  var tag = font.tables.fvar.axes[b].tag;
+                  var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                  passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
+            }
+        }
     }
 }
 
@@ -220,23 +224,24 @@ function passStyleValue(id,property,value,fvarSupport) {
       document.getElementById(id).style[property] = value;
 }
 function passfvarValue(id,property,value,fvarSupport) {
-      var fvarList = fvarSupport.split(',');
+      if (!(Array.isArray(fvarSupport))){
+            fvarSupport = fvarSupport.split(',');
+      }
        var fvarcss = "";
-       if (fvarList.length == 1) {
+       if (fvarSupport.length == 1) {
              fvarcss += "'"+property+"' "+value+" ";
       } else {
-            for (f = 0; f < fvarList.length; f++) {
-                   if (property == fvarList[f]) {
+            for (f = 0; f < fvarSupport.length; f++) {
+                   if (property == fvarSupport[f]) {
                         fvarcss += "'"+property+"' "+value;
                   } else {
-                        var fvalue = document.getElementById(id+"-slider-"+fvarList[f]).value;
-                        fvarcss += "'"+String(fvarList[f])+"' "+fvalue;
+                        var fvalue = document.getElementById(id+"-slider-"+fvarSupport[f]).value;
+                        fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue;
                   }
-                  if (f != fvarList.length - 1) {
+                  if (f != fvarSupport.length - 1) {
                         fvarcss += ", ";
                   }
              }
-             console.log(fvarcss);
       }
       $('#' + id).css('font-variation-settings', fvarcss);
 }
