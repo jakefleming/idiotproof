@@ -3,11 +3,18 @@
 
 Stable release at http://idiotproofed.com.
 
-The Font Testing Page is a tool primarily intended for type designers to 'Drag and Drop' and quickly test their fonts into a browser. It can also be used by Type and Art Directors, Graphic Designers, Teachers and Students interested in seeing how a typeface works on the web.
+Created by [Very Cool Studio](https://verycoolstudio.com) and [Jake Fleming](https://www.futurefonts.xyz/jake-fleming).
+
+Idiot Proofed was made so we'd never have to open InDesign again. It works best locally, where gulp can watch for changes to fonts, but also works just great in browser. On font selection Idiot Proofed takes a wild guess at where you're at in your proofing process, what opentype features are available in your font, and delivers proofing material accordingly in three broad stages. 
+
+## The Stages
+1. Hamburgedfontsiv
+2. Spacing
+3. Kerning
 
 ## Notes
 
-* Requires Firefox or Chrome
+* Not extensively browser tested
 * No server storage is used, fonts are stored in your browser, then embedded directly from there into a PDF that is unaccessable to us.
 
 ## Thanks
