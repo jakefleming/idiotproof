@@ -10,7 +10,7 @@ window.fontSize = 16;
 window.lineHeight = 1.3;
 
 // Level 1
-var text = {  
+var text = {
     1: {
         overview: 'HAMBURGEDFONTSIVhamburgedfontsiv',
         spacing: 'HHAHOAOO HHBHOBOO HHDHODOO HHEHOEOO HHFHOFOO HHGHOGOO HHHHOHOO HHIHOIOO HHMHOMOO HHNHONOO HHOHOOOO HHRHOROO HHSHOSOO HHTHOTOO HHUHOUOO HHVHOVOO hhahoaoo hhbhoboo hhdhodoo hhehoeoo hhfhofoo hhghogoo hhhhohoo hhihoioo hhlholoo hhmhomoo hhnhonoo hhohoooo hhrhoroo hhshosoo hhthotoo hhuhouoo hhvhovoo',
@@ -177,14 +177,25 @@ function addTypeSettingTools(isVariableFont) {
         html += '<label for="'+sliderID+'-lineheight">Line Height</label><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
+            var fvarSupport = [];
+            for (var a in font.tables.fvar.axes) {
+                  var tag = font.tables.fvar.axes[a].tag;
+                  fvarSupport.push(tag);
+            }
             for (var b in font.tables.fvar.axes) {
                 var min = font.tables.fvar.axes[b].minValue;
                 var max = font.tables.fvar.axes[b].maxValue;
                 var tag = font.tables.fvar.axes[b].tag;
-                html += '<label for="'+sliderID+'-'+tag+'">'+tag+'</label><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+tag+'" oninput="passStyleValue(\''+testAreaID+'\', \''+tag+'\', this.value)">';
+                var name = font.tables.fvar.axes[b].name.en;
+                var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                html += '<label for="'+sliderID+'-'+tag+'">'+tag+'</label><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
+                // Haven't figured out how to get the display to start on defaults
+                // This is my attempt 
+                // passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
             }
+
         }
         var testAreaParent = document.getElementById(testAreaID).parentNode.id;
         html += '<button onclick="insertField(\''+testAreaParent+'\')">+</button>';
@@ -202,18 +213,161 @@ function insertField(aboveHere) {
     addTypeSettingTools(isVariableFont());
 }
 
-function passStyleValue(id,property,value) {
-    var fvar = ["wght", "wdth", "ital", "slnt", "opsz"]
-    for (var i in fvar) {
-        if (property == fvar[i]) {
-            $('#' + id).css('font-variation-settings', "'"+property+"' " + value);
-        } else {
-            if (property == "fontSize") {
-                value = value+"px";
-            }
-            document.getElementById(id).style[property] = value;
-        }
-    }
+function passStyleValue(id,property,value,fvarSupport) {
+      if (property == "fontSize") {
+          value = value+"px";
+      }
+      document.getElementById(id).style[property] = value;
+}
+function passfvarValue(id,property,value,fvarSupport) {
+      var fvarList = fvarSupport.split(',');
+       var fvarcss = "";
+       if (fvarList.length == 1) {
+             fvarcss += "'"+property+"' "+value+" ";
+      } else {
+            for (f = 0; f < fvarList.length; f++) {
+                   if (property == fvarList[f]) {
+                        fvarcss += "'"+property+"' "+value;
+                  } else {
+                        var fvalue = document.getElementById(id+"-slider-"+fvarList[f]).value;
+                        fvarcss += "'"+String(fvarList[f])+"' "+fvalue;
+                  }
+                  if (f != fvarList.length - 1) {
+                        fvarcss += ", ";
+                  }
+             }
+             console.log(fvarcss);
+      }
+      $('#' + id).css('font-variation-settings', fvarcss);
+}
+function updateTextbox() {
+	$(textbox).css('transform', ""); // remove any scale that was applied
+	$(textbox).css('whiteSpace',"");
+
+	// reposition & resize the textbox
+	$(textbox).css('left', getX(handles[0]) + "px");
+	$(textbox).css('top', getY(handles[0]) + "px");
+	$(textbox).width(getX(handles[1]) - getX(handles[0]));
+
+	var heightIntended = getY(handles[2]) - getY(handles[0]);
+	$(textbox).css('font-size', heightIntended); // change the font-size
+	var heightActual = $(textbox).height();
+
+	var maxIterations = 15;
+	var minHeight, maxHeight;
+	var wdthLo = wdthMin;
+	var wdthHi = wdthMax;
+	//console.log ("Starting move");
+	var wdths = [], wdthLos = [], wdthHis = [], hiLinesArr = [];
+
+
+	// get height for the min
+	$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthLo);
+	minHeight = $(textbox).height();
+
+	// get height for the max
+	$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthHi);
+	maxHeight = $(textbox).height();
+
+	loLines = Math.round(minHeight / heightIntended);
+	hiLines = Math.round(maxHeight / heightIntended);
+
+	var scale = false;
+
+	for (var i=0; i<maxIterations; i++)
+	{
+		//console.log ('i='+i+',wdth: ' + wdth)
+		wdths.push(wdth);
+		wdthHis.push(wdthHi);
+		wdthLos.push(wdthLo);
+
+		hiLinesArr.push(hiLines);
+		$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdth);
+		var thisHeight = $(textbox).height();
+		var numLines = Math.round(thisHeight / heightIntended);
+
+
+		//$("#debug").html('wdthLo: ' + wdthLo +'<br>wdthHi: ' + wdthHi + '<br>minHeight: '+ minHeight + '<br>maxHeight' + maxHeight + "<br>loLines: " + loLines + '<br>hiLines: ' + hiLines);
+
+	      var time = 0;
+		// decide colour, and break out if we're not within the bounds
+		if (i == 0)
+			if (loLines > 1)
+			{
+				$('.handle').removeClass('fill-okay').removeClass('fill-over').addClass('fill-under'); // red
+
+				$('#hidden').css({
+					width: "auto",
+					whiteSpace: "nowrap",
+					fontSize: heightIntended + "px",
+					'font-variation-settings': "'wght' " + wght + ", 'wdth' " + wdthMin
+				}).text($(textbox).text());
+
+				$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthMin);
+
+
+				var thisWidth = parseInt(handles[1].css("left")) - parseInt(handles[0].css("left"));
+
+				//console.log ($(textbox).width()+ "," + thisWidth);
+				scale = /*thisWidth*/ $(textbox).width() / $('#hidden').width();
+				var xDelta = -0.5 * ($('#hidden').width() - $(textbox).width());
+				$(textbox).css('transform', "scale(" + scale +",1) translate(" + xDelta + "px,0px)")
+				//console.log (scale);
+				//console.log ("xDelta: " + xDelta);
+				$(textbox).css('whiteSpace',"nowrap");
+				//$(textbox).width(thisWidth / scale);
+
+				break;
+			}
+			else if (hiLines == 1)
+			{
+				$('.handle').removeClass('fill-under').removeClass('fill-okay').addClass('fill-over'); // blue
+
+				$('#hidden').css({
+					width: "auto",
+					whiteSpace: "nowrap",
+					fontSize: heightIntended + "px",
+					'font-variation-settings': "'wght' " + wght + ", 'wdth' " + wdthMax
+				}).text($(textbox).text());
+				//$(textbox).css('font-variation-settings', "'wght' 1.0, 'wdth' " + wdthMax);
+				$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthMax);
+
+				scale = $(textbox).width() / $('#hidden').width();
+				$(textbox).css('transform', "scale(" + scale +",1)")
+
+				break;
+			}
+			else
+				$('.handle').removeClass('fill-under').removeClass('fill-over').addClass('fill-okay'); // green
+
+		if (numLines > 1)
+		{
+			// needs to be narrower
+			//console.log ( wdth + '↓' + (0.5 * (wdthLo + wdth)));
+			wdthHi = wdth;
+			wdth = 0.5 * (wdthLo + wdthHi);
+
+			if (i == maxIterations-1) // we don't want to end in this state, so force it to the current lo value
+			{
+				wdth = wdthLo;
+				$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdth);
+			}
+		}
+		else if (numLines == 1)
+		{
+			// needs to be wider
+			//console.log ( wdth + '↑' + (0.5 * (wdthHi + wdth)));
+			wdthLo = wdth;
+			wdth = 0.5 * (wdthLo + wdthHi);
+		}
+	}
+
+	$('#fontSpec').html(
+		'size: ' + parseInt(heightIntended) + 'px<br>' +
+		'weight: ' + parseInt(wght) + "<br>width: " + parseInt(wdth) + "<br>" +
+		((scale === false) ? "" : "<div class='stretch-error'>STRETCHED TYPE</div>")
+		);
+
 }
 
 function displayFontData() {
