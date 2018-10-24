@@ -12,6 +12,14 @@ Idiot Proofed was made so we'd never have to open InDesign again. It works best 
 2. Spacing
 3. Kerning
 
+## How To Install Locally
+Clone this repository. If you have node installed and gulp installed go ahead and get the party started:
+* 'cd' into repository
+* `npm install`
+* `npm start`
+
+[If you don't have node or gulp installed](https://www.google.com/search?q=install+node+and+gulp&oq=install+node+and+gulp&aqs=chrome..69i57j0l5.5274j1j7&sourceid=chrome&ie=UTF-8).
+
 ## Notes
 
 * Not extensively browser tested
@@ -29,7 +37,3 @@ This entire thing is built on the work of other people!
 
 Code is available under the MIT License, see [license.md](license.md) for full details
 
-## How To Install Locally
-* Clone this repository
-* `npm install`
-* `npm start`
