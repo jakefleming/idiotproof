@@ -1,4 +1,5 @@
-# Idiot Proofer
+![Idiot Proofed](http://idiotproofed.com/images/github-share.jpg)
+
 
 Stable release at http://idiotproofed.com.
 
