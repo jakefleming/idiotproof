@@ -62,8 +62,8 @@ gulp.task('watch', function() {
   gulp.watch('scss/**/*.scss', ['css']);
   gulp.watch('js/**/*.js', ['js']);
   gulp.watch('*.html', browserSync.reload);
-  gulp.watch('fonts/*', browserSync.reload);
+  gulp.watch('fonts/*', ['update-fontlist', browserSync.reload]);
 });
 
 // DEFAULT
-gulp.task('default', [ 'css', 'js', 'browser-sync', 'watch', 'update-fontlist' ]);
+gulp.task('default', [ 'update-fontlist', 'css', 'js', 'browser-sync', 'watch' ]);

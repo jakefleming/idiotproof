@@ -103,6 +103,10 @@ var textFeature = {
           definition: 'Small Capitals From Capitals: substitutes lowercase characters to small capitals',
     },
 };
+var fontFormats = {
+    truetype: 'ttf',
+    opentype: 'otf',
+}
 // pulled from http://www.urtd.net/x/cod/source/words_language
 var textDiacritics = {
     Afrikaansbén : 'gedefiniërde wél ongeëwenaard reliëfs wêreldstelsels té dáárom sinaïwoestyn lêer geïnteresseerd één geïllustreerde asiëoorlog rûe trôe wîe breëblaarwoude paleosoïkum bó sôre sjiïete vóór vêrste teëgestaan dáárom gesê appèl hê adéliepikkewyn pêrel dít óm geïgnoreer môre álle brûe sinaïwoestyn adéliepikkewyn ýs têre karotenoïede reënboognasie kwêvoël geëmigreer ónder hoëdrukgebiede kontinuïteit vóór mét',
@@ -245,7 +249,7 @@ function passfvarValue(id,property,value,fvarSupport) {
       }
       $('#' + id).css('font-variation-settings', fvarcss);
 }
-function displayFontData() {
+function displayFontData(fontFileName) {
     var tablename, table, property, value, tag;
     var styles = '';
 
@@ -267,6 +271,8 @@ function displayFontData() {
             }
             setStage(window.proofingPhase);
         }
+        var fontFormat = font.outlinesFormat;
+        fontFormat = fontFormats[fontFormat];
         if (tablename === 'name') {
                 nameHtml = '';
                 var designerName = font.names.designer.en;
@@ -274,7 +280,7 @@ function displayFontData() {
                 window.fontFamily = postScriptName;
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left">'+designerName+'</h6>';
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center">'+postScriptName+'</h6>';
-                styles += '@font-face { font-family: "'+postScriptName+'"; src: url("/fonts/'+postScriptName+'.otf");}';
+                styles += '@font-face { font-family: "'+postScriptName+'"; src: url("/'+fontFileName+'");}';
                 styles += '.t__importedfontfamily { font-family: "'+postScriptName+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
                 document.getElementById('section__header-names').innerHTML = nameHtml;
@@ -333,14 +339,14 @@ function preserveUnique(a) {
     return out;
 }
 
-function onFontLoaded(font) {
+function onFontLoaded(font, fontFileName) {
     window.font = font;
     var binaryData = [];
     binaryData.push(font);
     window.URL.createObjectURL(new Blob(binaryData, {type: "application/zip"}));
 
     // Do the actual proofing build
-    displayFontData();
+    displayFontData(fontFileName);
 
     // Prepare pdf export details
     var fileName = utcNoSlash+'_'+window.fontFamily+'.pdf';
@@ -414,7 +420,7 @@ function isFontVariable(font) {
 }
 function setFont(fontFileName) {
     opentype.load(fontFileName, function(err, font) {
-                onFontLoaded(font);
+                onFontLoaded(font, fontFileName);
             });
 }
             
@@ -429,25 +435,25 @@ window.onload = function() {
         var allFontFilesInFolder = '';
         $.get( "../txt/fonts.txt", {}, function( data ) {
             allFontFilesInFolder = data.split("fonts/");
+            var fonts = [];
             for(var a=0; a<allFontFilesInFolder.length; a++) {
                 if (allFontFilesInFolder[a] != "") {
                     thisFont = allFontFilesInFolder[a].trim();
+                    fonts.push(thisFont);
                     html += '<button onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
                 }
             }
             fileButtonParent.innerHTML = html;
-            setFont('fonts/'+allFontFilesInFolder[2]);
+            setFont('fonts/'+fonts[0]);
         }, "text");
+        setStage(1);
     } else {
            fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
            var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
+            setStage(1);
     }
     
-    //Load up phase 1 content
-    document.getElementById('section__proofing-overview').innerHTML = text[1].overview;
-    document.getElementById('section__proofing-spacing').innerHTML = text[1].spacing;
-    document.getElementById('section__proofing-trio').innerHTML = text[1].trio;
     // Load pdfWrapper
     var pdfWrapper = document.getElementById('html-2-pdfwrapper');
     generate = function()
