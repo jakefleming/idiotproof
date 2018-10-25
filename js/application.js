@@ -275,11 +275,19 @@ function displayFontData(fontFileName) {
         fontFormat = fontFormats[fontFormat];
         if (tablename === 'name') {
                 nameHtml = '';
-                var designerName = font.names.designer.en;
-                var postScriptName = font.names.postScriptName.en;
+                if (font.names.designer === null) {
+                    var designerName = font.names.designer.en;
+                } else {
+                    var designerName = "Designer";
+                }
+                if (font.names.postScriptName === null) {
+                    var postScriptName = font.names.postScriptName.en;
+                } else {
+                    var postScriptName = "Font Name";
+                }
                 window.fontFamily = postScriptName;
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left">'+designerName+'</h6>';
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center">'+postScriptName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true">'+designerName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true">'+postScriptName+'</h6>';
                 styles += '@font-face { font-family: "'+postScriptName+'"; src: url("/'+fontFileName+'");}';
                 styles += '.t__importedfontfamily { font-family: "'+postScriptName+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
@@ -429,7 +437,6 @@ window.onload = function() {
     var fileButtonParent = document.getElementById('section__header-file-button');
     
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
-        
         document.getElementById('section__header-file-button').innerHTML = 'Local mode: gulp is reading from /fonts/ ';
         var html = '';
         var allFontFilesInFolder = '';
@@ -446,13 +453,12 @@ window.onload = function() {
             fileButtonParent.innerHTML = html;
             setFont('fonts/'+fonts[0]);
         }, "text");
-        setStage(1);
     } else {
-           fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
-           var fileButton = document.getElementById('fontInput');
+            var fontFileName = 'fonts/gooper-VF.ttf';
+            setFont(fontFileName);
+            fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
+            var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
-            setFont('fonts/gooper-VF.ttf');
-            setStage(1);
     }
     
     // Load pdfWrapper
