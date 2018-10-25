@@ -276,14 +276,14 @@ function displayFontData(fontFileName) {
         if (tablename === 'name') {
                 nameHtml = '';
                 if (font.names.designer === null) {
-                    var designerName = font.names.designer.en;
-                } else {
                     var designerName = "Designer";
+                } else {
+                    var designerName = font.names.designer.en;
                 }
                 if (font.names.postScriptName === null) {
-                    var postScriptName = font.names.postScriptName.en;
-                } else {
                     var postScriptName = "Font Name";
+                } else {
+                    var postScriptName = font.names.postScriptName.en;
                 }
                 window.fontFamily = postScriptName;
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true">'+designerName+'</h6>';
