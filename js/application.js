@@ -451,6 +451,7 @@ window.onload = function() {
            fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
            var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
+            setFont('fonts/gooper-VF.ttf');
             setStage(1);
     }
     
