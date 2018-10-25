@@ -245,136 +245,6 @@ function passfvarValue(id,property,value,fvarSupport) {
       }
       $('#' + id).css('font-variation-settings', fvarcss);
 }
-function updateTextbox() {
-	$(textbox).css('transform', ""); // remove any scale that was applied
-	$(textbox).css('whiteSpace',"");
-
-	// reposition & resize the textbox
-	$(textbox).css('left', getX(handles[0]) + "px");
-	$(textbox).css('top', getY(handles[0]) + "px");
-	$(textbox).width(getX(handles[1]) - getX(handles[0]));
-
-	var heightIntended = getY(handles[2]) - getY(handles[0]);
-	$(textbox).css('font-size', heightIntended); // change the font-size
-	var heightActual = $(textbox).height();
-
-	var maxIterations = 15;
-	var minHeight, maxHeight;
-	var wdthLo = wdthMin;
-	var wdthHi = wdthMax;
-	//console.log ("Starting move");
-	var wdths = [], wdthLos = [], wdthHis = [], hiLinesArr = [];
-
-
-	// get height for the min
-	$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthLo);
-	minHeight = $(textbox).height();
-
-	// get height for the max
-	$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthHi);
-	maxHeight = $(textbox).height();
-
-	loLines = Math.round(minHeight / heightIntended);
-	hiLines = Math.round(maxHeight / heightIntended);
-
-	var scale = false;
-
-	for (var i=0; i<maxIterations; i++)
-	{
-		//console.log ('i='+i+',wdth: ' + wdth)
-		wdths.push(wdth);
-		wdthHis.push(wdthHi);
-		wdthLos.push(wdthLo);
-
-		hiLinesArr.push(hiLines);
-		$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdth);
-		var thisHeight = $(textbox).height();
-		var numLines = Math.round(thisHeight / heightIntended);
-
-
-		//$("#debug").html('wdthLo: ' + wdthLo +'<br>wdthHi: ' + wdthHi + '<br>minHeight: '+ minHeight + '<br>maxHeight' + maxHeight + "<br>loLines: " + loLines + '<br>hiLines: ' + hiLines);
-
-	      var time = 0;
-		// decide colour, and break out if we're not within the bounds
-		if (i == 0)
-			if (loLines > 1)
-			{
-				$('.handle').removeClass('fill-okay').removeClass('fill-over').addClass('fill-under'); // red
-
-				$('#hidden').css({
-					width: "auto",
-					whiteSpace: "nowrap",
-					fontSize: heightIntended + "px",
-					'font-variation-settings': "'wght' " + wght + ", 'wdth' " + wdthMin
-				}).text($(textbox).text());
-
-				$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthMin);
-
-
-				var thisWidth = parseInt(handles[1].css("left")) - parseInt(handles[0].css("left"));
-
-				//console.log ($(textbox).width()+ "," + thisWidth);
-				scale = /*thisWidth*/ $(textbox).width() / $('#hidden').width();
-				var xDelta = -0.5 * ($('#hidden').width() - $(textbox).width());
-				$(textbox).css('transform', "scale(" + scale +",1) translate(" + xDelta + "px,0px)")
-				//console.log (scale);
-				//console.log ("xDelta: " + xDelta);
-				$(textbox).css('whiteSpace',"nowrap");
-				//$(textbox).width(thisWidth / scale);
-
-				break;
-			}
-			else if (hiLines == 1)
-			{
-				$('.handle').removeClass('fill-under').removeClass('fill-okay').addClass('fill-over'); // blue
-
-				$('#hidden').css({
-					width: "auto",
-					whiteSpace: "nowrap",
-					fontSize: heightIntended + "px",
-					'font-variation-settings': "'wght' " + wght + ", 'wdth' " + wdthMax
-				}).text($(textbox).text());
-				//$(textbox).css('font-variation-settings', "'wght' 1.0, 'wdth' " + wdthMax);
-				$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdthMax);
-
-				scale = $(textbox).width() / $('#hidden').width();
-				$(textbox).css('transform', "scale(" + scale +",1)")
-
-				break;
-			}
-			else
-				$('.handle').removeClass('fill-under').removeClass('fill-over').addClass('fill-okay'); // green
-
-		if (numLines > 1)
-		{
-			// needs to be narrower
-			//console.log ( wdth + '↓' + (0.5 * (wdthLo + wdth)));
-			wdthHi = wdth;
-			wdth = 0.5 * (wdthLo + wdthHi);
-
-			if (i == maxIterations-1) // we don't want to end in this state, so force it to the current lo value
-			{
-				wdth = wdthLo;
-				$(textbox).css('font-variation-settings', "'wght' " + wght + ", 'wdth' " + wdth);
-			}
-		}
-		else if (numLines == 1)
-		{
-			// needs to be wider
-			//console.log ( wdth + '↑' + (0.5 * (wdthHi + wdth)));
-			wdthLo = wdth;
-			wdth = 0.5 * (wdthLo + wdthHi);
-		}
-	}
-
-	$('#fontSpec').html(
-		'size: ' + parseInt(heightIntended) + 'px<br>' +
-		'weight: ' + parseInt(wght) + "<br>width: " + parseInt(wdth) + "<br>" +
-		((scale === false) ? "" : "<div class='stretch-error'>STRETCHED TYPE</div>")
-		);
-
-}
-
 function displayFontData() {
     var tablename, table, property, value, tag;
     var styles = '';
@@ -398,23 +268,14 @@ function displayFontData() {
             setStage(window.proofingPhase);
         }
         if (tablename === 'name') {
-                var nameHtml = '';
-                for (property in table) {
-                    var translations = table[property];
-                    if (property === "designer") {
-                        var name = translations.en;
-                            nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center">'+name+'</h6>';
-                    }
-                    if (property === "postScriptName") {
-                        var name = translations.en;
-                        nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left">'+name+'</h6>';
-                        window.fontFamily = name;
-                        if (name === "Gooper0.2-Thin") {
-                            styles += '@font-face { font-family: "'+name+'"; src: url("/fonts/gooper-VF.ttf");}';
-                        }
-                        styles += '.t__importedfontfamily { font-family: "'+name+'" }';
-                    }
-                }
+                nameHtml = '';
+                var designerName = font.names.designer.en;
+                var postScriptName = font.names.postScriptName.en;
+                window.fontFamily = postScriptName;
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left">'+designerName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center">'+postScriptName+'</h6>';
+                styles += '@font-face { font-family: "'+postScriptName+'"; src: url("/fonts/'+postScriptName+'.otf");}';
+                styles += '.t__importedfontfamily { font-family: "'+postScriptName+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
                 document.getElementById('section__header-names').innerHTML = nameHtml;
                 continue;
@@ -542,14 +403,56 @@ function onReadFile(e) {
     reader.onerror = function(err) {
         showErrorMessage(err.toString());
     };
-
     reader.readAsArrayBuffer(file);
 }
-function isFontVariable(font)
-{
+function isFontVariable(font) {
     if (font.axes) {
         return true;
     } else {
         return false;
     }
+}
+function setFont(fontFileName) {
+    opentype.load(fontFileName, function(err, font) {
+                onFontLoaded(font);
+            });
+}
+            
+
+window.onload = function() {
+    var fileButtonParent = document.getElementById('section__header-file-button');
+    
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
+        
+        document.getElementById('section__header-file-button').innerHTML = 'Local mode: gulp is reading from /fonts/ ';
+        var html = '';
+        var allFontFilesInFolder = '';
+        $.get( "../txt/fonts.txt", {}, function( data ) {
+            allFontFilesInFolder = data.split("fonts/");
+            for(var a=0; a<allFontFilesInFolder.length; a++) {
+                if (allFontFilesInFolder[a] != "") {
+                    thisFont = allFontFilesInFolder[a].trim();
+                    html += '<button onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
+                }
+            }
+            fileButtonParent.innerHTML = html;
+            setFont('fonts/'+allFontFilesInFolder[2]);
+        }, "text");
+    } else {
+           fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
+           var fileButton = document.getElementById('fontInput');
+            fileButton.addEventListener('change', onReadFile, false);
+    }
+    
+    //Load up phase 1 content
+    document.getElementById('section__proofing-overview').innerHTML = text[1].overview;
+    document.getElementById('section__proofing-spacing').innerHTML = text[1].spacing;
+    document.getElementById('section__proofing-trio').innerHTML = text[1].trio;
+    // Load pdfWrapper
+    var pdfWrapper = document.getElementById('html-2-pdfwrapper');
+    generate = function()
+    {
+        html2pdf(pdfWrapper, opt);
+    };
+
 }

@@ -1,0 +1,8 @@
+fonts/Gooper-Regular.otf 
+fonts/Gooper-Light.otf 
+fonts/gooper-VF.ttf 
+fonts/Gooper-Thin.otf 
+fonts/Gooper-Black.otf 
+fonts/Gooper-SemiBold.otf 
+fonts/Gooper-Super.otf 
+fonts/Gooper-Bold.otf 

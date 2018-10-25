@@ -6,6 +6,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var sass = require('gulp-sass');
 var notify = require('gulp-notify');
 var uglify = require('gulp-uglify');
+var exec = require('child_process').exec;
 
 gulp.task('css', function(){
   return gulp.src('scss/style.scss', {sourcemap: true})
@@ -34,6 +35,21 @@ gulp.task('js', function(){
     .pipe(browserSync.stream())
 });
 
+gulp.task('update-fontlist', function (cb) {
+    console.log('Updating List of Fonts');
+    var child = exec("sh listfonts.sh");
+
+    child.stdout.on('data', function(data) {
+      console.log('stdout: ' + data);
+    });
+    child.stderr.on('data', function(data) {
+      console.log('stderr: ' + data);
+    });
+    child.on('close', function(code) {
+      console.log('closing code: ' + code);
+    });
+});
+
 gulp.task('browser-sync', ['css'], function() {
   browserSync.init({
     server: {
@@ -45,7 +61,9 @@ gulp.task('browser-sync', ['css'], function() {
 gulp.task('watch', function() {
   gulp.watch('scss/**/*.scss', ['css']);
   gulp.watch('js/**/*.js', ['js']);
+  gulp.watch('*.html', browserSync.reload);
+  gulp.watch('fonts/*', browserSync.reload);
 });
 
 // DEFAULT
-gulp.task('default', [ 'css', 'js', 'browser-sync', 'watch' ]);
+gulp.task('default', [ 'css', 'js', 'browser-sync', 'watch', 'update-fontlist' ]);
