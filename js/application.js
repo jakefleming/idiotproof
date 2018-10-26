@@ -7,6 +7,7 @@
 var font = null;
 window.fontSize = 16;
 window.lineHeight = 1.3;
+window.letterSpacing = 0;
 
 // Level 1
 var text = {
@@ -144,11 +145,32 @@ function appendStyle(styles) {
 }
 
 function setStage(stage) {
-    document.getElementById('section__proofing-overview').innerHTML = text[ stage ].overview;
-    document.getElementById('section__proofing-spacing').innerHTML = text[ stage ].spacing;
-    document.getElementById('section__proofing-trio').innerHTML = text[ stage ].trio;
+      var layoutGroups = ["overview", "spacing", "trio"];
+      for (i in layoutGroups) {
+            var item = layoutGroups[i];
+            var innerText = text[ stage ][ item ];
+            document.getElementById('section__proofing-'+item).innerHTML = innerText;
+            var textClass = whichFontSize(innerText);
+            document.getElementById('section__proofing-'+item).classList.add(textClass);
+      }
 }
-
+function whichFontSize(thisString) {
+      var charCount = thisString.length;
+      console.log(charCount);
+      if (charCount < 25 ) {
+            return "t__size-xxl";
+      } else if (charCount < 50 ) {
+            return "t__size-xl";
+      } else if (charCount < 95) {
+            return "t__size-l";
+      } else if (charCount < 200 ){
+            return "t__size-m";
+      } else if (charCount < 1000 ){
+            return "t__size-s";
+      } else {
+            return "t__size-xs";
+      }
+}
 function isVariableFont() {
     if (font.tables["fvar"]) {
         return true;
@@ -178,6 +200,8 @@ function addTypeSettingTools(isVariableFont) {
         html += '<label for="'+sliderID+'-fontsize">Font Size</label><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
         html += '<label for="'+sliderID+'-lineheight">Line Height</label><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        //letterspacing
+        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input id="'+sliderID+'-letterspacing" type="range" min="-5.0" max="5.0" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -198,9 +222,9 @@ function addTypeSettingTools(isVariableFont) {
 
         }
         var testAreaParent = document.getElementById(testAreaID).parentNode.id;
-        html += '<button onclick="insertField(\''+testAreaParent+'\')">+</button>';
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
         html += '</span>';
+        html += '<span class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></span>';
         testarea[i].insertAdjacentHTML('beforebegin', html);
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
@@ -274,12 +298,12 @@ function displayFontData(fontFileName) {
         fontFormat = fontFormats[fontFormat];
         if (tablename === 'name') {
                 nameHtml = '';
-                if (font.names.designer === null) {
+                if (font.names.designer.en === null) {
                     var designerName = "Designer";
                 } else {
                     var designerName = font.names.designer.en;
                 }
-                if (font.names.postScriptName === null) {
+                if (font.names.postScriptName.en === null) {
                     var postScriptName = "Font Name";
                 } else {
                     var postScriptName = font.names.postScriptName.en;
@@ -314,11 +338,14 @@ function displayFontData(fontFileName) {
                             if (tag === "aalt" || tag === "ccmp") {
                                continue;
                             } else if (textFeature[tag]) {
-                               featuresHtml += '<div id="item--'+tag+'" class="item"><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textFeature[tag].sample+'</div></div>';
+                              var textClass = whichFontSize(textFeature[tag].sample);
+                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea proofing__feature-'+tag+'">'+textFeature[tag].sample+'</div></div>';
                             } else if (tag.includes("ss")) {
-                               featuresHtml += '<div id="item--'+tag+'" class="item"><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
+                               var textClass = whichFontSize(textLetters);
+                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
                             } else {
-                               featuresHtml += '<div id="item--'+tag+'" class="item"><h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
+                               var textClass = whichFontSize(textLetters);
+                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
                             }
                         }
                     }
@@ -359,10 +386,7 @@ function onFontLoaded(font, fontFileName) {
     var fileName = utcNoSlash+'_'+window.fontFamily+'.pdf';
 
     window.opt = {
-      margin:       1,
       filename:     fileName,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 3 },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 }
