@@ -140,10 +140,6 @@ var textDiacritics = {
 var utc = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
 
-function appendStyle(styles) {
-    $("#style__webfonts").append(styles);
-}
-
 function setStage(stage) {
       var layoutGroups = ["overview", "spacing", "trio"];
       for (i in layoutGroups) {
@@ -277,7 +273,8 @@ function passfvarValue(id,property,value,fvarSupport) {
       }
       $('#' + id).css('font-variation-settings', fvarcss);
 }
-function displayFontData(fontFileName) {
+function displayFontData(fontFamily) {
+
     var tablename, table, property, value, tag;
     var styles = '';
 
@@ -313,11 +310,10 @@ function displayFontData(fontFileName) {
                 } else {
                     var postScriptName = "Font Name";
                 }
-                window.fontFamily = postScriptName;
+                window.fontFamily = fontFamily;
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true">'+designerName+'</h6>';
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true">'+postScriptName+'</h6>';
-                styles += '@font-face { font-family: "'+postScriptName+'"; src: url("/'+fontFileName+'");}';
-                styles += '.t__importedfontfamily { font-family: "'+postScriptName+'" }';
+                styles += '.t__importedfontfamily { font-family: "'+fontFamily+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
                 document.getElementById('section__header-names').innerHTML = nameHtml;
                 continue;
@@ -359,7 +355,7 @@ function displayFontData(fontFileName) {
             featuresList.innerHTML = featuresHtml;
         }
     }
-    appendStyle(styles);
+    $("#style__opentype-features").html(styles);
     addTypeSettingTools(isVariableFont());
 }
 
@@ -378,22 +374,18 @@ function preserveUnique(a) {
     return out;
 }
 
-function onFontLoaded(font, fontFileName) {
+function onFontLoaded(font, fontFamilySource, fontFamily) {
     window.font = font;
     var binaryData = [];
     binaryData.push(font);
     window.URL.createObjectURL(new Blob(binaryData, {type: "application/zip"}));
 
     // Do the actual proofing build
-    displayFontData(fontFileName);
+    displayFontData(fontFamily);
+    localStorage.setItem("fontFamily", fontFamily);
+    localStorage.setItem("fontFamilySource", fontFamilySource);
 
-    // Prepare pdf export details
-    var fileName = utcNoSlash+'_'+window.fontFamily+'.pdf';
 
-    window.opt = {
-      filename:     fileName,
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
 }
 
 function showErrorMessage(message) {
@@ -454,9 +446,9 @@ function isFontVariable(font) {
         return false;
     }
 }
-function setFont(fontFileName) {
-    opentype.load(fontFileName, function(err, font) {
-                onFontLoaded(font, fontFileName);
+function setFont(fontFamilySource, fontFamily) {
+    opentype.load(fontFamilySource, function(err, font) {
+                onFontLoaded(font, fontFamilySource, fontFamily);
             });
 }
 
@@ -467,6 +459,7 @@ window.onload = function() {
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
         document.getElementById('section__header-file-buttons').innerHTML = 'Local mode: gulp is reading from /fonts/ ';
         var html = '';
+        var style = '';
         var allFontFilesInFolder = '';
         $.get( "../txt/fonts.txt", {}, function( data ) {
             allFontFilesInFolder = data.split("fonts/");
@@ -479,17 +472,22 @@ window.onload = function() {
             }
             preserveUnique(fonts)
             for(var a=0; a<fonts.length; a++) {
-                  thisFont = fonts[a];
-                  thisFontClass = thisFont.replace('.', '-');
-                  html += '<button class="btn btn__setfont" id="btn__setfont-'+thisFontClass+'" onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
+                  thisFontSource = fonts[a];
+                  thisFontFamily = thisFontSource.replace('.', '-');
+                  html += '<button class="btn btn__setfont" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \'/'+thisFontFamily+'\')">'+thisFontSource+'</button>';
+                  style += '@font-face { font-family: "/'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
             }
             fileButtonParent.innerHTML = html;
-            setFont('fonts/'+fonts[0]);
+            if (localStorage.getItem('fontFamilySource')) {
+                  var fontFamilySource = localStorage.getItem('fontFamilySource');
+                  var fontFamily = localStorage.getItem('fontFamily');
+                  setFont(fontFamilySource, fontFamily);
+            }
+            $('#style__fontface').append(style);
         }, "text");
 
     } else {
-            var fontFileName = 'fonts/gooper-VF.ttf';
-            setFont(fontFileName);
+            setFont('fonts/gooper-VF.ttf', 'gooper-VF-ttf');
             fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);

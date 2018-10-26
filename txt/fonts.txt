@@ -5,6 +5,7 @@ fonts/ignore/MediumRareSans-Extrathin.otf
 fonts/ignore/MediumRareSans-Extrabold.otf 
 fonts/ignore/MediumRareSans-Bold.otf 
 fonts/ignore/MediumRareSans-Regular.otf 
+fonts/ignore/MediumRareSans-DemiBlack.otf 
 fonts/ignore/MediumRareSans-Light.otf 
 fonts/ignore/MediumRareSans-Thin.otf 
 fonts/GoitersGX.ttf 
