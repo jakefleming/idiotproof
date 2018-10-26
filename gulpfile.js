@@ -52,8 +52,18 @@ gulp.task('browser-sync', ['css'], function() {
 gulp.task('watch', function() {
       gulp.watch('scss/**/*.scss', ['css']);
       gulp.watch('js/**/*.js', ['js']);
-      gulp.watch("fonts/**/*.{otf,ttf}", ['update-fontlist']);
+      gulp.watch('*.html', browserSync.reload);
+      // Fonts Added or Deleted
+      gulp.watch("fonts/**/*.{otf,ttf}", function(event){
+          if(event.type === 'added' || event.type === 'deleted'){
+                gulp.start('update-fontlist');
+          } else {
+                gulp.start('js');
+          }
+      })
+      // Fonts Updated
       gulp.watch("txt/**/*.txt", {delay: 300}, ['js']);
+
 });
 
 // DEFAULT
