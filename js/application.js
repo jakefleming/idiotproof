@@ -1,8 +1,7 @@
 //To Do
 // * Diacritics proofing. Maybe phase 4?
 // * Drag and drop?
-// * Select multiple fonts, add tabs or drop down
-// * Local mode—gulp watch specific local folder for changes and auto generate pdf
+// * Select multiple fonts server side
 // * save pdf to google drive?
 
 var font = null;
@@ -363,7 +362,7 @@ function onFontLoaded(font, fontFileName) {
       margin:       1,
       filename:     fileName,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
+      html2canvas:  { scale: 3 },
       jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
     };
 }
@@ -457,6 +456,7 @@ window.onload = function() {
             fileButtonParent.innerHTML = html;
             setFont('fonts/'+fonts[0]);
         }, "text");
+
     } else {
             var fontFileName = 'fonts/gooper-VF.ttf';
             setFont(fontFileName);
@@ -464,12 +464,10 @@ window.onload = function() {
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
     }
-
     // Load pdfWrapper
     var pdfWrapper = document.getElementById('html-2-pdfwrapper');
     generate = function()
     {
-        html2pdf(pdfWrapper, opt);
+       html2pdf(pdfWrapper, opt);
     };
-
 }
