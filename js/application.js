@@ -303,15 +303,15 @@ function displayFontData(fontFileName) {
         fontFormat = fontFormats[fontFormat];
         if (tablename === 'name') {
                 nameHtml = '';
-                if (font.names.designer.en === null) {
-                    var designerName = "Designer";
-                } else {
+                if (font.names.designer) {
                     var designerName = font.names.designer.en;
-                }
-                if (font.names.postScriptName.en === null) {
-                    var postScriptName = "Font Name";
                 } else {
+                    var designerName = "Designer Name";
+                }
+                if (font.names.postScriptName) {
                     var postScriptName = font.names.postScriptName.en;
+                } else {
+                    var postScriptName = "Font Name";
                 }
                 window.fontFamily = postScriptName;
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true">'+designerName+'</h6>';
