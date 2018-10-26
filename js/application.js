@@ -199,7 +199,10 @@ function addTypeSettingTools(isVariableFont) {
         var html = '<span class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></span>';
         html += '<span class="sliders">';
         //font size
-        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        var testAreaElement = document.getElementById(testAreaID);
+        var testAreaStyle = window.getComputedStyle(testAreaElement);
+        var testAreaFontSize = testAreaStyle.getPropertyValue('font-size').replace('px', '');;
+        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
         html += '<label for="'+sliderID+'-lineheight">Line Height</label><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
@@ -459,10 +462,10 @@ function setFont(fontFileName) {
 
 
 window.onload = function() {
-    var fileButtonParent = document.getElementById('section__header-file-button');
+    var fileButtonParent = document.getElementById('section__header-file-buttons');
 
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
-        document.getElementById('section__header-file-button').innerHTML = 'Local mode: gulp is reading from /fonts/ ';
+        document.getElementById('section__header-file-buttons').innerHTML = 'Local mode: gulp is reading from /fonts/ ';
         var html = '';
         var allFontFilesInFolder = '';
         $.get( "../txt/fonts.txt", {}, function( data ) {
@@ -478,7 +481,7 @@ window.onload = function() {
             for(var a=0; a<fonts.length; a++) {
                   thisFont = fonts[a];
                   thisFontClass = thisFont.replace('.', '-');
-                  html += '<button class="b__setfont" id="b__setfont-'+thisFontClass+'" onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
+                  html += '<button class="btn btn__setfont" id="btn__setfont-'+thisFontClass+'" onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
             }
             fileButtonParent.innerHTML = html;
             setFont('fonts/'+fonts[0]);
@@ -491,7 +494,10 @@ window.onload = function() {
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
     }
-    $('#section__header-file-button').on('click', '.b__setfont', function() {
+    $('#section__header-file-buttons').on('click', '.btn__setfont', function() {
+        $(this).addClass('active').siblings().removeClass('active');
+    });
+    $('#section__header-stage-buttons').on('click', '.btn__setfont', function() {
         $(this).addClass('active').siblings().removeClass('active');
     });
 }

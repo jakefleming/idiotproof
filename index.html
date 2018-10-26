@@ -19,18 +19,18 @@
 </head>
 <body>
     <header id="section__header-app" class="section__header-app u__flex">
-        <div id="section__header-file-button" class="u__flex-grow-1 t__left"></div>
-        <div class="u__flex-grow-1 t__center">
-            <button onclick="setStage(1)">Stage 1</button>
-            <button onclick="setStage(2)">Stage 2</button>
-            <button onclick="setStage(3)">Stage 3</button>
+        <div id="section__header-file-buttons" class="u__flex-grow-1 t__left"></div>
+        <div id="section__header-stage-buttons" class="u__flex-grow-1 t__center">
+            <button class="btn btn__setstage" onclick="setStage(1)">Stage 1</button>
+            <button class="btn btn__setstage" onclick="setStage(2)">Stage 2</button>
+            <button class="btn btn__setstage" onclick="setStage(3)">Stage 3</button>
         </div>
         <div class="u__flex-grow-1 t__right">
-            <button onclick="javascript:window.print()">Generate PDF</button>
+            <button class="btn btn__print" onclick="javascript:window.print()">Print/Save PDF</button>
         </div>
     </header>
 
-    <header id ="section__header-names" class="section__header-names u__flex"></header>
+    <header id="section__header-names" class="section__header-names u__flex"></header>
     <button class="view-tools-toggle">toggle sliders</button>
     <div id="html-2-pdfwrapper" class="container">
         <section class="section__proofing section__proofing-phases grid">
