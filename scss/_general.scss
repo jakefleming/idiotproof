@@ -31,6 +31,24 @@
 .t__uppercase {
 	text-transform: uppercase;
 }
+.t__size-xxl {
+  font-size: 10rem;
+}
+.t__size-xl {
+  font-size: 8rem;
+}
+.t__size-l {
+  font-size: 6rem;
+}
+.t__size-m {
+  font-size: 4rem;
+}
+.t__size-s {
+  font-size: 2rem;
+}
+.t__size-xs {
+  font-size: 1rem;
+}
 
 //Utility Classes
 .u__flex {
@@ -40,33 +58,6 @@
 	flex-grow: 1;
 }
 
-// Hiding a couple things
-// .item {
-// 	&:hover, &:active, &:focus {
-// 		.sliders {
-// 			opacity: 1;
-// 		}
-// 	}
-// }
-// .sliders {
-// 	opacity: 0;
-// }
-// .h3 {
-// 	position: relative;
-// 	.tooltip {
-// 		display: none;
-// 	}
-// 	&:hover {
-// 		text-indent: -1000em;
-// 		.tooltip {
-// 			text-indent: 0;
-// 			display: block;
-// 			position: absolute;
-// 			left: 0px;
-// 			top: 0px;
-// 		}
-// 	}
-// }
 
 .sliders {
   display: block;

@@ -156,7 +156,6 @@ function setStage(stage) {
 }
 function whichFontSize(thisString) {
       var charCount = thisString.length;
-      console.log(charCount);
       if (charCount < 25 ) {
             return "t__size-xxl";
       } else if (charCount < 50 ) {
@@ -191,17 +190,20 @@ function removeElementsByID(IDName){
 function addTypeSettingTools(isVariableFont) {
     var testarea = document.getElementsByClassName("testarea");
     removeElementsByClass("sliders");
+    removeElementsByClass("add-item-above");
 
     for(var i = 0; i < testarea.length; i++) {
         var testAreaID = testarea[i].id;
         var sliderID = testAreaID.trim()+'-slider';
-        var html = '<span class="sliders">';
+        var testAreaParent = document.getElementById(testAreaID).parentNode.id;
+        var html = '<span class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></span>';
+        html += '<span class="sliders">';
         //font size
         html += '<label for="'+sliderID+'-fontsize">Font Size</label><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
         html += '<label for="'+sliderID+'-lineheight">Line Height</label><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
-        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input id="'+sliderID+'-letterspacing" type="range" min="-5.0" max="5.0" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -221,10 +223,8 @@ function addTypeSettingTools(isVariableFont) {
             }
 
         }
-        var testAreaParent = document.getElementById(testAreaID).parentNode.id;
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
         html += '</span>';
-        html += '<span class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></span>';
         testarea[i].insertAdjacentHTML('beforebegin', html);
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
@@ -240,13 +240,15 @@ var fieldcount = 0;
 function insertField(aboveHere) {
     fieldcount += 1;
     document.getElementById(aboveHere).insertAdjacentHTML('beforebegin',
-    '<div id="item--'+fieldcount+'" class="item"><div id="section__proofing-'+fieldcount+'" class="page-break-before t__importedfontfamily testarea" contenteditable="true">Insert your own content</div></div>');
+    '<div id="item--'+fieldcount+'" class="item"><div id="section__proofing-'+fieldcount+'" class="page-break-before t__importedfontfamily testarea" contenteditable="true">'+textPangram[fieldcount]+'</div></div>');
     addTypeSettingTools(isVariableFont());
 }
 
-function passStyleValue(id,property,value,fvarSupport) {
-      if (property == "fontSize") {
+function passStyleValue(id,property,value) {
+      if (property === "fontSize") {
           value = value+"px";
+      } else if (property === "letterSpacing") {
+          value = value+"em";
       }
       document.getElementById(id).style[property] = value;
 }
@@ -475,7 +477,8 @@ window.onload = function() {
             preserveUnique(fonts)
             for(var a=0; a<fonts.length; a++) {
                   thisFont = fonts[a];
-                  html += '<button onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
+                  thisFontClass = thisFont.replace('.', '-');
+                  html += '<button class="b__setfont" id="b__setfont-'+thisFontClass+'" onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
             }
             fileButtonParent.innerHTML = html;
             setFont('fonts/'+fonts[0]);
@@ -488,10 +491,7 @@ window.onload = function() {
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
     }
-    // Load pdfWrapper
-    var pdfWrapper = document.getElementById('html-2-pdfwrapper');
-    generate = function()
-    {
-       html2pdf(pdfWrapper, opt);
-    };
+    $('#section__header-file-button').on('click', '.b__setfont', function() {
+        $(this).addClass('active').siblings().removeClass('active');
+    });
 }
