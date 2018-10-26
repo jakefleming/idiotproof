@@ -431,11 +431,11 @@ function setFont(fontFileName) {
                 onFontLoaded(font, fontFileName);
             });
 }
-            
+
 
 window.onload = function() {
     var fileButtonParent = document.getElementById('section__header-file-button');
-    
+
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
         document.getElementById('section__header-file-button').innerHTML = 'Local mode: gulp is reading from /fonts/ ';
         var html = '';
@@ -447,8 +447,12 @@ window.onload = function() {
                 if (allFontFilesInFolder[a] != "") {
                     thisFont = allFontFilesInFolder[a].trim();
                     fonts.push(thisFont);
-                    html += '<button onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
                 }
+            }
+            preserveUnique(fonts)
+            for(var a=0; a<fonts.length; a++) {
+                  thisFont = fonts[a];
+                  html += '<button onclick="setFont(\'fonts/'+thisFont+'\')">'+thisFont+'</button>';
             }
             fileButtonParent.innerHTML = html;
             setFont('fonts/'+fonts[0]);
@@ -460,7 +464,7 @@ window.onload = function() {
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
     }
-    
+
     // Load pdfWrapper
     var pdfWrapper = document.getElementById('html-2-pdfwrapper');
     generate = function()

@@ -35,23 +35,14 @@ gulp.task('js', function(){
     .pipe(browserSync.stream())
 });
 
-gulp.task('update-fontlist', function (cb) {
+gulp.task('update-fontlist', function() {
     console.log('Updating List of Fonts');
     var child = exec("sh listfonts.sh");
-
-    child.stdout.on('data', function(data) {
-      console.log('stdout: ' + data);
-    });
-    child.stderr.on('data', function(data) {
-      console.log('stderr: ' + data);
-    });
-    child.on('close', function(code) {
-      console.log('closing code: ' + code);
-    });
 });
 
 gulp.task('browser-sync', ['css'], function() {
   browserSync.init({
+    notify: false,
     server: {
       baseDir: './'
     }
@@ -59,10 +50,10 @@ gulp.task('browser-sync', ['css'], function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('scss/**/*.scss', ['css']);
-  gulp.watch('js/**/*.js', ['js']);
-  gulp.watch('*.html', browserSync.reload);
-  gulp.watch('fonts/*', ['update-fontlist', browserSync.reload]);
+      gulp.watch('scss/**/*.scss', ['css']);
+      gulp.watch('js/**/*.js', ['js']);
+      gulp.watch("fonts/**/*.{otf,ttf}", ['update-fontlist']);
+      gulp.watch("txt/fonts.txt", ['js']);
 });
 
 // DEFAULT
