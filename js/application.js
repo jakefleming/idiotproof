@@ -494,10 +494,14 @@ window.onload = function() {
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
     }
+    //Active button toggles
     $('#section__header-file-buttons').on('click', '.btn__setfont', function() {
         $(this).addClass('active').siblings().removeClass('active');
     });
     $('#section__header-stage-buttons').on('click', '.btn__setfont', function() {
         $(this).addClass('active').siblings().removeClass('active');
+    });
+    $('#btn__view-tools-toggle').on('click', function(e) {
+        $('.body__idiotproofed').toggleClass("tools-visible"); 
     });
 }

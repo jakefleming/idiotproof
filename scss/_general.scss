@@ -102,6 +102,22 @@ h3 .tooltip {
   }
 }
 
+// slider styles
+.sliders {
+  max-height: 0px;
+  opacity: 0;
+  transition: max-height 400ms ease-in-out, opacity 200ms ease-in-out;
+}
+
+.body__idiotproofed {
+  &.tools-visible {
+    .sliders {
+      opacity: 1;
+      max-height: 200px;
+    }
+  }
+}
+
 // proofing sections
 .section__proofing {
   + .section__proofing {
