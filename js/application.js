@@ -19,7 +19,7 @@ var text = {
         furniture: '',
     },
     2: {
-        overview: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghhijklmmnnopqrstuvwxyz.,:; -‘’“” ?!0123456789',
+        overview: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnnopqrstuvwxyz.,:; -‘’“” ?!0123456789',
         spacing: 'HHAHOAOO HHBHOBOO HHCHOCOO HHDHODOO HHEHOEOO HHFHOFOO HHGHOGOO HHHHOHOO HHIHOIOO HHJHOJOO HHKHOKOO HHLHOLOO HHMHOMOO HHNHONOO HHOHOOOO HHPHOPOO HHQHOQOO HHRHOROO HHSHOSOO HHTHOTOO HHUHOUOO HHVHOVOO HHWHOWOO HHXHOXOO  HHYHOYOO HH&HO&OO HHZHOZOO HH@HO@OO HHẞHOẞOO HAHBHCHDHEHFHGHHHIHJHKHHLHMHNHOHHPHQH HRHSHTHUHVHWHXHYHZHẞH OAOBOCODOEOFOGOHOIOJOKOLOMONOOOPOQO OROSOTOUOVOWOXOYOZOẞO hhahoaoo hhbhoboo hhchocoo hhdhodoo hhehoeoo hhfhofoo hhghogoo hhhhohoo hhihoioo hhjhojoo hhkhokoo hhlholoo hhmhomoo hhnhonoo hhohoooo hhphopoo hhqhoqoo hhrhoroo hhshosoo hhßhoßoo hhthotoo hhuhouoo hhvhovoo hhwhowoo hhxhoxoo hhyhoyoo hhzhozoo hh@ho@oo hhðhoðoo nnoonnecnncennbnndnnbdnnpqnnpðnn oaobocodoeofogohoiojokoolomono oopoqorosoßotouovoowoxoyozoðo nanbncndnenfngnhninjnknnlnmnnn nonpnqnrnsnßntnunvnwnxnynznðn hahbhchdhehfhghhhihjhkhhlhmhnh hohphqhrhshßhthuhvhwhxhyhzhðh',
         trio: 'Aho Bho Cho Dho Eho Fho Gho Hho Iho Jho Kho Lho Mho Nho Oho Pho Qho Rho Sho Tho Uho Vho Who Xho Yho ZhoAon Bon Con Don Eon Fon Gon Hon Ion Jon Kon Lon Mon Non Oon Pon Qon Ron Son Ton Uon Von Won Xon Yon Zon',
         extra: 'Grumpy wizards make toxic brew for the evil Queen and Jack.',
@@ -502,6 +502,6 @@ window.onload = function() {
         $(this).addClass('active').siblings().removeClass('active');
     });
     $('#btn__view-tools-toggle').on('click', function(e) {
-        $('.body__idiotproofed').toggleClass("tools-visible"); 
+        $('.body__idiotproofed').toggleClass("tools-visible");
     });
 }

@@ -53,7 +53,7 @@ gulp.task('watch', function() {
       gulp.watch('scss/**/*.scss', ['css']);
       gulp.watch('js/**/*.js', ['js']);
       gulp.watch("fonts/**/*.{otf,ttf}", ['update-fontlist']);
-      gulp.watch("txt/fonts.txt", ['js']);
+      gulp.watch("txt/**/*.txt", {delay: 300}, ['js']);
 });
 
 // DEFAULT
