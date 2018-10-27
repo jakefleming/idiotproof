@@ -456,8 +456,10 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
           //Remember selection for local livereload
           //Was searching for uploaded server version fonts otherwise
-          localStorage.setItem("fontFamily", fontFamily);
-          localStorage.setItem("fontFamilySource", fontFamilySource);
+        if (localStorage.setItem("fontFamily", fontFamily) {
+            localStorage.setItem("fontFamily", fontFamily);
+            localStorage.setItem("fontFamilySource", fontFamilySource);
+        }
     }
 
 
