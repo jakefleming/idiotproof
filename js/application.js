@@ -241,8 +241,8 @@ function addTypeSettingTools(isVariableFont) {
         var testAreaID = testarea[i].id;
         var sliderID = testAreaID.trim()+'-slider';
         var testAreaParent = document.getElementById(testAreaID).parentNode.id;
-        var html = '<span class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></span>';
-        html += '<span class="sliders">';
+        var html = '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+        html += '<div class="sliders">';
         //font size
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
@@ -275,7 +275,7 @@ function addTypeSettingTools(isVariableFont) {
 
         }
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
-        html += '</span>';
+        html += '</div>';
         testarea[i].insertAdjacentHTML('beforebegin', html);
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
@@ -456,7 +456,7 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
           //Remember selection for local livereload
           //Was searching for uploaded server version fonts otherwise
-        if (localStorage.setItem("fontFamily", fontFamily) {
+        if (localStorage.setItem("fontFamily", fontFamily)) {
             localStorage.setItem("fontFamily", fontFamily);
             localStorage.setItem("fontFamilySource", fontFamilySource);
         }
