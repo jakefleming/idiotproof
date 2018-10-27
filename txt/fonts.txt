@@ -1,9 +1,2 @@
-fonts/ignore/Gooper-Regular.otf 
-fonts/ignore/Gooper-Light.otf 
-fonts/ignore/Gooper-Thin.otf 
-fonts/ignore/Gooper-Black.otf 
-fonts/ignore/Gooper-SemiBold.otf 
-fonts/ignore/Gooper-Super.otf 
-fonts/ignore/Gooper-Bold.otf 
 fonts/GoitersGX.ttf 
 fonts/gooper-VF.ttf 

@@ -1,14 +1,26 @@
 // item styles
 .item {
-  background: white;
-  border-radius: 2px;
-  box-shadow: 0 6px 24px rgba(0,0,0,.1);
-  margin: 0 auto;
-  max-width: 800px;
-  padding: 4rem;
+  display: flex;
   white-space: normal;
   word-break: break-all;
+  align-items: stretch;
   + .item {
     margin-top: 1rem;
   }
+}
+
+.testarea {
+  background: white;
+  border-radius: 2px;
+  padding: 4rem;
+  flex-grow: 1;
+  width: 100%;
+}
+
+.add-item-above {
+  display: none;
+}
+
+.sliders {
+  flex-grow: 0;
 }

@@ -1,5 +1,6 @@
 body {
-  background: lightgray;
+  background: #f4f4f4;
+	color: #000001;
   margin: 0;
 }
 
@@ -17,8 +18,8 @@ body {
 .body__idiotproofed {
   &.tools-visible {
     .sliders {
-      opacity: 1;
-      max-height: 200px;
+      display: block;
+      //max-height: 200px;
     }
   }
 }
@@ -34,7 +35,6 @@ body {
 // view tools toggle
 .view-tools-toggle {
   display: block;
-  float: right;
   position: sticky;
   top: 1rem;
   right: .5rem;
