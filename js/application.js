@@ -611,6 +611,7 @@ window.onload = function() {
             fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
+            
     }
     //Active button toggles
     $('#section__header-file-buttons').on('click', '.btn__setfont', function() {
@@ -622,4 +623,5 @@ window.onload = function() {
     $('#btn__view-tools-toggle').on('click', function(e) {
         $('.body__idiotproofed').toggleClass("tools-visible");
     });
+    document.body.className += " loaded";
 }

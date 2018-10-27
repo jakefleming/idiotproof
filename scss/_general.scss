@@ -1,6 +1,19 @@
 body {
   background: lightgray;
   margin: 0;
+  //more graceful loadin of proofing stuff
+  .item {
+    transform-origin: top center;
+    transform: scaleY(0) translateY(-20px);
+    opacity: 0;
+    transition: opacity 3s ease-in-out, transform 1s ease-in-out;
+  }
+  &.loaded {
+    .item {
+        transform: scaleY(1) translateY(0px);
+        opacity: 1;
+      }
+  }
 }
 
 // container styles
