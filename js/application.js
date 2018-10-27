@@ -158,16 +158,34 @@ function setStage(stage) {
       }
 }
 function restoreStage() {
-    //Preserve document edits
-    var editBtn = document.getElementById('btn__edit-content');
+    //Save all document edits
     var testareas = document.getElementsByClassName("testarea");
 
     for(var i = 0; i < testareas.length; i++) {
-            if (typeof(Storage) !== "undefined") {
-                if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
-                    testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
-                }
+        if (typeof(Storage) !== "undefined") {
+            if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
+                testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
             }
+        }
+    }
+    var sliders = document.getElementsByClassName("slider");
+
+    for(var i = 0; i < sliders.length; i++) {
+        if (typeof(Storage) !== "undefined") {
+            var sliderID = sliders[i].getAttribute('id');
+            var testareaID = sliderID.split("-slider-")[0];
+            var property = sliderID.split("-slider-")[1];
+            var localStorageValue = localStorage.getItem(sliderID+"-val");
+            if (localStorageValue !== null) {
+                // Update indicator
+                var indicator = document.getElementById(sliderID+"-val");
+                indicator.innerHTML = localStorageValue;
+                // Update slider value
+                document.getElementById(sliderID).value = localStorageValue;
+                // Pass style to testares
+                passStyleValue(testareaID,property,localStorageValue);
+            }
+        }
     }
 }
 function localStorageSave(class,valueWanted) {
@@ -249,14 +267,12 @@ function addTypeSettingTools(isVariableFont) {
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
         var testAreaFontSize = testAreaStyle.getPropertyValue('font-size');
-        //pass through localstorage
-        testAreaFontSize = saveData(sliderID+'-fontsize',testAreaFontSize);
         testAreaFontSize = testAreaFontSize.replace('px', '');
-        html += '<label for="'+sliderID+'-fontsize">Font Size</label><span id="'+sliderID+'-fontSize-val">'+testAreaFontSize+'</span><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        html += '<label for="'+sliderID+'-fontSize">Font Size</label><span id="'+sliderID+'-fontSize-val">'+testAreaFontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<label for="'+sliderID+'-lineheight">Line Height</label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<label for="'+sliderID+'-lineHeight">Line Height</label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
-        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+        html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing</label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -270,7 +286,7 @@ function addTypeSettingTools(isVariableFont) {
                 var tag = font.tables.fvar.axes[b].tag;
                 var name = font.tables.fvar.axes[b].name.en;
                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
@@ -297,16 +313,13 @@ function insertField(aboveHere) {
     addTypeSettingTools(isVariableFont());
 }
 function saveData(id, value) {
-    if (localStorage.getItem(id)) {
-        return localStorage.getItem(id);
-    } else {
-        var input = document.getElementById(id);
+    if (typeof(Storage) !== "undefined") {
         localStorage.setItem(id, value);
-        return value;
     }
 }
 function passStyleValue(id,property,value) {
       document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
+      saveData(id+"-slider-"+property+"-val", value);
       if (property === "fontSize") {
           value = value+"px";
       } else if (property === "letterSpacing") {
@@ -316,6 +329,7 @@ function passStyleValue(id,property,value) {
 }
 function passfvarValue(id,property,value,fvarSupport) {
       document.getElementById(id+"-slider-"+property+"-val").value=value;
+      saveData(id, property, value);
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
       }
@@ -423,6 +437,8 @@ function displayFontData(fontFamily) {
     $("#style__opentype-features").html(styles);
     //Add item boxes for each feature
     featuresList.innerHTML = featuresHtml;
+    //Add tools to each section
+    addTypeSettingTools(isVariableFont());
     if (typeof(Storage) !== "undefined") {
         //Check for localstorage content edits and load them instead
         restoreStage();
@@ -432,8 +448,6 @@ function displayFontData(fontFamily) {
     }
     //Adding ability to auto save content edits
     setStageSave();
-    //Add tools to each section
-    addTypeSettingTools(isVariableFont());
 }
 
 function preserveUnique(a) {
