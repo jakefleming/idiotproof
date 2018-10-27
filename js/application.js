@@ -156,6 +156,13 @@ function setStage(stage) {
             var textClass = whichFontSize(innerText);
             document.getElementById(item).classList.add(textClass);
       }
+        var editBtn = document.getElementById('btn__edit-content');
+        editBtn.innerHTML = 'Save';
+        editBtn.classList.remove("editing");
+        editBtn.classList.remove("saved");
+        editBtn.classList.add("need-save");
+                
+                
 }
 function restoreStage() {
     //Save all document edits
@@ -267,15 +274,14 @@ function removeElementsByID(IDName){
 }
 function addTypeSettingTools(isVariableFont) {
     var testarea = document.getElementsByClassName("testarea");
-    removeElementsByClass("sliders");
+    removeElementsByClass("item__sliders");
     removeElementsByClass("add-item-above");
 
     for(var i = 0; i < testarea.length; i++) {
         var testAreaID = testarea[i].id;
         var sliderID = testAreaID.trim()+'-slider';
         var testAreaParent = document.getElementById(testAreaID).parentNode.id;
-        var html = '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-        html += '<div class="sliders">';
+        var html = '<div class="item__sliders">';
         //font size
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
@@ -305,9 +311,10 @@ function addTypeSettingTools(isVariableFont) {
             }
 
         }
+        html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
         html += '</div>';
-        testarea[i].insertAdjacentHTML('beforebegin', html);
+        testarea[i].parentNode.insertAdjacentHTML('beforebegin', html);
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
                   var tag = font.tables.fvar.axes[b].tag;
@@ -429,15 +436,22 @@ function displayFontData(fontFamily) {
                             styles += '.section__proofing-'+tag+' { font-feature-settings: "'+tag+'" 1;}';
                             if (tag === "aalt" || tag === "ccmp") {
                                continue;
-                            } else if (textFeature[tag]) {
-                              var textClass = whichFontSize(textFeature[tag].sample);
-                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textFeature[tag].sample+'</div></div>';
-                            } else if (tag.includes("ss")) {
-                               var textClass = whichFontSize(textLetters);
-                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textLetters+'</div></div>';
                             } else {
+                               featuresHtml += '<div id="item--'+tag+'" class="item u__flex">';
+                               featuresHtml += '<div class="item__proof">';
                                var textClass = whichFontSize(textLetters);
-                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+'</h3><div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textLetters+'</div></div>';
+                                if (textFeature[tag]) {
+                                  var textClass = whichFontSize(textFeature[tag].sample);
+                                   featuresHtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3>';
+                                   featuresHtml += '<div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textFeature[tag].sample+'</div>';
+                                } else if (tag.includes("ss")) {
+                                   featuresHtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3>';
+                                   featuresHtml += '<div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textLetters+'</div>';
+                                } else {
+                                   featuresHtml += '<h3 class="h3">'+tag+'</h3>';
+                                   featuresHtml += '<div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textLetters+'</div>';
+                                }
+                                featuresHtml += '</div></div>';
                             }
                         }
                     }
