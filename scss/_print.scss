@@ -1,0 +1,23 @@
+// Hide shit
+#section__header-app {
+	display: none;
+}
+button, .btn {
+	display: none;
+}
+.sliders {
+	display: none;
+}
+// Basic style tweaking
+.item {
+	box-shadow: 0px 0px 0px;
+	margin: 0px;
+	padding: 0px;
+	page-break-inside: avoid;
+}
+#section__header-names {
+	position: fixed;
+	padding: 0px;
+	width: 100vw;
+	bottom: -20px;
+}
