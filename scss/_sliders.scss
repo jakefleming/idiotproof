@@ -1,0 +1,8 @@
+// slider styles
+.sliders {
+  max-height: 0px;
+  opacity: 0;
+  transition: max-height 400ms ease-in-out, opacity 200ms ease-in-out;
+  display: block;
+  margin-bottom: 1rem;
+}
