@@ -252,11 +252,11 @@ function addTypeSettingTools(isVariableFont) {
         //pass through localstorage
         testAreaFontSize = saveData(sliderID+'-fontsize',testAreaFontSize);
         testAreaFontSize = testAreaFontSize.replace('px', '');
-        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input type="text" id="'+sliderID+'-fontSize-val" value="'+testAreaFontSize+'"><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        html += '<label for="'+sliderID+'-fontsize">Font Size</label><span id="'+sliderID+'-fontSize-val">'+testAreaFontSize+'</span><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<label for="'+sliderID+'-lineheight">Line Height</label><input type="text" id="'+sliderID+'-lineHeight-val" value="'+lineHeight+'"><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<label for="'+sliderID+'-lineheight">Line Height</label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
-        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input type="text" id="'+sliderID+'-letterSpacing-val" value="'+letterSpacing+'"><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -270,7 +270,7 @@ function addTypeSettingTools(isVariableFont) {
                 var tag = font.tables.fvar.axes[b].tag;
                 var name = font.tables.fvar.axes[b].name.en;
                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><input type="text" id="'+sliderID+'-'+tag+'-val" value="'+defaultValue+'"><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
@@ -306,7 +306,7 @@ function saveData(id, value) {
     }
 }
 function passStyleValue(id,property,value) {
-      document.getElementById(id+"-slider-"+property+"-val").value=value;
+      document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
       if (property === "fontSize") {
           value = value+"px";
       } else if (property === "letterSpacing") {
@@ -419,15 +419,20 @@ function displayFontData(fontFamily) {
 
         }
     }
+    //Inject css of necessary features
     $("#style__opentype-features").html(styles);
-    //Set content
+    //Add item boxes for each feature
     featuresList.innerHTML = featuresHtml;
-
-    setStage(window.proofingPhase);
     if (typeof(Storage) !== "undefined") {
+        //Check for localstorage content edits and load them instead
         restoreStage();
+    } else {
+        //Set proofing for all based on font file size
+        setStage(window.proofingPhase);
     }
+    //Adding ability to auto save content edits
     setStageSave();
+    //Add tools to each section
     addTypeSettingTools(isVariableFont());
 }
 
@@ -455,13 +460,11 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
 
     // Do the actual proofing build
     displayFontData(fontFamily);
-    //Remember selection for local livereload
+    //Set selection into localstorage for potential  livereload later
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
         localStorage.setItem("fontFamily", fontFamily);
         localStorage.setItem("fontFamilySource", fontFamilySource);
-        document.getElementById("btn__setfont-"+fontFamily).classList.add('active');
     }
-
 
 }
 
@@ -527,8 +530,8 @@ function isFontVariable(font) {
 }
 function setFont(fontFamilySource, fontFamily) {
     opentype.load(fontFamilySource, function(err, font) {
-                onFontLoaded(font, fontFamilySource, fontFamily);
-            });
+        onFontLoaded(font, fontFamilySource, fontFamily);
+    });
 }
 
 
@@ -537,7 +540,7 @@ window.onload = function() {
 
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
         // local
-        document.getElementById('section__header-file-buttons').innerHTML = 'Export fonts into <code>/fonts</code> to begin proofing ';
+        document.getElementById('section__header-file-buttons').innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
         var html = '';
         var style = '';
         var allFontFilesInFolder = '';
@@ -558,13 +561,17 @@ window.onload = function() {
                   style += '@font-face { font-family: "'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
             }
             fileButtonParent.innerHTML = html;
-            if (localStorage.getItem('fontFamilySource')) {
+            if (typeof(Storage) !== "undefined") {
+                    // Check for local storage settings
                   var fontFamilySource = localStorage.getItem('fontFamilySource');
                   var fontFamily = localStorage.getItem('fontFamily');
-                  setFont(fontFamilySource, fontFamily);
             } else {
-                      setFont("fonts/"+fonts.slice(-1)[0], thisFontFamily);
+                    // Set very last font in list
+                    var fontFamilySource = "fonts/"+fonts.slice(-1)[0];
+                    var fontFamily = thisFontFamily;
             }
+            setFont(fontFamilySource, fontFamily);
+            document.getElementById("btn__setfont-"+fontFamily).classList.add('active');
             $('#style__fontface').append(style);
         }, "text");
 
