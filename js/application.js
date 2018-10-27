@@ -198,11 +198,11 @@ function addTypeSettingTools(isVariableFont) {
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
         var testAreaFontSize = testAreaStyle.getPropertyValue('font-size').replace('px', '');;
-        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input type="text" id="'+sliderID+'-fontSize-val" value="'+testAreaFontSize+'"><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<label for="'+sliderID+'-lineheight">Line Height</label><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<label for="'+sliderID+'-lineheight">Line Height</label><input type="text" id="'+sliderID+'-lineHeight-val" value="'+lineHeight+'"><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
-        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input type="text" id="'+sliderID+'-letterSpacing-val" value="'+letterSpacing+'"><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -216,7 +216,7 @@ function addTypeSettingTools(isVariableFont) {
                 var tag = font.tables.fvar.axes[b].tag;
                 var name = font.tables.fvar.axes[b].name.en;
                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><input type="text" id="'+sliderID+'-'+tag+'-val" value="'+defaultValue+'"><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
@@ -244,6 +244,7 @@ function insertField(aboveHere) {
 }
 
 function passStyleValue(id,property,value) {
+      document.getElementById(id+"-slider-"+property+"-val").value=value;
       if (property === "fontSize") {
           value = value+"px";
       } else if (property === "letterSpacing") {
@@ -252,6 +253,7 @@ function passStyleValue(id,property,value) {
       document.getElementById(id).style[property] = value;
 }
 function passfvarValue(id,property,value,fvarSupport) {
+      document.getElementById(id+"-slider-"+property+"-val").value=value;
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
       }
