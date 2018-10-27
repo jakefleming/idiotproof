@@ -1,0 +1,29 @@
+// Small tablets and large smartphones (landscape view)
+$screen-sm-max: 576px;
+
+// Small tablets (portrait view)
+$screen-md-max: 768px;
+
+// Tablets and small desktops
+$screen-lg-max: 992px;
+
+// Large tablets and desktops
+$screen-xl-max: 1200px;
+
+@media (max-width: $screen-sm-max) {
+  .sliders {
+    display: none!important;
+  }
+}
+
+@media (max-width: $screen-md-max) {
+
+}
+
+@media (max-width: $screen-lg-max) {
+
+}
+
+@media (max-width: $screen-xl-max) {
+
+}
