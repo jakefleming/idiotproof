@@ -218,6 +218,19 @@ function setStageSave() {
                 editBtn.classList.add("saved");
         });
     }
+    var sliders = document.getElementsByClassName("slider");
+    for(var i = 0; i < sliders.length; i++) {
+        $(sliders[i]).on("focus", function(){
+                editBtn.innerHTML = 'Editing...';
+                editBtn.classList.remove("saved");
+                editBtn.classList.add("editing");
+        });
+        $(sliders[i]).mouseup( function() {
+                editBtn.innerHTML = 'Saved';
+                editBtn.classList.remove("editing");
+                editBtn.classList.add("saved");
+        });
+    }
 }
 function whichFontSize(thisString) {
       var charCount = thisString.length;
