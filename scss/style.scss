@@ -6,6 +6,8 @@
 @import 'typography';
 @import 'utilities';
 
+@import 'media-queries';
+
 @media print {
   @import 'print';
 }
