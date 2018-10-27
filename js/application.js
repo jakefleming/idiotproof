@@ -141,14 +141,63 @@ var utc = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
 
 function setStage(stage) {
-      var layoutGroups = ["overview", "spacing", "trio"];
-      for (i in layoutGroups) {
-            var item = layoutGroups[i];
-            var innerText = text[ stage ][ item ];
-            document.getElementById('section__proofing-'+item).innerHTML = innerText;
+      var layoutGroups = document.getElementsByClassName("testarea");
+      for(var i = 0; i < layoutGroups.length; i++) {
+            var item = layoutGroups[i].getAttribute('id');
+            var itemtag = item.replace('section__proofing-', '');
+            if (text[ stage ][ itemtag ]) {
+                var innerText = text[ stage ][ itemtag ];
+            } else if (textFeature[ itemtag ]) {
+                var innerText = textFeature[ itemtag ].sample;
+            } else {
+                var innerText = textLetters;
+            }
+            document.getElementById(item).innerHTML = innerText;
             var textClass = whichFontSize(innerText);
-            document.getElementById('section__proofing-'+item).classList.add(textClass);
+            document.getElementById(item).classList.add(textClass);
       }
+}
+function restoreStage() {
+    //Preserve document edits
+    var editBtn = document.getElementById('btn__edit-content');
+    var testareas = document.getElementsByClassName("testarea");
+
+    for(var i = 0; i < testareas.length; i++) {
+            if (typeof(Storage) !== "undefined") {
+                if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
+                    testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
+                }
+            }
+    }
+}
+function localStorageSave(class,valueWanted) {
+    //Attached to actual button
+    var classes = document.getElementsByClassName(class);
+    for(var i = 0; i < classes.length; i++) {
+            console.log(classes[i]);
+            localStorage.setItem(classes[i].getAttribute('id'), classes[i][valueWanted]);
+    }
+}
+function setStageSave() {
+    var editBtn = document.getElementById('btn__edit-content');
+    var testareas = document.getElementsByClassName("testarea");
+
+    for(var i = 0; i < testareas.length; i++) {
+        $(testareas[i]).on("click", function(){
+                this.contentEditable = true;
+                this.focus();
+                editBtn.innerHTML = 'Editing...';
+                editBtn.style.backgroundColor = '#F96';
+        });
+        $(testareas[i]).focusout( function() {
+                this.contentEditable = false;
+                for(var b = 0; b < testareas.length; b++) {
+                    localStorage.setItem(testareas[b].getAttribute('id'), testareas[b].innerHTML);
+                }
+                editBtn.innerHTML = 'Saved!';
+                editBtn.style.backgroundColor = '#6F9';
+        });
+    }
 }
 function whichFontSize(thisString) {
       var charCount = thisString.length;
@@ -197,7 +246,10 @@ function addTypeSettingTools(isVariableFont) {
         //font size
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
-        var testAreaFontSize = testAreaStyle.getPropertyValue('font-size').replace('px', '');;
+        var testAreaFontSize = testAreaStyle.getPropertyValue('font-size');
+        //pass through localstorage
+        testAreaFontSize = saveData(sliderID+'-fontsize',testAreaFontSize);
+        testAreaFontSize = testAreaFontSize.replace('px', '');
         html += '<label for="'+sliderID+'-fontsize">Font Size</label><input type="text" id="'+sliderID+'-fontSize-val" value="'+testAreaFontSize+'"><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
         html += '<label for="'+sliderID+'-lineheight">Line Height</label><input type="text" id="'+sliderID+'-lineHeight-val" value="'+lineHeight+'"><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
@@ -242,7 +294,15 @@ function insertField(aboveHere) {
     '<div id="item--'+fieldcount+'" class="item"><div id="section__proofing-'+fieldcount+'" class="page-break-before t__importedfontfamily testarea" contenteditable="true">'+textPangram[fieldcount]+'</div></div>');
     addTypeSettingTools(isVariableFont());
 }
-
+function saveData(id, value) {
+    if (localStorage.getItem(id)) {
+        return localStorage.getItem(id);
+    } else {
+        var input = document.getElementById(id);
+        localStorage.setItem(id, value);
+        return value;
+    }
+}
 function passStyleValue(id,property,value) {
       document.getElementById(id+"-slider-"+property+"-val").value=value;
       if (property === "fontSize") {
@@ -337,27 +397,35 @@ function displayFontData(fontFamily) {
                         taglist = preserveUnique(taglist)
                         for (var i in taglist) {
                             var tag = taglist[i];
-                            styles += '.proofing__feature-'+tag+' { font-feature-settings: "'+tag+'" 1;}';
+                            styles += '.section__proofing-'+tag+' { font-feature-settings: "'+tag+'" 1;}';
                             if (tag === "aalt" || tag === "ccmp") {
                                continue;
                             } else if (textFeature[tag]) {
                               var textClass = whichFontSize(textFeature[tag].sample);
-                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea proofing__feature-'+tag+'">'+textFeature[tag].sample+'</div></div>';
+                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+textFeature[tag].definition+'</span></h3><div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textFeature[tag].sample+'</div></div>';
                             } else if (tag.includes("ss")) {
                                var textClass = whichFontSize(textLetters);
-                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
+                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3><div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textLetters+'</div></div>';
                             } else {
                                var textClass = whichFontSize(textLetters);
-                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+'</h3><div id="proofing__feature-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea proofing__feature-'+tag+'">'+textLetters+'</div></div>';
+                               featuresHtml += '<div id="item--'+tag+'" class="item "><h3 class="h3">'+tag+'</h3><div id="section__proofing-'+tag+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea section__proofing-'+tag+'">'+textLetters+'</div></div>';
                             }
                         }
                     }
                 }
             }
-            featuresList.innerHTML = featuresHtml;
+
         }
     }
     $("#style__opentype-features").html(styles);
+    //Set content
+    featuresList.innerHTML = featuresHtml;
+
+    setStage(window.proofingPhase);
+    if (typeof(Storage) !== "undefined") {
+        restoreStage();
+    }
+    setStageSave();
     addTypeSettingTools(isVariableFont());
 }
 
