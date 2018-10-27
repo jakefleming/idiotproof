@@ -19,14 +19,14 @@ var text = {
         furniture: '',
     },
     2: {
-        overview: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnnopqrstuvwxyz.,:; -‘’“” ?!0123456789',
+        overview: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:; -‘’“” ?!0123456789',
         spacing: 'HHAHOAOO HHBHOBOO HHCHOCOO HHDHODOO HHEHOEOO HHFHOFOO HHGHOGOO HHHHOHOO HHIHOIOO HHJHOJOO HHKHOKOO HHLHOLOO HHMHOMOO HHNHONOO HHOHOOOO HHPHOPOO HHQHOQOO HHRHOROO HHSHOSOO HHTHOTOO HHUHOUOO HHVHOVOO HHWHOWOO HHXHOXOO  HHYHOYOO HH&HO&OO HHZHOZOO HH@HO@OO HHẞHOẞOO HAHBHCHDHEHFHGHHHIHJHKHHLHMHNHOHHPHQH HRHSHTHUHVHWHXHYHZHẞH OAOBOCODOEOFOGOHOIOJOKOLOMONOOOPOQO OROSOTOUOVOWOXOYOZOẞO hhahoaoo hhbhoboo hhchocoo hhdhodoo hhehoeoo hhfhofoo hhghogoo hhhhohoo hhihoioo hhjhojoo hhkhokoo hhlholoo hhmhomoo hhnhonoo hhohoooo hhphopoo hhqhoqoo hhrhoroo hhshosoo hhßhoßoo hhthotoo hhuhouoo hhvhovoo hhwhowoo hhxhoxoo hhyhoyoo hhzhozoo hh@ho@oo hhðhoðoo nnoonnecnncennbnndnnbdnnpqnnpðnn oaobocodoeofogohoiojokoolomono oopoqorosoßotouovoowoxoyozoðo nanbncndnenfngnhninjnknnlnmnnn nonpnqnrnsnßntnunvnwnxnynznðn hahbhchdhehfhghhhihjhkhhlhmhnh hohphqhrhshßhthuhvhwhxhyhzhðh',
         trio: 'Aho Bho Cho Dho Eho Fho Gho Hho Iho Jho Kho Lho Mho Nho Oho Pho Qho Rho Sho Tho Uho Vho Who Xho Yho ZhoAon Bon Con Don Eon Fon Gon Hon Ion Jon Kon Lon Mon Non Oon Pon Qon Ron Son Ton Uon Von Won Xon Yon Zon',
         extra: 'Grumpy wizards make toxic brew for the evil Queen and Jack.',
         furniture: '',
     },
     3: {
-        overview: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghhijklmmnnopqrstuvwxyz.,:; -‘’“” ?!0123456789&@/|[](){}',
+        overview: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:; -‘’“” ?!0123456789&@/|[](){}',
         spacing: 'I “Ask Jeff” or ‘Ask Jeff’. Take the chef d’œuvre! Two of [of] (of) ‘of’ “of” of? of! of*. Two of [of] (of) ‘of’ “of” of? of! of*. Ydes, Yffignac and Ygrande are in France: so are Ypres, Les Woëvres, the Fôret de Wœvres, the Voire and Vauvise. Yves is in heaven; D’Amboise is in jail. Lyford’s in Texas & L’Anse-aux-Griffons in Québec; the Łyna in Poland. Yriarte, Yciar and Ycsaÿe are at Yale. Kyoto and Ryotsu are both in Japan, Kwikpak on the Yukon delta, Kvæven in Norway, Kyulu in Kenya, not in Rwanda.… Walton’s in West Virginia, but «Wren» is in Oregon. Tlálpan is near Xochimilco in México. The Zygos & Xylophagou are in Cyprus, Zwettl in Austria, Fænø in Denmark, the Vøringsfossen and Værøy in Norway. Tchula is in Mississippi, the Tittabawassee in Michigan. Twodot is here in Montana, Ywamun in Burma. Yggdrasil and Ymir, Yngvi and Vóden, Vídrið and Skeggjöld and Týr are all in the Eddas. Tørberget and Våg, of course, are in Norway, Ktipas and Tmolos in Greece, but Vázquez is in Argentina, Vreden in Germany, Von-Vincke-Straße in Münster, Vdovino in Russia, Ytterbium in the periodic table. Are Toussaint L’Ouverture, Wölfflin, Wolfe, Miłosz and Wū Wŭ all in the library? 1510–1620, 11:00 pm, and the 1980s are over. Ergänzt von Typefacts: Ist da „Jemand“? „Volker?“ – „Wolf“. „Anna?“ – „Yvonne“. „Torsten fragte: ‚Vladimir?‘, später riefer ‚Wolf‘ und ‚Theresa‘, dann ‚Andreas‘ und ‚Yvonne‘“. Eleganter: Ist da »Jemand«? »Volker?« – »Wolf«. »Anna?« – »Yvonne«. »Torsten fragte: ›Vladimir?‹, später rief er ›Wolf‹ und ›Theresa‹, dann ›Andreas‹ und ›Yvonne‹«',
         trio: 'Aar Abo Act Adj Aer Aft Aga Ahe Aie Aji Ake Alm Amo Ano Aoa App Aqu Art Ass Att Aug Ave Awa Axe Aye Azo Bal Bbn Bcc Bdj Ber Bfd Bga Bhu Bie Bji Bkl Bli Bmo Bni Boa Bpi Bqu Brt Bss Btl But Bve Bwa Bxl Bye Bzo Cal Cbn Ccn Cdj Cer Cfi Cga Che Cie Cjn Ckl Cle Cmo Cnl Coa Cpl Cqu Crl Css Ctl Cul Cvl Cwl Cxl Cyi Czo Dal Dbn Dci Ddj Der Dfl Dga Dhr Die Dji Dkl Dli Dmo Dnu Don Dpi Dqu Dri Dsl Dtl Dul Dvl Dwl Dxl Dya Dzn Ear Ebe Ech Edw Een Efo Ega Ehr Eit Ejo Ekn Eld Emp Ens Eob Epa Equ Ero Est Eth Euc Eva Ewa Exe Eyo Eze Fal Fbo Fci Fdj Fer Ffu Fgn Fhi Fil Fjo Fkl Fli Fmi Fnl Fol Fpi Fqu Fra Fst Fto Ful Fvl Fwl Fxi Fyi Fzi Gal Gbo Gch Gdj Ger Gfl Ggl Ghi Gil Gjl Gke Gli Gmo Gnl Gol Gpi Gqu Gra Gst Gto Gut Gve Gwl Gxi Gyn Gzn Har Hbo Hct Hdj Her Hfl Hga Hhe Hie Hji Hke Hlm Hmo Hno Hon Hpl Hqu Hrt Hss Htt Hue Hve Hwa Hxe Hyu Hzi Ian Ibo Ict Idj Ier Ift Iga Ihe Iie Ijo Ike Ilm Imo Ino Ion Ipl Iqu Irt Iss Ita Iut Ive Iwa Ixe Iyo Izo Jap Jbo Jct Jdj Jer Jfn Jgu Jhe Jie Jjl Jkl Jlm Jmo Jno Jon Jpl Jqu Jrt Jss Jtt Jut Jve Jwa Jxe Jyn Jzt Kan Kbo Kci Kdj Ker Kfn Kga Khe Kie Kjl Kkn Klm Kmo Kno Kon Kpl Kqu Krt Kss Kti Kui Kve Kwa Kxe Kye Kzo Lam Lbo Lct Ldj Len Lft Lga Lhe Lie Lju Lke Llm Lmo Lno Lon Lpl Lqu Lrt Lss Ltt Luc Lve Lwa Lxe Lye Lzt Mar Mbu Mct Mdj Mer Mfl Mga Mhe Mie Mji Mke Mlf Mmi Mnu Mon Mpl Mqu Mrt Mss Mtt Mut Mvl Mwa Mxe Myu Mzi Nam Nbu Nct Ndj Nel Nfl Nga Nhi Nie Njn Nke Nlo Nmi Nnu Non Npr Nqu Nrt Nst Ntu Nul Nvd Nwa Nxe Nyi Nzu Oan Obu Oct Odj Oer Ofa Oga Ohe Oie Oja Oke Olf Omi Onu Oon Opl Oqu Ort Oss Ott Out Ovl Owa Oxe Oye Ozo Par Pbl Pct Pdj Per Pfe Pgs Phi Pie Pji Pki Pla Pml Pnu Pon Ppl Pqu Prt Psa Pts Pul Pvc Pwi Pxl Pyn Pzl Qal Qbo Qct Qdj Qer Qfi Qga Qhe Qie Qji Qke Qlm Qmo Qno Qoa Qpp Qqu Qrt Qss Qtt Qui Qve Qwa Qxe Qyo Qzo Rad Rbi Rct Rdj Ren Rfe Rgs Rha Ria Rji Rkl Rli Rms Rni Roa Rpi Rqu Rrt Rsi Rtd Rut Rvi Rwl Rxi Ryn Rzi Sar Sbo Sct Sdl Ser Sfo Sgi She Sie Sja Ski Slo Smi Sno Sol Spe Squ Srt Sst Stt Sut Sve Swa Sxe Syl Szo Tar Tba Tcm Tdi Ter Tfl Tgi The Tie Tji Tke Tlm Tmo Tno Tol Tpi Tqu Trt Tsi Tti Tut Tvl Twl Txl Tyl Tzo Ual Ubi Uct Udj Uer Ufc Uga Uhi Uie Uji Uke Ulm Umo Uno Uol Upp Uqu Urt Uss Utl Uui Uvl Uwl Uxe Uye Uzo Val Vbo Vct Vdj Ver Vft Vga Vhe Vie Vjl Vki Vlm Vmo Vno Vol Vpi Vqu Vrl Vsi Vtt Vut Vvl Vwl Vxl Vyl Vzi Wal Wbo Wcl Wdj Wer Wfi Wga Whe Wie Wjl Wke Wlm Wmo Wno Wol Wpi Wqu Wrl Wsi Wtt Wut Wvl Wwl Wxl Wya Wzl Xal Xbo Xce Xdj Xer Xft Xga Xhe Xie Xjl Xki Xlm Xmo Xno Xol Xpi Xqu Xrl Xsi Xtt Xut Xvl Xwl Xxl Xye Xzi Yal Ybo Yci Ydj Yer Yfl Yga Yhe Yie Yjo Ykl Yli Ymo Yno Yol Ypi Yqu Yrl Ysi Ytt Yut Yvl Ywl Yxl Yyl Yzi Zan Zbr Zco Zdj Zer Zfl Zga Zhe Zie Zji Zke Zlm Zmo Zno Zol Zpi Zqu Zro Zsn Zti Zut Zvl Zwl Zxl Zyl Zzl',
         extra: 'Aardvark Ablution Acrimonious Adventures Aeolian Africa Agamemnon Ahoy Aileron Ajax Akimbo Altruism America Anecdote Aorta Aptitude Aquarium Arcade Aspartame Athens Aurelius Avuncular Awning Axminster Ayers Azure Banishment Benighted Bhagavad Biblical Bjorn Blancmange Bolton Brusque Burnish Bwana Byzantium Cabbala Cetacean Charlemagne Cicero Clamorous Cnidarian Conifer Crustacean Ctenoid Culled Cynosure Czarina Dalmatian Delphi Dhurrie Dinner Djinn Document Drill Dunleary Dvorak Dwindle Dynamo Eames Ebullient Echo Edify Eels Eftsoons Egress Ehrlich Eindhoven Eject Ekistics Elzevir Eminence Ennoble Eocene Ephemeral Equator Erstwhile Estienne Etiquette Eucalyptus Everyman Ewen Exeter Eyelet Ezekiel Fanfare Ferocious Ffestiniog Finicky Fjord Flanders Forestry Frills Furniture Fylfot Garrulous Generous Ghastly Gimlet Glorious Gnomon Golfer Grizzled Gumption Gwendolyn Gymkhana Harrow Heifer Hindemith Horace Hsi Hubris Hybrid Iambic Ibarra Ichthyology Identity Ievgeny Ifritignite Ihre Ikon Iliad Imminent Innovation Iolanthe Ipanema Irascible Island Italic Ivory Iwis Ixtapa Iyar Izzard Janacek Jenson Jitter Joinery Jr. Jungian Kaiser Kenilworth Khaki Kindred Klondike Knowledge Kohlrabi Kraken Kudzu Kvetch Kwacha Kyrie Labrador Lent Lhasa Liniment Llama Longboat Luddite Lyceum Mandarin Mbandaka Mcintyre Mdina Mendacious Mfg. Mg Millinery Mlle. Mme. Mnemonic Moribund Mr. Ms. Mtn. Munitions Myra Narragansett Nefarious Nguyen Nile Nkoso Nnenna Nonsense Nr. Nunnery Nyack Oarsman Oblate Ocular Odessa Oedipus Often Ogre Ohms Oilers Okra Olfactory Ominous Onerous Oogamous Opine Ornate Ossified Othello Oubliette Ovens Owlish Oxen Oyster Ozymandias Parisian Pb Pd. Penrose Pfennig Pg. Pharmacy Pirouette Pleistocene Pneumatic Porridge Pp. Principle Psaltery Ptarmigan Pundit Pyrrhic Qaid Qed Qibris Qom Quill Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Ransom Rb. Rd. Renfield Rheumatic Ringlet Rm. Ronsard Rp. Rte. Runcible Rwanda Rye Salacious Sbeitla Scherzo Serpentine Sforza Shackles Sinful Sjoerd Skull Slalom Smelting Snipe Sorbonne Spartan Squire Sri Stultified Summoner Svelte Swarthy Sykes Szentendre Tarragon Tblisi Tcherny Tennyson Thaumaturge Tincture Tlaloc Toreador Treacherous Tsunami Turkey Twine Tyrolean Tzara Ubiquitous Ucello Udder Ufology Ugric Uhlan Uitlander Ukulele Ulster Umber Unguent Uomo Uplift Ursine Usurious Utrecht Uvula Uxorious Uzbek Vanished Vd. Venomous Vindicate Voracious Vrillier Vs. Vt. Vulnerable Vying Washington Wendell Wharf Window Wm. Worth Wrung Wt. Wunderman Wyes Xanthan Xenon Xiao Xmas Xonen Xray Xuxa Xylem Yarrow Ybarra Ycair Yds. Yellowstone Yggdrasil Yin Ylang Yours Ypsilanti Yquem Yrs. Ys. Ytterbium Yunnan Yvonne Zanzibar Zero Zhora Zinfandel Zone Zuni Zwieback Zygote',
@@ -158,16 +158,34 @@ function setStage(stage) {
       }
 }
 function restoreStage() {
-    //Preserve document edits
-    var editBtn = document.getElementById('btn__edit-content');
+    //Save all document edits
     var testareas = document.getElementsByClassName("testarea");
 
     for(var i = 0; i < testareas.length; i++) {
-            if (typeof(Storage) !== "undefined") {
-                if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
-                    testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
-                }
+        if (typeof(Storage) !== "undefined") {
+            if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
+                testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
             }
+        }
+    }
+    var sliders = document.getElementsByClassName("slider");
+
+    for(var i = 0; i < sliders.length; i++) {
+        if (typeof(Storage) !== "undefined") {
+            var sliderID = sliders[i].getAttribute('id');
+            var testareaID = sliderID.split("-slider-")[0];
+            var property = sliderID.split("-slider-")[1];
+            var localStorageValue = localStorage.getItem(sliderID+"-val");
+            if (localStorageValue !== null) {
+                // Update indicator
+                var indicator = document.getElementById(sliderID+"-val");
+                indicator.innerHTML = localStorageValue;
+                // Update slider value
+                document.getElementById(sliderID).value = localStorageValue;
+                // Pass style to testares
+                passStyleValue(testareaID,property,localStorageValue);
+            }
+        }
     }
 }
 function localStorageSave(class,valueWanted) {
@@ -187,15 +205,30 @@ function setStageSave() {
                 this.contentEditable = true;
                 this.focus();
                 editBtn.innerHTML = 'Editing...';
-                editBtn.style.backgroundColor = '#F96';
+                editBtn.classList.remove("saved");
+                editBtn.classList.add("editing");
         });
         $(testareas[i]).focusout( function() {
                 this.contentEditable = false;
                 for(var b = 0; b < testareas.length; b++) {
                     localStorage.setItem(testareas[b].getAttribute('id'), testareas[b].innerHTML);
                 }
-                editBtn.innerHTML = 'Saved!';
-                editBtn.style.backgroundColor = '#6F9';
+                editBtn.innerHTML = 'Saved';
+                editBtn.classList.remove("editing");
+                editBtn.classList.add("saved");
+        });
+    }
+    var sliders = document.getElementsByClassName("slider");
+    for(var i = 0; i < sliders.length; i++) {
+        $(sliders[i]).on("focus", function(){
+                editBtn.innerHTML = 'Editing...';
+                editBtn.classList.remove("saved");
+                editBtn.classList.add("editing");
+        });
+        $(sliders[i]).mouseup( function() {
+                editBtn.innerHTML = 'Saved';
+                editBtn.classList.remove("editing");
+                editBtn.classList.add("saved");
         });
     }
 }
@@ -247,14 +280,12 @@ function addTypeSettingTools(isVariableFont) {
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
         var testAreaFontSize = testAreaStyle.getPropertyValue('font-size');
-        //pass through localstorage
-        testAreaFontSize = saveData(sliderID+'-fontsize',testAreaFontSize);
         testAreaFontSize = testAreaFontSize.replace('px', '');
-        html += '<label for="'+sliderID+'-fontsize">Font Size</label><input type="text" id="'+sliderID+'-fontSize-val" value="'+testAreaFontSize+'"><input id="'+sliderID+'-fontsize" type="range" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        html += '<label for="'+sliderID+'-fontSize">Font Size</label><span id="'+sliderID+'-fontSize-val">'+testAreaFontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<label for="'+sliderID+'-lineheight">Line Height</label><input type="text" id="'+sliderID+'-lineHeight-val" value="'+lineHeight+'"><input id="'+sliderID+'-lineheight" type="range" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<label for="'+sliderID+'-lineHeight">Line Height</label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
-        html += '<label for="'+sliderID+'-letterspacing">Letter Spacing</label><input type="text" id="'+sliderID+'-letterSpacing-val" value="'+letterSpacing+'"><input id="'+sliderID+'-letterspacing" type="range" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+        html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing</label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -268,7 +299,7 @@ function addTypeSettingTools(isVariableFont) {
                 var tag = font.tables.fvar.axes[b].tag;
                 var name = font.tables.fvar.axes[b].name.en;
                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><input type="text" id="'+sliderID+'-'+tag+'-val" value="'+defaultValue+'"><input id="'+sliderID+'-'+tag+'" type="range" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
@@ -295,16 +326,13 @@ function insertField(aboveHere) {
     addTypeSettingTools(isVariableFont());
 }
 function saveData(id, value) {
-    if (localStorage.getItem(id)) {
-        return localStorage.getItem(id);
-    } else {
-        var input = document.getElementById(id);
+    if (typeof(Storage) !== "undefined") {
         localStorage.setItem(id, value);
-        return value;
     }
 }
 function passStyleValue(id,property,value) {
-      document.getElementById(id+"-slider-"+property+"-val").value=value;
+      document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
+      saveData(id+"-slider-"+property+"-val", value);
       if (property === "fontSize") {
           value = value+"px";
       } else if (property === "letterSpacing") {
@@ -314,6 +342,7 @@ function passStyleValue(id,property,value) {
 }
 function passfvarValue(id,property,value,fvarSupport) {
       document.getElementById(id+"-slider-"+property+"-val").value=value;
+      saveData(id, property, value);
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
       }
@@ -417,16 +446,21 @@ function displayFontData(fontFamily) {
 
         }
     }
+    //Inject css of necessary features
     $("#style__opentype-features").html(styles);
-    //Set content
+    //Add item boxes for each feature
     featuresList.innerHTML = featuresHtml;
-
-    setStage(window.proofingPhase);
-    if (typeof(Storage) !== "undefined") {
-        restoreStage();
-    }
-    setStageSave();
+    //Add tools to each section
     addTypeSettingTools(isVariableFont());
+    if (typeof(Storage) !== "undefined") {
+        //Check for localstorage content edits and load them instead
+        restoreStage();
+    } else {
+        //Set proofing for all based on font file size
+        setStage(window.proofingPhase);
+    }
+    //Adding ability to auto save content edits
+    setStageSave();
 }
 
 function preserveUnique(a) {
@@ -453,15 +487,11 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
 
     // Do the actual proofing build
     displayFontData(fontFamily);
+    //Set selection into localstorage for potential  livereload later
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
-          //Remember selection for local livereload
-          //Was searching for uploaded server version fonts otherwise
-        if (localStorage.setItem("fontFamily", fontFamily)) {
-            localStorage.setItem("fontFamily", fontFamily);
-            localStorage.setItem("fontFamilySource", fontFamilySource);
-        }
+        localStorage.setItem("fontFamily", fontFamily);
+        localStorage.setItem("fontFamilySource", fontFamilySource);
     }
-
 
 }
 
@@ -527,8 +557,8 @@ function isFontVariable(font) {
 }
 function setFont(fontFamilySource, fontFamily) {
     opentype.load(fontFamilySource, function(err, font) {
-                onFontLoaded(font, fontFamilySource, fontFamily);
-            });
+        onFontLoaded(font, fontFamilySource, fontFamily);
+    });
 }
 
 
@@ -537,7 +567,7 @@ window.onload = function() {
 
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
         // local
-        document.getElementById('section__header-file-buttons').innerHTML = 'Export fonts into <code>/fonts</code> to begin proofing ';
+        document.getElementById('section__header-file-buttons').innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
         var html = '';
         var style = '';
         var allFontFilesInFolder = '';
@@ -558,13 +588,17 @@ window.onload = function() {
                   style += '@font-face { font-family: "'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
             }
             fileButtonParent.innerHTML = html;
-            if (localStorage.getItem('fontFamilySource')) {
+            if (typeof(Storage) !== "undefined") {
+                    // Check for local storage settings
                   var fontFamilySource = localStorage.getItem('fontFamilySource');
                   var fontFamily = localStorage.getItem('fontFamily');
-                  setFont(fontFamilySource, fontFamily);
             } else {
-                      setFont("fonts/"+fonts.slice(-1)[0], thisFontFamily);
+                    // Set very last font in list
+                    var fontFamilySource = "fonts/"+fonts.slice(-1)[0];
+                    var fontFamily = thisFontFamily;
             }
+            setFont(fontFamilySource, fontFamily);
+            document.getElementById("btn__setfont-"+fontFamily).classList.add('active');
             $('#style__fontface').append(style);
         }, "text");
 
@@ -582,7 +616,7 @@ window.onload = function() {
     $('#section__header-file-buttons').on('click', '.btn__setfont', function() {
         $(this).addClass('active').siblings().removeClass('active');
     });
-    $('#section__header-stage-buttons').on('click', '.btn__setfont', function() {
+    $('#section__header-stage-buttons').on('click', '.btn__setstage', function() {
         $(this).addClass('active').siblings().removeClass('active');
     });
     $('#btn__view-tools-toggle').on('click', function(e) {
