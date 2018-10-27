@@ -187,15 +187,17 @@ function setStageSave() {
                 this.contentEditable = true;
                 this.focus();
                 editBtn.innerHTML = 'Editing...';
-                editBtn.style.backgroundColor = '#F96';
+                editBtn.classList.remove("saved");
+                editBtn.classList.add("editing");
         });
         $(testareas[i]).focusout( function() {
                 this.contentEditable = false;
                 for(var b = 0; b < testareas.length; b++) {
                     localStorage.setItem(testareas[b].getAttribute('id'), testareas[b].innerHTML);
                 }
-                editBtn.innerHTML = 'Saved!';
-                editBtn.style.backgroundColor = '#6F9';
+                editBtn.innerHTML = 'Saved';
+                editBtn.classList.remove("editing");
+                editBtn.classList.add("saved");
         });
     }
 }
