@@ -1,0 +1,43 @@
+// Typography
+.h6, .h3 {
+	font-family: "monospaced", "Courier";
+}
+.t__left {
+	text-align: left;
+}
+.t__right {
+	text-align: right;
+}
+.t__center {
+	text-align: center;
+}
+.t__uppercase {
+	text-transform: uppercase;
+}
+.t__size-xxl {
+  font-size: 10rem;
+}
+.t__size-xl {
+  font-size: 8rem;
+}
+.t__size-l {
+  font-size: 6rem;
+}
+.t__size-m {
+  font-size: 4rem;
+}
+.t__size-s {
+  font-size: 2rem;
+}
+.t__size-xs {
+  font-size: 1rem;
+}
+
+// headings
+h2 {
+  text-align: center;
+}
+
+h3 .tooltip {
+  display: block;
+}

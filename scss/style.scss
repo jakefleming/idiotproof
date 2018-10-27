@@ -1,6 +1,10 @@
 @CHARSET "UTF-8";
 
 @import 'general';
+@import 'items';
+@import 'sliders';
+@import 'typography';
+@import 'utilities';
 
 @media print {
       @import 'print';

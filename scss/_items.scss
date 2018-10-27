@@ -1,0 +1,14 @@
+// item styles
+.item {
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.1);
+  margin: 0 auto;
+  max-width: 800px;
+  padding: 4rem;
+  white-space: normal;
+  word-break: break-all;
+  + .item {
+    margin-top: 1rem;
+  }
+}
