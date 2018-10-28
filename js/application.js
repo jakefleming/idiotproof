@@ -285,17 +285,17 @@ function addTypeSettingTools(isVariableFont) {
         var sliderID = testAreaID.trim()+'-slider';
         var testAreaParent = $('#'+testAreaID).closest('.item').attr('id');
         console.log
-        var html = '<div class="item__sliders">';
+        var html = '<div class="item__sliders"><div class="item__sliders-wrapper">';
         //font size
         var testAreaElement = document.getElementById(testAreaID);
         var testAreaStyle = window.getComputedStyle(testAreaElement);
         var testAreaFontSize = testAreaStyle.getPropertyValue('font-size');
         testAreaFontSize = testAreaFontSize.replace('px', '');
-        html += '<label for="'+sliderID+'-fontSize">Font Size</label><span id="'+sliderID+'-fontSize-val">'+testAreaFontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="2" max="160" step="4" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+        html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+testAreaFontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
         //line height
-        html += '<label for="'+sliderID+'-lineHeight">Line Height</label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+        html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
         //letterspacing
-        html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing</label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+        html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
         if (isVariableFont) {
             var fvarSupport = [];
@@ -309,7 +309,7 @@ function addTypeSettingTools(isVariableFont) {
                 var tag = font.tables.fvar.axes[b].tag;
                 var name = font.tables.fvar.axes[b].name.en;
                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+'</label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
@@ -317,7 +317,7 @@ function addTypeSettingTools(isVariableFont) {
         }
         html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
-        html += '</div>';
+        html += '</div></div>';
         testarea[i].parentNode.insertAdjacentHTML('beforebegin', html);
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {

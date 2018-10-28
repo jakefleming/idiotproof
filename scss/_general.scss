@@ -49,6 +49,7 @@ body {
 .view-tools-toggle {
   display: block;
   position: sticky;
+  z-index: 1;
   top: 1rem;
   right: .5rem;
   text-align: right;
