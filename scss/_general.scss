@@ -30,7 +30,7 @@ body {
 
 .body__idiotproofed {
   &.tools-visible {
-    .sliders {
+    .item__sliders {
       display: block;
       //max-height: 200px;
     }
