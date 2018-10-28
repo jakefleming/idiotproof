@@ -152,6 +152,7 @@ function setStage(stage) {
             } else {
                 var innerText = textLetters;
             }
+
             document.getElementById(item).innerHTML = innerText;
             var textClass = whichFontSize(innerText);
             document.getElementById(item).classList.add(textClass);
@@ -169,10 +170,10 @@ function restoreStage() {
     var testareas = document.getElementsByClassName("testarea");
 
     for(var i = 0; i < testareas.length; i++) {
-        if (typeof(Storage) !== "undefined") {
-            if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
-                testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
-            }
+        if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
+            testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
+        } else {
+            setStage(window.proofingPhase);
         }
     }
     var sliders = document.getElementsByClassName("slider");
@@ -199,9 +200,11 @@ function localStorageSave(class,valueWanted) {
     //Attached to actual button
     var classes = document.getElementsByClassName(class);
     for(var i = 0; i < classes.length; i++) {
-            console.log(classes[i]);
             localStorage.setItem(classes[i].getAttribute('id'), classes[i][valueWanted]);
     }
+}
+function localStorageClear() {
+    localStorage.clear();
 }
 function setStageSave() {
     var editBtn = document.getElementById('btn__edit-content');
@@ -349,7 +352,7 @@ function passStyleValue(id,property,value) {
 }
 function passfvarValue(id,property,value,fvarSupport) {
       document.getElementById(id+"-slider-"+property+"-val").value=value;
-      saveData(id, property, value);
+      saveData(id+"-slider-"+property+"-val", value);
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
       }
@@ -466,13 +469,8 @@ function displayFontData(fontFamily) {
     featuresList.innerHTML = featuresHtml;
     //Add tools to each section
     addTypeSettingTools(isVariableFont());
-    if (typeof(Storage) !== "undefined") {
-        //Check for localstorage content edits and load them instead
-        restoreStage();
-    } else {
-        //Set proofing for all based on font file size
-        setStage(window.proofingPhase);
-    }
+    //Check for localstorage content edits and load them instead
+    restoreStage();
     //Adding ability to auto save content edits
     setStageSave();
 }
@@ -596,19 +594,18 @@ window.onload = function() {
             }
             preserveUnique(fonts)
             for(var a=0; a<fonts.length; a++) {
-                  thisFontSource = fonts[a];
-                  thisFontFamily = thisFontSource.replace('.', '-');
+                  var thisFontSource = fonts[a];
+                  var thisFontFamily = thisFontSource.replace('.', '-');
                   html += '<button class="btn btn__setfont" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontSource+'</button>';
                   style += '@font-face { font-family: "'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
             }
             fileButtonParent.innerHTML = html;
-            if (typeof(Storage) !== "undefined") {
+            if (localStorage.getItem('fontFamilySource')) {
                     // Check for local storage settings
                   var fontFamilySource = localStorage.getItem('fontFamilySource');
                   var fontFamily = localStorage.getItem('fontFamily');
             } else {
-                    // Set very last font in list
-                    var fontFamilySource = "fonts/"+fonts.slice(-1)[0];
+                    var fontFamilySource = "fonts/"+fonts[fonts.length - 1];
                     var fontFamily = thisFontFamily;
             }
             setFont(fontFamilySource, fontFamily);
