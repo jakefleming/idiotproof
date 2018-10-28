@@ -283,7 +283,8 @@ function addTypeSettingTools(isVariableFont) {
     for(var i = 0; i < testarea.length; i++) {
         var testAreaID = testarea[i].id;
         var sliderID = testAreaID.trim()+'-slider';
-        var testAreaParent = document.getElementById(testAreaID).parentNode.id;
+        var testAreaParent = $('#'+testAreaID).closest('.item').attr('id');
+        console.log
         var html = '<div class="item__sliders">';
         //font size
         var testAreaElement = document.getElementById(testAreaID);
