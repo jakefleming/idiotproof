@@ -279,12 +279,11 @@ function addTypeSettingTools(isVariableFont) {
     var testarea = document.getElementsByClassName("testarea");
     removeElementsByClass("item__sliders");
     removeElementsByClass("add-item-above");
-
+    // add inline .item tools
     for(var i = 0; i < testarea.length; i++) {
         var testAreaID = testarea[i].id;
         var sliderID = testAreaID.trim()+'-slider';
         var testAreaParent = $('#'+testAreaID).closest('.item').attr('id');
-        console.log
         var html = '<div class="item__sliders"><div class="item__sliders-wrapper">';
         //font size
         var testAreaElement = document.getElementById(testAreaID);
@@ -297,6 +296,7 @@ function addTypeSettingTools(isVariableFont) {
         //letterspacing
         html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
         testarea[i].classList.add("hastools-basic");
+        //include required sliders if variable font
         if (isVariableFont) {
             var fvarSupport = [];
             for (var a in font.tables.fvar.axes) {
@@ -318,7 +318,9 @@ function addTypeSettingTools(isVariableFont) {
         html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
         html += '</div></div>';
+        //insert next to nearest .item
         testarea[i].parentNode.insertAdjacentHTML('beforebegin', html);
+        //update fvar sliders to default settings
         if (isVariableFont) {
             for (var b in font.tables.fvar.axes) {
                   var tag = font.tables.fvar.axes[b].tag;
@@ -327,6 +329,23 @@ function addTypeSettingTools(isVariableFont) {
             }
         }
     }
+    //header level tools
+    html = '<div id="header__sliders" class="header__sliders"><div class="item__sliders-wrapper">';
+    //font size
+    var proofIDName = "item__proof";
+    var proofID = document.getElementsByClassName(proofIDName);
+    var headerElement = document.getElementById('header__sliders');
+    var proofStyle = window.getComputedStyle(proofID[0], null);
+    var proofFontSize = proofStyle.getPropertyValue('font-size');
+    proofFontSize = proofFontSize.replace('px', '');
+    var proofLineHeight = proofStyle.getPropertyValue('line-height');
+    var proofletterSpacing = proofStyle.getPropertyValue('letter-spacing');
+    html = '<div><label for="'+proofIDName+'-slider-fontSize">Font Size </label><span id="'+proofIDName+'-slider-fontSize-val">'+proofFontSize+'</span><input id="'+proofIDName+'-slider-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+proofFontSize+'" oninput="passStyleValue(\''+proofIDName+'\', \'fontSize\', this.value)"></div>';
+    //line height
+    html += '<div><label for="'+proofIDName+'-slider-lineHeight">Line Height </label><span id="'+proofIDName+'-slider-lineHeight-val">'+proofLineHeight+'</span><input id="'+proofIDName+'-slider-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+proofLineHeight+'" oninput="passStyleValue(\''+proofIDName+'\', \'lineHeight\', this.value)"></div>';
+    //letterspacing
+    html += '<div><label for="'+proofIDName+'-slider-letterSpacing">Letter Spacing </label><span id="'+proofIDName+'-slider-letterSpacing-val">'+proofletterSpacing+'</span><input id="'+proofIDName+'-slider-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+proofletterSpacing+'" oninput="passStyleValue(\''+proofIDName+'\', \'letterSpacing\', this.value)"></div>';
+    headerElement.innerHTML = html;
 }
 
 var fieldcount = 0;
@@ -342,15 +361,15 @@ function saveData(id, value) {
     }
 }
 function passStyleValue(id,property,value) {
-    if (id === "section__article-app") {
-        var id = document.getElementsByClassName("testarea");
-        saveData(id, value);
+    if (id === "item__proof") {
+        var id = document.getElementsByClassName(id);
+        document.getElementById("item__proof-slider-"+property+"-val").innerHTML=value;
+        saveData("item__proof-slider-"+property+"-val", value);
         if (property === "fontSize") {
           value = value+"px";
         } else if (property === "letterSpacing") {
           value = value+"em";
         }
-        console.log(id);
         $(id).css(property, value);
     } else {
         document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;

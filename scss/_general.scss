@@ -5,7 +5,7 @@ body {
   //more graceful loadin of proofing stuff
   .item {
     transform-origin: top center;
-    transform: scaleY(0) translateY(-20px);
+    transform: scaleY(.5) translateY(-30px);
     opacity: 0;
     transition: opacity 3s ease-in-out, transform 1s ease-in-out;
   }
@@ -30,7 +30,7 @@ body {
 
 .body__idiotproofed {
   &.tools-visible {
-    .item__sliders {
+    .item__sliders, .header__sliders {
       display: block;
       //max-height: 200px;
     }
@@ -46,7 +46,7 @@ body {
 }
 
 // view tools toggle
-.view-tools-toggle {
+.section__header-tools {
   display: block;
   position: sticky;
   z-index: 1;

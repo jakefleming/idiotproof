@@ -20,6 +20,10 @@ $slider-thumb-shadow: 'ass';
       top: 2rem;
   }
 }
+.header__sliders {
+  display: none;
+  max-width: 300px;
+}
 
 input[type=range] {
   -webkit-appearance: none;
