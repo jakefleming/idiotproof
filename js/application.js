@@ -309,7 +309,10 @@ function addTypeSettingTools(isVariableFont) {
                 var tag = font.tables.fvar.axes[b].tag;
                 var name = font.tables.fvar.axes[b].name.en;
                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label><span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span><input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
+                html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
+                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
+                html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                 testarea[i].classList.remove("hastools-basic");
                 testarea[i].classList.add("hastools-fvar");
             }
@@ -405,6 +408,59 @@ function passfvarValue(id,property,value,fvarSupport) {
              }
       }
       $('#' + id).css('font-variation-settings', fvarcss);
+}
+
+var isAnimating = null;
+function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
+        document.getElementById(id+"-slider-"+property+"-val").value=value;
+        //generate insert keyframe animation based on value
+        var styles = '',
+            addKeyFrames = null;
+        if (isAnimating !== null) {
+            $("#style__fvar-animation").html('');
+            isAnimating = null;
+        } else {
+            addKeyFrames = function(name, frames){
+                if (CSSRule.WEBKIT_KEYFRAMES_RULE) { // WebKit
+                    styles += "@-webkit-keyframes " + name + " {" + frames + "}";
+                } else if (CSSRule.MOZ_KEYFRAMES_RULE) { // Mozilla
+                    styles += "@-moz-keyframes " + name + " {" + frames + "}";
+                } else if (CSSRule.KEYFRAMES_RULE) { // W3C
+                    styles += "@keyframes " + name + " {" + frames + "}";
+                }
+            }
+            if (!(Array.isArray(fvarSupport))){
+                fvarSupport = fvarSupport.split(',');
+            }
+            var fvarcss = "";
+            if (fvarSupport.length == 1) {
+                 addKeyFrames(
+                    property+'infinite',
+                    '0%, 100% {font-variation-settings:"'+property+'" '+value+';}' +
+                    '25% {font-variation-settings:"'+property+'" '+minValue+';}' + 
+                    '50% {font-variation-settings:"'+property+'" '+maxValue+';}'
+                );
+            } else {
+                for (f = 0; f < fvarSupport.length; f++) {
+                    if (property !== fvarSupport[f]) {
+                        var fvalue = document.getElementById(id+"-slider-"+fvarSupport[f]).value;
+                        fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue;
+                    }
+                    if (f != fvarSupport.length - 1) {
+                        fvarcss += ", ";
+                    }
+                 }
+                addKeyFrames(
+                    property+'infinite',
+                    '0%, 100% {font-variation-settings:"'+property+'" '+value+' '+fvarcss+';}' +
+                    '25% {font-variation-settings:"'+property+'" '+minValue+' '+fvarcss+';}' + 
+                    '50% {font-variation-settings:"'+property+'" '+maxValue+' '+fvarcss+';}'
+                );
+            }
+            $("#style__fvar-animation").html(styles);
+            $('#' + id).css("font-variation-settings","unset").css('animation',  property+'infinite 4s ease-in-out infinite');
+            isAnimating = true;
+        }
 }
 function displayFontData(fontFamily) {
 

@@ -1,4 +1,5 @@
 fonts/ignore/Gooper-Regular.otf 
+fonts/ignore/IdiotGX.ttf 
 fonts/ignore/Gooper-Light.otf 
 fonts/ignore/Gooper-Thin.otf 
 fonts/ignore/Gooper-Black.otf 
