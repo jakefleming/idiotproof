@@ -176,7 +176,7 @@ function restoreStage() {
             setStage(window.proofingPhase);
         }
     }
-    var sliders = document.getElementsByClassName("slider");
+    var sliders = document.getElementsByClassName("slider-item");
 
     for(var i = 0; i < sliders.length; i++) {
         if (typeof(Storage) !== "undefined") {
@@ -342,14 +342,26 @@ function saveData(id, value) {
     }
 }
 function passStyleValue(id,property,value) {
-      document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
-      saveData(id+"-slider-"+property+"-val", value);
-      if (property === "fontSize") {
+    if (id === "section__article-app") {
+        var id = document.getElementsByClassName("testarea");
+        saveData(id, value);
+        if (property === "fontSize") {
           value = value+"px";
-      } else if (property === "letterSpacing") {
+        } else if (property === "letterSpacing") {
           value = value+"em";
-      }
-      document.getElementById(id).style[property] = value;
+        }
+        console.log(id);
+        $(id).css(property, value);
+    } else {
+        document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
+        saveData(id+"-slider-"+property+"-val", value);
+        if (property === "fontSize") {
+          value = value+"px";
+        } else if (property === "letterSpacing") {
+          value = value+"em";
+        }
+        document.getElementById(id).style[property] = value;
+    }
 }
 function passfvarValue(id,property,value,fvarSupport) {
       document.getElementById(id+"-slider-"+property+"-val").value=value;
