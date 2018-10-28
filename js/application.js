@@ -205,6 +205,7 @@ function localStorageSave(class,valueWanted) {
 }
 function localStorageClear() {
     localStorage.clear();
+    location.reload();
 }
 function setStageSave() {
     var editBtn = document.getElementById('btn__edit-content');
