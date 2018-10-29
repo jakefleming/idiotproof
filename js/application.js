@@ -19,48 +19,48 @@ var json = "js/proof.json";
 var utc = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
 // function addTypeSettingTools(isVariableFont) {
-//     removeElementsByClass("item__sliders");
-//     removeElementsByClass("add-item-above");
-//     // add inline .item tools
-//     $(".testarea").each(function() {
-//         //
-//         //include required sliders if variable font
-//         if (isVariableFont) {
-//             var fvarSupport = [];
-//             for (var a in font.tables.fvar.axes) {
-//                   var tag = font.tables.fvar.axes[a].tag;
-//                   fvarSupport.push(tag);
-//             }
-//             for (var b in font.tables.fvar.axes) {
-//                 var min = font.tables.fvar.axes[b].minValue;
-//                 var max = font.tables.fvar.axes[b].maxValue;
-//                 var tag = font.tables.fvar.axes[b].tag;
-//                 var name = font.tables.fvar.axes[b].name.en;
-//                 var defaultValue = font.tables.fvar.axes[b].defaultValue;
-//                 html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
-//                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
-//                 html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
-//                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
-//                 $(this).removeClass("hastools-basic");
-//                 $(this).addClass("hastools-fvar");
-//             }
+    removeElementsByClass("item__sliders");
+    removeElementsByClass("add-item-above");
+    // add inline .item tools
+    $(".testarea").each(function() {
+        //
+        //include required sliders if variable font
+        if (isVariableFont) {
+            var fvarSupport = [];
+            for (var a in font.tables.fvar.axes) {
+                  var tag = font.tables.fvar.axes[a].tag;
+                  fvarSupport.push(tag);
+            }
+            for (var b in font.tables.fvar.axes) {
+                var min = font.tables.fvar.axes[b].minValue;
+                var max = font.tables.fvar.axes[b].maxValue;
+                var tag = font.tables.fvar.axes[b].tag;
+                var name = font.tables.fvar.axes[b].name.en;
+                var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
+                html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
+                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
+                html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                $(this).removeClass("hastools-basic");
+                $(this).addClass("hastools-fvar");
+            }
 
-//         }
-//         html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-//         html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
-//         html += '</div></div>';
-//         //insert next to nearest .item
-//         document.getElementById('#'+testAreaParent).insertAdjacentHTML('beforebegin', html);
-        
-//         //update fvar sliders to default settings
-//         if (isVariableFont) {
-//             for (var b in font.tables.fvar.axes) {
-//                   var tag = font.tables.fvar.axes[b].tag;
-//                   var defaultValue = font.tables.fvar.axes[b].defaultValue;
-//                   passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
-//             }
-//         }
-//     });
+        }
+        html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+        html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
+        html += '</div></div>';
+        //insert next to nearest .item
+        document.getElementById('#'+testAreaParent).insertAdjacentHTML('beforebegin', html);
+
+        //update fvar sliders to default settings
+        if (isVariableFont) {
+            for (var b in font.tables.fvar.axes) {
+                  var tag = font.tables.fvar.axes[b].tag;
+                  var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                  passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
+            }
+        }
+    });
     // // header level tools
     // html = '<div id="header__sliders" class="header__sliders"><div class="item__sliders-wrapper">';
     // //font size
@@ -94,6 +94,29 @@ function setStage(thisStage) {
     $.getJSON(json, function(proof) {
         for(stage in proof) {
             if (stage === thisStage) {
+                  var addVariableSliders = function() {
+                        if (isVariableFont) {
+                            var fvarSupport = [];
+                            for (var a in font.tables.fvar.axes) {
+                                  var tag = font.tables.fvar.axes[a].tag;
+                                  fvarSupport.push(tag);
+                            }
+                            for (var b in font.tables.fvar.axes) {
+                                var min = font.tables.fvar.axes[b].minValue;
+                                var max = font.tables.fvar.axes[b].maxValue;
+                                var tag = font.tables.fvar.axes[b].tag;
+                                var name = font.tables.fvar.axes[b].name.en;
+                                var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                                html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
+                                html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
+                                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
+                                html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                                $(this).removeClass("hastools-basic");
+                                $(this).addClass("hastools-fvar");
+                            }
+
+                        }
+                  }
                 if (stage === "FEAT") {
                 // Generating font feature proofing section
                     if (font.tables.gsub) {
@@ -142,6 +165,10 @@ function setStage(thisStage) {
                             sliderhtml += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+whichFontSize(textClass)+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
                             sliderhtml += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
                             sliderhtml += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+                            //plus minus buttons
+                            sliderhtml += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+                            sliderhtml += '<div class="remove-item-this"><button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
+                            //close slider
                             sliderhtml += '</div></div>';
                             html += sliderhtml;
                             html += proofhtml;
@@ -163,6 +190,10 @@ function setStage(thisStage) {
                         html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+whichFontSize(textClass)+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+whichFontSize(textClass)+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
                         html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
                         html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+                        //plus minus buttons
+                        html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+                        html += '<div class="remove-item-this"><button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
+                        //close slider
                         html += '</div>';
                         html += '</div>';
                         html += '<div class="item__proof">';
@@ -175,7 +206,7 @@ function setStage(thisStage) {
                     }
                 }
             }
-            buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';            
+            buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
         }
         stageButtons.innerHTML = buttonhtml;
         article.innerHTML = html;
@@ -399,7 +430,7 @@ function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
                  addKeyFrames(
                     property+'infinite',
                     '0%, 100% {font-variation-settings:"'+property+'" '+value+';}' +
-                    '25% {font-variation-settings:"'+property+'" '+minValue+';}' + 
+                    '25% {font-variation-settings:"'+property+'" '+minValue+';}' +
                     '50% {font-variation-settings:"'+property+'" '+maxValue+';}'
                 );
             } else {
@@ -415,7 +446,7 @@ function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
                 addKeyFrames(
                     property+'infinite',
                     '0%, 100% {font-variation-settings:"'+property+'" '+value+' '+fvarcss+';}' +
-                    '25% {font-variation-settings:"'+property+'" '+minValue+' '+fvarcss+';}' + 
+                    '25% {font-variation-settings:"'+property+'" '+minValue+' '+fvarcss+';}' +
                     '50% {font-variation-settings:"'+property+'" '+maxValue+' '+fvarcss+';}'
                 );
             }
@@ -431,7 +462,7 @@ function displayFontData(fontFamily) {
 
     for (tablename in font.tables) {
         table = font.tables[tablename];
-        
+
         if (tablename === 'cmap') {
             var gim = font.tables.cmap.glyphIndexMap;
             var gimLength = Object.keys(gim).length;
@@ -615,9 +646,9 @@ window.onload = function() {
             setFont(fontFamilySource, fontFamily);
             document.getElementById("btn__setfont-"+fontFamily).classList.add('active');
             $('#style__fontface').append(style);
-            
+
             //var i;
-            // check local storage values 
+            // check local storage values
             // console.log("local storage");
             // for (i = 0; i < localStorage.length; i++)   {
             //     console.log(localStorage.key(i) + "=[" + localStorage.getItem(localStorage.key(i)) + "]");
@@ -634,7 +665,7 @@ window.onload = function() {
             fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
-            
+
     }
 
     //Active button toggles
