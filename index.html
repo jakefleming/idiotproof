@@ -16,16 +16,17 @@
     <script src='js/application-min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <style id="style__fontface"></style>
+    <style id="style__fontfamily"></style>
     <style id="style__opentype-features"></style>
     <style id="style__fvar-animation"></style>
 </head>
 <body class="body__idiotproofed tools-visible">
     <header id="section__header-app" class="section__header-app u__flex">
-        <div id="section__header-file-buttons" class="u__flex-grow-1 t__left"></div>
+        <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
+            <!-- upload or auto load goes here -->
+        </div>
         <div id="section__header-stage-buttons" class="u__flex-grow-1 t__center">
-            <button class="btn btn__setstage" onclick="setStage(1)">Stage 1</button>
-            <button class="btn btn__setstage" onclick="setStage(2)">Stage 2</button>
-            <button class="btn btn__setstage" onclick="setStage(3)">Stage 3</button>
+            <!-- stage set buttons go here -->
         </div>
         <div class="u__flex-grow-1 t__right">
             <button class="btn btn__print" onclick="javascript:window.print()">Print/Save PDF</button>
@@ -38,28 +39,11 @@
         <button id="btn__edit-content" type="button" onclick="localStorageSave('testarea','innerHTML')">Save</button>
         <button id="btn__edit-content" type="button" onclick="localStorageClear()">Reset</button>
         <div id="header__sliders" class="header__sliders">
-                
+            <!-- header level controls -->
         </div>
     </div>
     <article id="section__article-app" class="container">
-        <section class="section__proofing section__proofing-phases grid">
-            <div id="item-overview" class="item u__flex">
-              <div class="item__proof">
-                <div id="section__proofing-overview" class="t__importedfontfamily testarea" contentEditable="true"></div>
-            </div>
-            </div>
-            <div id="item-spacing" class="item u__flex">
-              <div class="item__proof">
-                <div id="section__proofing-spacing" class="t__importedfontfamily testarea" contentEditable="true"></div>
-            </div>
-            </div>
-            <div id="item-trio" class="item u__flex">
-              <div class="item__proof">
-                <div id="section__proofing-trio" class="t__importedfontfamily testarea" contentEditable="true"></div>
-            </div>
-            </div>
-        </section>
-        <section class="section__proofing section__proofing-feature" id="section__proofing-feature"></section>
+        <!-- proofing goes here -->
     </article>
     <footer id="section__footer-app" class="section__footer-app container u__flex t__center">
         <div class="u__flex-grow-1">
