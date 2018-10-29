@@ -19,48 +19,9 @@ var json = "js/proof.json";
 var utc = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
 // function addTypeSettingTools(isVariableFont) {
-    removeElementsByClass("item__sliders");
-    removeElementsByClass("add-item-above");
-    // add inline .item tools
-    $(".testarea").each(function() {
-        //
-        //include required sliders if variable font
-        if (isVariableFont) {
-            var fvarSupport = [];
-            for (var a in font.tables.fvar.axes) {
-                  var tag = font.tables.fvar.axes[a].tag;
-                  fvarSupport.push(tag);
-            }
-            for (var b in font.tables.fvar.axes) {
-                var min = font.tables.fvar.axes[b].minValue;
-                var max = font.tables.fvar.axes[b].maxValue;
-                var tag = font.tables.fvar.axes[b].tag;
-                var name = font.tables.fvar.axes[b].name.en;
-                var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
-                html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
-                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
-                html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
-                $(this).removeClass("hastools-basic");
-                $(this).addClass("hastools-fvar");
-            }
-
-        }
-        html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-        html += '<button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button>';
-        html += '</div></div>';
-        //insert next to nearest .item
-        document.getElementById('#'+testAreaParent).insertAdjacentHTML('beforebegin', html);
 
         //update fvar sliders to default settings
-        if (isVariableFont) {
-            for (var b in font.tables.fvar.axes) {
-                  var tag = font.tables.fvar.axes[b].tag;
-                  var defaultValue = font.tables.fvar.axes[b].defaultValue;
-                  passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
-            }
-        }
-    });
+
     // // header level tools
     // html = '<div id="header__sliders" class="header__sliders"><div class="item__sliders-wrapper">';
     // //font size
@@ -79,6 +40,9 @@ var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
     // html += '<div><label for="'+proofIDName+'-slider-letterSpacing">Letter Spacing </label><span id="'+proofIDName+'-slider-letterSpacing-val">'+proofletterSpacing+'</span><input id="'+proofIDName+'-slider-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+proofletterSpacing+'" oninput="passStyleValue(\''+proofIDName+'\', \'letterSpacing\', this.value)"></div>';
     // headerElement.innerHTML = html;
 // }
+function toggleClass(thisID, thisClass) {
+      document.getElementById(thisID).classList.toggle(thisClass);
+}
 function setStage(thisStage) {
     //insert stage buttons
     var articleID = 'section__article-app',
@@ -95,13 +59,13 @@ function setStage(thisStage) {
         for(stage in proof) {
             if (stage === thisStage) {
                   var addVariableSliders = function() {
-                        if (isVariableFont) {
-                            var fvarSupport = [];
-                            for (var a in font.tables.fvar.axes) {
+                        if (font.tables.fvar) {
+                           var fvarSupport = [];
+                           for (var a in font.tables.fvar.axes) {
                                   var tag = font.tables.fvar.axes[a].tag;
                                   fvarSupport.push(tag);
-                            }
-                            for (var b in font.tables.fvar.axes) {
+                           }
+                           for (var b in font.tables.fvar.axes) {
                                 var min = font.tables.fvar.axes[b].minValue;
                                 var max = font.tables.fvar.axes[b].maxValue;
                                 var tag = font.tables.fvar.axes[b].tag;
@@ -111,102 +75,69 @@ function setStage(thisStage) {
                                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
                                 html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
                                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
-                                $(this).removeClass("hastools-basic");
-                                $(this).addClass("hastools-fvar");
-                            }
+                                // passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
+                           }
 
                         }
+
                   }
-                if (stage === "FEAT") {
-                // Generating font feature proofing section
-                    if (font.tables.gsub) {
-                        gsubFeatures = font.tables.gsub.features;
-                        var taglist = [];
-                        for (var i in gsubFeatures) {
-                            var tag = gsubFeatures[i].tag;
-                            taglist.push(tag);
-                        }
-                        taglist = preserveUnique(taglist);
-                        for (var b in taglist) {
-                            var tag = taglist[b];
-                            var testAreaID = 'section__proofing'+tag;
-                            var sliderID = testAreaID+'-slider';
-                            var testAreaParent = 'item--'+tag;
-                            var testAreaFontSize = testAreaStyle.getPropertyValue('font-size');
-                            styles += "."+testAreaID+' { font-feature-settings: "'+tag+'" 1;}';
-                            sliderhtml = '<div class="item__sliders"><div class="item__sliders-wrapper">';
-
-                            if (tag === "aalt" || tag === "ccmp") {
-                                continue;
-                            } else {
-                                html = '<div id="'+testAreaParent+'" class="item u__flex">';
-                                proofhtml += '<div class="item__proof">';
-                            }
-                            if (proof[stage][tag]) {
-                                var textClass = whichFontSize(proof[stage][tag].sample);
-                                proofhtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">'+proof[stage][tag].definition+'</span></h3>';
-                                proofhtml += '<div id="'+testAreaID+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea '+testAreaID+'">';
-                                proofhtml +=  proof[stage][tag].sample;
-                                return textClass;
-                            } else if (tag.includes("ss")) {
-                                var textClass = whichFontSize(proof[stage].liga.sample);
-                                proofhtml += '<h3 class="h3">'+tag+' <span class="tooltip tooltip__features">Stylistic Set</span></h3>';
-                                proofhtml += '<div id="'+testAreaID+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea '+testAreaID+'">';
-                                proofhtml +=  proof[stage].liga.sample;
-                                return textClass;
-                            } else {
-                                var textClass = whichFontSize(proof[stage].liga.sample);
-                                proofhtml += '<h3 class="h3">'+tag+'</h3>';
-                                proofhtml += '<div id="'+testAreaID+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea '+testAreaID+'">';
-                                proofhtml +=  proof[stage].liga.sample;
-                                return textClass;
-                            }
-                            proofhtml += '</div></div>';
-                            sliderhtml += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+whichFontSize(textClass)+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+testAreaFontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
-                            sliderhtml += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
-                            sliderhtml += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
-                            //plus minus buttons
-                            sliderhtml += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-                            sliderhtml += '<div class="remove-item-this"><button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
-                            //close slider
-                            sliderhtml += '</div></div>';
-                            html += sliderhtml;
-                            html += proofhtml;
-                            html += '</div>';
-                        }
-                    }
-                } else {
-
                     html = '';
                     sliderhtml = '';
                     proofhtml = '';
+                    gsubFeatures = font.tables.gsub.features;
+                    var taglist = [];
+                    for (var i in gsubFeatures) {
+                        if (gsubFeatures[i].tag !== "aalt") {
+                              var tag = gsubFeatures[i].tag;
+                              taglist.push(tag);
+                        }
+                    }
+                    taglist = preserveUnique(taglist);
+
                     for(var title in proof[stage]) {
-                        var textClass = whichFontSize(proof[stage][title]);
-                        var testAreaID = 'section__proofing'+title;
-                        var sliderID = testAreaID+'-slider';
-                        var testAreaParent = 'item--'+title;
-                        html += '<div id="'+testAreaParent+'" class="item u__flex">';
-                        html += '<div class="item__sliders"><div class="item__sliders-wrapper">';
-                        html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+whichFontSize(textClass)+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+whichFontSize(textClass)+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
-                        html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
-                        html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
-                        //plus minus buttons
-                        html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-                        html += '<div class="remove-item-this"><button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
-                        //close slider
-                        html += '</div>';
-                        html += '</div>';
-                        html += '<div class="item__proof">';
-                        html += '<h3 class="h3">'+title+'</h3>';
-                        html += '<div id="'+testAreaID+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true">';
-                        html += proof[stage][title];
-                        html += '</div>';
-                        html += '</div>';
-                        html += '</div>';
+                        if (stage === "FEAT" && !taglist.includes(title)) {
+                              continue;
+                        } else {
+                              var textClass = whichFontSize(proof[stage][title]);
+                              var testAreaID = 'section__proofing'+title;
+                              var sliderID = testAreaID+'-slider';
+                              var testAreaParent = 'item--'+title;
+                              html += '<div id="'+testAreaParent+'" class="item u__flex">';
+                              html += '<div class="item__sliders"><div class="item__sliders-wrapper">';
+                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+whichFontSize(textClass)+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+whichFontSize(textClass)+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
+                              html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
+                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+                              //Variable sliders
+                              addVariableSliders();
+                              //plus minus buttons
+                              html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+                              html += '<div class="remove-item-this"><button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
+                              //toggle feature button
+                              if (stage === "FEAT") {
+                                    html += '<div class="turn-off-feature"><button onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">Feature</button></div>';
+                              }
+                              //close slider
+                              html += '</div>';
+                              html += '</div>';
+                              html += '<div class="item__proof">';
+                              if (stage === "FEAT") {
+                                    styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
+                                    var textClass = whichFontSize(proof[stage][title].sample);
+                                    html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
+                                    html += '<div id="'+testAreaID+'" contenteditable="true" class="t__importedfontfamily '+textClass+' testarea '+testAreaID+'">';
+                                    html +=  proof[stage][title].sample;
+                              } else {
+                                    html += '<h3 class="h3">'+title+'</h3>';
+                                    html += '<div id="'+testAreaID+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true">';
+                                    html += proof[stage][title];
+                              }
+                              html += '</div>';
+                              html += '</div>';
+                              html += '</div>';
+                        }
                     }
                 }
-            }
-            buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+               buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
         }
         stageButtons.innerHTML = buttonhtml;
         article.innerHTML = html;
