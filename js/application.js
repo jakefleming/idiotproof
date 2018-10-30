@@ -75,7 +75,6 @@ function setStage(thisStage) {
                                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
                                 html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
                                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
-                                // passfvarValue(testAreaID, tag, defaultValue, fvarSupport);
                            }
 
                         }
@@ -96,6 +95,7 @@ function setStage(thisStage) {
 
                     for(var title in proof[stage]) {
                         if (stage === "FEAT" && !taglist.includes(title)) {
+                              var hasFeatures = false;
                               continue;
                         } else {
                               var textClass = whichFontSize(proof[stage][title]);
@@ -121,6 +121,7 @@ function setStage(thisStage) {
                               html += '</div>';
                               html += '<div class="item__proof">';
                               if (stage === "FEAT") {
+                                    hasFeatures = true;
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
@@ -136,6 +137,9 @@ function setStage(thisStage) {
                               html += '</div>';
                         }
                     }
+                }
+                if (!hasFeatures) {
+                      html += '<div class="item u__flex t__center"><div class="item__proof">No features found! :...(</div></div>';
                 }
                buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
         }
@@ -229,17 +233,17 @@ function setStageSave() {
 }
 function whichFontSize(thisString) {
     if (thisString === "t__size-xxl") {
-        return "10em";
+        return "140";
     } else if (thisString === "t__size-xl") {
-        return "8em";
+        return "100";
     } else if (thisString === "t__size-l") {
-        return "6em";
+        return "84";
     } else if (thisString === "t__size-m") {
-        return "4em";
+        return "56";
     } else if (thisString === "t__size-s") {
-        return "2em";
+        return "28";
     } else if (thisString === "t__size-xs") {
-        return "1em";
+        return "14";
     } else {
           var charCount = thisString.length;
           if (charCount < 25 ) {
