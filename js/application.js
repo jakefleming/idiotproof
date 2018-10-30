@@ -103,7 +103,6 @@ function setStage(thisStage) {
 
                     for(var title in proof[stage]) {
                         if (stage === "FEAT" && !taglist.includes(title)) {
-                              var hasFeatures = 0;
                               continue;
                         } else {
                               var textClass = whichFontSize(proof[stage][title]);
@@ -111,6 +110,7 @@ function setStage(thisStage) {
                               var sliderID = testAreaID+'-slider';
                               var testAreaParent = 'item--'+title;
                               var inlineStyle = '';
+                              // font value check localstorage
                               if (localStorage.getItem(sliderID+'-fontSize-val')) {
                                     var fontSize = localStorage.getItem(sliderID+'-fontSize-val');
                                     inlineStyle += 'font-size: '+fontSize+'px;';
@@ -139,17 +139,27 @@ function setStage(thisStage) {
                               html += '</div>';
                               html += '<div class="item__proof">';
                               if (stage === "FEAT") {
-                                    hasFeatures =+ 1;
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
-                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea '+testAreaID+'" contenteditable="true">';
-                                    html +=  proof[stage][title].sample;
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true">';
+                                    // content check localstorage
+                                    if (localStorage.getItem(testAreaID)) {
+                                          html += localStorage.getItem(testAreaID);
+                                    } else {
+                                           html +=  proof[stage][title].sample;
+                                    }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true">';
-                                    html += proof[stage][title];
+                                    // content check localstorage
+                                    if (localStorage.getItem(testAreaID)) {
+                                          html += localStorage.getItem(testAreaID);
+                                    } else {
+                                           html += proof[stage][title];
+                                    }
                               }
+                              stageWatchNSave(testAreaID, "content");
                               html += '</div>';
                               html += '</div>';
                               html += '</div>';
@@ -173,37 +183,6 @@ function setStage(thisStage) {
     editBtn.classList.remove("saved");
     editBtn.classList.add("need-save");
 }
-// function restoreStage() {
-//     //Save all document edits
-//     var testareas = document.getElementsByClassName("testarea");
-//     console.log(testareas);
-//     for(var i = 0; i < testareas.length; i++) {
-//         if (localStorage.getItem(testareas[i].getAttribute('id')) !== null) {
-//             testareas[i].innerHTML = localStorage.getItem(testareas[i].getAttribute('id'));
-//         } else {
-//             setStage(window.proofingPhase);
-//         }
-//     }
-//     var sliders = document.getElementsByClassName("slider-item");
-//
-//     for(var i = 0; i < sliders.length; i++) {
-//         if (typeof(Storage) !== "undefined") {
-//             var sliderID = sliders[i].getAttribute('id');
-//             var testareaID = sliderID.split("-slider-")[0];
-//             var property = sliderID.split("-slider-")[1];
-//             var localStorageValue = localStorage.getItem(sliderID+"-val");
-//             if (localStorageValue !== null) {
-//                 // Update indicator
-//                 var indicator = document.getElementById(sliderID+"-val");
-//                 indicator.innerHTML = localStorageValue;
-//                 // Update slider value
-//                 document.getElementById(sliderID).value = localStorageValue;
-//                 // Pass style to testares
-//                 passStyleValue(testareaID,property,localStorageValue);
-//             }
-//         }
-//     }
-// }
 function localStorageSave(thisClass,valueWanted) {
     //Attached to actual button
     var classes = document.getElementsByClassName(thisClass);
