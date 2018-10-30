@@ -5,9 +5,6 @@
 // * save pdf to google drive?
 
 var font = null;
-window.fontSize = 16;
-window.lineHeight = 1.3;
-window.letterSpacing = 0;
 
 var fontFormats = {
     truetype: 'ttf',
@@ -188,6 +185,14 @@ function setStage(thisStage) {
                               } else {
                                       var fontSize = whichFontSize(textClass);
                               }
+                              if (localStorage.getItem(sliderID+'-lineHeight-val')) {
+                                    var lineHeight = localStorage.getItem(sliderID+'-lineHeight-val');
+                                    inlineStyle += 'line-height: '+lineHeight+';';
+                              }
+                              if (localStorage.getItem(sliderID+'-letterSpacing-val')) {
+                                    var letterSpacing = localStorage.getItem(sliderID+'-letterSpacing-val');
+                                    inlineStyle += 'letter-spacing: '+letterSpacing+'em;';
+                              }
                               html += '<div id="'+testAreaParent+'" class="item u__flex">';
                               html += '<div class="item__sliders"><div class="item__sliders-wrapper">';
                               html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
@@ -202,6 +207,10 @@ function setStage(thisStage) {
                               if (stage === "FEAT") {
                                     html += '<div class="turn-off-feature"><button onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">Feature</button></div>';
                               }
+                              // other style buttons
+                              html += '<div class="turn-off-feature"><button onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
+                              html += '<div class="turn-off-feature"><button onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
+                              html += '<div class="turn-off-feature"><button onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">rt</button></div>';
                               //close slider
                               html += '</div>';
                               html += '</div>';
@@ -263,26 +272,19 @@ function insertField(aboveHere) {
 }
 
 function passStyleValue(id,property,value) {
-    if (id === "item__proof") {
-        var id = document.getElementsByClassName(id);
-        document.getElementById("item__proof-slider-"+property+"-val").innerHTML=value;
-        saveData("item__proof-slider-"+property+"-val", value);
-        if (property === "fontSize") {
-          value = value+"px";
-        } else if (property === "letterSpacing") {
-          value = value+"em";
-        }
-        $(id).css(property, value);
-    } else {
-        document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
-        saveData(id+"-slider-"+property+"-val", value);
-        if (property === "fontSize") {
-          value = value+"px";
-        } else if (property === "letterSpacing") {
-          value = value+"em";
-        }
-        document.getElementById(id).style[property] = value;
-    }
+      if (property === "fontSize" || property === "lineHeight" || property === "letterSpacing") {
+            document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
+            saveData(id+"-slider-"+property+"-val", value);
+            if (property === "fontSize") {
+                  value = value+"px";
+            } else if (property === "letterSpacing") {
+                  value = value+"em";
+            }
+      } else {
+            saveData(id+property, value);
+      }
+
+      document.getElementById(id).style[property] = value;
 }
 function passfvarValue(id,property,value,fvarSupport) {
       document.getElementById(id+"-slider-"+property+"-val").value=value;
