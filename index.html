@@ -20,7 +20,7 @@
     <style id="style__opentype-features"></style>
     <style id="style__fvar-animation"></style>
 </head>
-<body class="body__idiotproofed tools-visible">
+<body id="body__idiotproofed" class="body__idiotproofed tools-visible">
     <header id="section__header-app" class="section__header-app u__flex">
         <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
             <!-- upload or auto load goes here -->
@@ -30,13 +30,15 @@
         </div>
         <div class="u__flex-grow-1 t__right">
             <button class="btn btn__print" onclick="javascript:window.print()">Print/Save PDF</button>
+            <button class="btn btn__professional" onclick="toggleClass('body__idiotproofed', 'professional')">Professional Mode</button>
+            
         </div>
     </header>
 
     <header id="section__header-names" class="section__header-names u__flex"></header>
     <div id="section__header-tools" class="section__header-tools">
         <button id="btn__view-tools-toggle" class="btn btn__view-tools-toggle">toggle sliders</button>
-        <button id="btn__edit-reset" type="button" onclick="localStorageClear()">Reset</button>
+        <button id="btn__edit-reset" type="button" class="btn btn__edit-reset" onclick="localStorageClear()">Reset</button>
         <div id="header__sliders" class="header__sliders">
             <!-- header level controls -->
         </div>

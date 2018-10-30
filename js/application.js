@@ -116,7 +116,6 @@ function saveData(id, value) {
         localStorage.setItem(id, value);
     }
 }
-
 //Meat and potatoes
 //------------------------
 
@@ -158,7 +157,7 @@ function setStage(thisStage) {
                                 }
                                 html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
                                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
-                                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
+                                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')" class="btn">ease</button>';
                                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                                 if (b != font.tables.fvar.axes.length - 1) {
                                       fvarStyle += ", ";
@@ -212,17 +211,19 @@ function setStage(thisStage) {
                               //Variable sliders
                               addVariableSliders();
                               //plus minus buttons
-                              html += '<div class="add-item-above"><button onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-                              html += '<div class="remove-item-this"><button onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
+                              html += '<div class="u__flex btn__wrapper">';
+                              html += '<div class="add-item-above"><button class="btn" onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+                              html += '<div class="remove-item-this"><button class="btn" onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
                               //toggle feature button
                               if (stage === "FEAT") {
                                     html += '<div class="turn-off-feature"><button onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">Feature</button></div>';
                               }
                               // other style buttons
-                              html += '<div class="turn-off-feature"><button onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
-                              html += '<div class="turn-off-feature"><button onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="turn-off-feature"><button onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">rt</button></div>';
-                              //close slider
+                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
+                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
+                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">rt</button></div>';
+                              html += '</div>';
+                              //close tools
                               html += '</div>';
                               html += '</div>';
                               html += '<div class="item__proof">';

@@ -1,0 +1,71 @@
+//Styles for ProfessionalProofer
+$white: #fff;
+$lightestgray: #f4f4f4;
+$lightergray: #e3e3e3;
+$lightgray: #eaeaea;
+$gray: #d5d5d5;
+$darkishgray: #b1aeb1;
+$darkgray: #9C9C9C;
+$darkergray: #2C2C2C;
+$black: #2C2C2C;
+
+&.loaded {
+	font-family: -apple-system, BlinkMacSystemFont, 'BlinkMacSystemFont', sans-serif;
+	color: $black;
+}
+
+
+.section__header-app {
+	color: #4d494d;
+	border-bottom: 1px solid $lightergray;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	user-select: none;
+	cursor: default;
+	position: sticky;
+	top: 0;
+	background: $lightestgray;
+	z-index: 1;
+}
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+.btn {
+	text-decoration: none;
+	color: $black;
+	font-size: 10px;
+	padding: 4px 7px;
+	border: 0px;
+	margin: 2px 2px;
+	display: inline-block;
+	background: $white;
+	box-shadow: 0px 0px 1px rgba(0,0,0,0.1);
+	border-radius: 10px;
+	cursor: default;
+	outline: none;
+	&:active {
+	 	border-color: $gray;
+	 	background: $lightergray;
+		box-shadow: 0px 0px 1px rgba(0,0,0,0.65);		
+	}
+	&:disabled {
+		color: $gray;
+		background: linear-gradient(top, $lightergray, $lightestgray);
+	}
+}
+.item__proof {
+	.h3 {
+		color: $gray;
+		margin-top: 0px;
+	}
+}
+.item__sliders {
+	span {
+		float: right;
+		font-size: 9px;
+		color: $darkergray;
+		letter-spacing: .01em;
+		font-weight: bold;
+	}
+}

@@ -5,8 +5,10 @@
 @import 'sliders';
 @import 'typography';
 @import 'utilities';
-
 @import 'media-queries';
+body.professional {
+	@import 'professional';
+}
 
 @media print {
   @import 'print';
