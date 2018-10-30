@@ -19,40 +19,111 @@ var json = "js/proof.json";
 var utc = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
 
+// Utility functions
+//------------------------
 function toggleClass(thisID, thisClass) {
       document.getElementById(thisID).classList.toggle(thisClass);
 }
-function stageWatchNSave(id, type) {
-      if (type === "content") {
-            $(id).on("click", function(){
-                this.contentEditable = true;
-                this.focus();
-                editBtn.innerHTML = 'Editing...';
-                editBtn.classList.remove("saved");
-                editBtn.classList.add("editing");
-            });
-            $(id).focusout( function() {
-                this.contentEditable = false;
-                for(var b = 0; b < testareas.length; b++) {
-                    localStorage.setItem(this.getAttribute('id'), this.innerHTML);
-                }
-                editBtn.innerHTML = 'Saved';
-                editBtn.classList.remove("editing");
-                editBtn.classList.add("saved");
-            });
-      } else if (type === "slider") {
-              $(id).on("focus", function(){
-                      editBtn.innerHTML = 'Editing...';
-                      editBtn.classList.remove("saved");
-                      editBtn.classList.add("editing");
-              });
-              $(id).mouseup( function() {
-                      editBtn.innerHTML = 'Saved';
-                      editBtn.classList.remove("editing");
-                      editBtn.classList.add("saved");
-              });
-        }
+function preserveUnique(a) {
+    var seen = {};
+    var out = [];
+    var len = a.length;
+    var j = 0;
+    for(var i = 0; i < len; i++) {
+         var item = a[i];
+         if(seen[item] !== 1) {
+               seen[item] = 1;
+               out[j++] = item;
+         }
+    }
+    return out;
 }
+function showErrorMessage(message) {
+    var el = document.getElementById('message');
+    if (!message || message.trim().length === 0) {
+        el.style.display = 'none';
+    } else {
+        el.style.display = 'block';
+    }
+    el.innerHTML = message;
+}
+
+function uint8ToBase64(buffer) {
+     var binary = '';
+     var len = buffer.byteLength;
+     for (var i = 0; i < len; i++) {
+         binary += String.fromCharCode(buffer[i]);
+     }
+     return window.btoa( binary );
+}
+// Was useful when I had a save button
+// function localStorageSave(thisClass,valueWanted) {
+//     //Attached to actual button
+//     var classes = document.getElementsByClassName(thisClass);
+//     for(var i = 0; i < classes.length; i++) {
+//             localStorage.setItem(classes[i].getAttribute('id'), classes[i][valueWanted]);
+//     }
+// }
+function localStorageClear() {
+    localStorage.clear();
+    location.reload();
+}
+function whichFontSize(thisString) {
+    if (thisString === "t__size-xxl") {
+        return "140";
+    } else if (thisString === "t__size-xl") {
+        return "100";
+    } else if (thisString === "t__size-l") {
+        return "84";
+    } else if (thisString === "t__size-m") {
+        return "56";
+    } else if (thisString === "t__size-s") {
+        return "28";
+    } else if (thisString === "t__size-xs") {
+        return "14";
+    } else {
+          var charCount = thisString.length;
+          if (charCount < 25 ) {
+                return "t__size-xxl";
+          } else if (charCount < 50 ) {
+                return "t__size-xl";
+          } else if (charCount < 95) {
+                return "t__size-l";
+          } else if (charCount < 200 ){
+                return "t__size-m";
+          } else if (charCount < 1000 ){
+                return "t__size-s";
+          } else {
+                return "t__size-xs";
+          }
+    }
+}
+// Probably useful one day
+// function isVariableFont() {
+//     if (font.tables["fvar"]) {
+//         return true;
+//     } else {
+//         return false;
+//     }
+// }
+function removeElementsByClass(className){
+    var elements = document.getElementsByClassName(className);
+    while(elements.length > 0){
+        elements[0].parentNode.removeChild(elements[0]);
+    }
+}
+function removeElementsByID(IDName){
+    document.getElementById(IDName).outerHTML = "";
+}
+function saveData(id, value) {
+    if (typeof(Storage) !== "undefined") {
+        localStorage.setItem(id, value);
+    }
+}
+
+//Meat and potatoes
+//------------------------
+
 function setStage(thisStage) {
     //insert stage buttons
     var articleID = 'section__article-app',
@@ -120,11 +191,8 @@ function setStage(thisStage) {
                               html += '<div id="'+testAreaParent+'" class="item u__flex">';
                               html += '<div class="item__sliders"><div class="item__sliders-wrapper">';
                               html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
-                              stageWatchNSave(sliderID+'-fontSize-val', "slider");
                               html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
-                              stageWatchNSave(sliderID+'-lineHeight-val', "slider");
                               html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
-                              stageWatchNSave(sliderID+'-letterSpacing-val', "slider");
                               //Variable sliders
                               addVariableSliders();
                               //plus minus buttons
@@ -142,7 +210,7 @@ function setStage(thisStage) {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
-                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true">';
+                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -151,7 +219,7 @@ function setStage(thisStage) {
                                     }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
-                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true">';
+                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -159,8 +227,7 @@ function setStage(thisStage) {
                                            html += proof[stage][title];
                                     }
                               }
-                              stageWatchNSave(testAreaID, "content");
-                              html += '</div>';
+                              html += '</textarea>';
                               html += '</div>';
                               html += '</div>';
                         }
@@ -170,76 +237,18 @@ function setStage(thisStage) {
                       console.log(html);
                       html += '<div class="item u__flex t__center"><div class="item__proof">No features found! :...(</div></div>';
                 }
-               buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+               if (stage === thisStage) {
+                     buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+               } else {
+                     buttonhtml += '<button class="btn btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+               }
         }
         stageButtons.innerHTML = buttonhtml;
         article.innerHTML = html;
         $("#style__opentype-features").html(styles);
 
     });
-    var editBtn = document.getElementById('btn__edit-content');
-    editBtn.innerHTML = 'Save';
-    editBtn.classList.remove("editing");
-    editBtn.classList.remove("saved");
-    editBtn.classList.add("need-save");
-}
-function localStorageSave(thisClass,valueWanted) {
-    //Attached to actual button
-    var classes = document.getElementsByClassName(thisClass);
-    for(var i = 0; i < classes.length; i++) {
-            localStorage.setItem(classes[i].getAttribute('id'), classes[i][valueWanted]);
-    }
-}
-function localStorageClear() {
-    localStorage.clear();
-    location.reload();
-}
-function whichFontSize(thisString) {
-    if (thisString === "t__size-xxl") {
-        return "140";
-    } else if (thisString === "t__size-xl") {
-        return "100";
-    } else if (thisString === "t__size-l") {
-        return "84";
-    } else if (thisString === "t__size-m") {
-        return "56";
-    } else if (thisString === "t__size-s") {
-        return "28";
-    } else if (thisString === "t__size-xs") {
-        return "14";
-    } else {
-          var charCount = thisString.length;
-          if (charCount < 25 ) {
-                return "t__size-xxl";
-          } else if (charCount < 50 ) {
-                return "t__size-xl";
-          } else if (charCount < 95) {
-                return "t__size-l";
-          } else if (charCount < 200 ){
-                return "t__size-m";
-          } else if (charCount < 1000 ){
-                return "t__size-s";
-          } else {
-                return "t__size-xs";
-          }
-    }
-}
-function isVariableFont() {
-    if (font.tables["fvar"]) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-function removeElementsByClass(className){
-    var elements = document.getElementsByClassName(className);
-    while(elements.length > 0){
-        elements[0].parentNode.removeChild(elements[0]);
-    }
-}
-function removeElementsByID(IDName){
-    document.getElementById(IDName).outerHTML = "";
+    saveData("proofingPhase",thisStage);
 }
 
 var fieldcount = 0;
@@ -252,11 +261,7 @@ function insertField(aboveHere) {
 
     $("#"+aboveHere).prepend(thisClone);
 }
-function saveData(id, value) {
-    if (typeof(Storage) !== "undefined") {
-        localStorage.setItem(id, value);
-    }
-}
+
 function passStyleValue(id,property,value) {
     if (id === "item__proof") {
         var id = document.getElementsByClassName(id);
@@ -402,22 +407,12 @@ function displayFontData(fontFamily) {
     //Inject css of necessary features
     $("#style__fontfamily").html(styles);
     //setStage
-    setStage(window.proofingPhase);
-}
-
-function preserveUnique(a) {
-    var seen = {};
-    var out = [];
-    var len = a.length;
-    var j = 0;
-    for(var i = 0; i < len; i++) {
-         var item = a[i];
-         if(seen[item] !== 1) {
-               seen[item] = 1;
-               out[j++] = item;
-         }
+    if (localStorage.getItem('proofingPhase')) {
+            // Check for local storage settings
+            setStage(localStorage.getItem('proofingPhase'));
+    } else {
+            setStage(window.proofingPhase);
     }
-    return out;
 }
 
 function onFontLoaded(font, fontFamilySource, fontFamily) {
@@ -435,26 +430,6 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
         localStorage.setItem("fontFamilySource", fontFamilySource);
     }
 
-}
-
-function showErrorMessage(message) {
-    var el = document.getElementById('message');
-    if (!message || message.trim().length === 0) {
-        el.style.display = 'none';
-    } else {
-        el.style.display = 'block';
-    }
-    el.innerHTML = message;
-}
-
-// taken from axis-praxis.org
-function uint8ToBase64(buffer) {
-     var binary = '';
-     var len = buffer.byteLength;
-     for (var i = 0; i < len; i++) {
-         binary += String.fromCharCode(buffer[i]);
-     }
-     return window.btoa( binary );
 }
 
 function onReadFile(e) {
@@ -490,19 +465,12 @@ function onReadFile(e) {
     };
     reader.readAsArrayBuffer(file);
 }
-function isFontVariable(font) {
-    if (font.axes) {
-        return true;
-    } else {
-        return false;
-    }
-}
+
 function setFont(fontFamilySource, fontFamily) {
     opentype.load(fontFamilySource, function(err, font) {
         onFontLoaded(font, fontFamilySource, fontFamily);
     });
 }
-
 
 window.onload = function() {
     var fileButtonParent = document.getElementById('section__header-file-buttons');
