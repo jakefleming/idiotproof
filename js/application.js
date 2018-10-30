@@ -130,7 +130,8 @@ function setStage(thisStage) {
         sliderhtml = '',
         proofhtml = '',
         buttonhtml = '',
-        styles = '';
+        styles = '',
+        fvarStyle = '';
 
     $.getJSON(json, function(proof) {
         for(stage in proof) {
@@ -142,17 +143,28 @@ function setStage(thisStage) {
                                   var tag = font.tables.fvar.axes[a].tag;
                                   fvarSupport.push(tag);
                            }
+                           fvarStyle += 'font-variation-settings:';
                            for (var b in font.tables.fvar.axes) {
                                 var min = font.tables.fvar.axes[b].minValue;
                                 var max = font.tables.fvar.axes[b].maxValue;
                                 var tag = font.tables.fvar.axes[b].tag;
                                 var name = font.tables.fvar.axes[b].name.en;
-                                var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                                console.log(testAreaID+'-slider-'+tag+'-val');
+                                if (localStorage.getItem(testAreaID+'-slider-'+tag+'-val')) {
+                                    var defaultValue = localStorage.getItem(testAreaID+'-slider-'+tag+'-val');
+                                    fvarStyle += '\''+tag+'\' '+defaultValue+' ';
+                                } else {
+                                    var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                                }
                                 html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
                                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
                                 html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')">ease</button>';
                                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                                if (b != font.tables.fvar.axes.length - 1) {
+                                      fvarStyle += ", ";
+                                }
                            }
+                           fvarStyle += ';';
 
                         }
 
@@ -218,7 +230,7 @@ function setStage(thisStage) {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
-                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -227,7 +239,7 @@ function setStage(thisStage) {
                                     }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
-                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -290,7 +302,7 @@ function passStyleValue(id,property,value) {
       document.getElementById(id).style[property] = value;
 }
 function passfvarValue(id,property,value,fvarSupport) {
-      document.getElementById(id+"-slider-"+property+"-val").value=value;
+      document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
       saveData(id+"-slider-"+property+"-val", value);
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
