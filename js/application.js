@@ -1,7 +1,6 @@
 //To Do
-// * Diacritics proofing. Maybe phase 4?
-// * Drag and drop?
 // * Select multiple fonts server side
+// * Drag and drop?
 // * save pdf to google drive?
 
 var font = null;
@@ -263,12 +262,16 @@ function setStage(thisStage) {
 var fieldcount = 0;
 function insertField(aboveHere) {
     fieldcount += 1;
-    var thisClone = jQuery("#"+aboveHere).clone().removeAttr("id");
-    thisClone = $(thisClone).filter("#username")
-           .children("div").attr("id", 'item--'+fieldcount)
-           .children("div").html("new user");
+    console.log(aboveHere);
+    var thisClone = jQuery("#"+aboveHere).clone();
+    var thisCloneId = thisClone.attr("id");
+    console.log(thisCloneId);
+    thisCloneId = thisCloneId.replace("item--", "");
+    console.log(thisCloneId);
+    thisClone.html().replace(thisCloneId, fieldcount);
+    thisClone.children("textarea").text("eff yeah");
 
-    $("#"+aboveHere).prepend(thisClone);
+    $("#"+aboveHere).parent().prepend(thisClone);
 }
 
 function passStyleValue(id,property,value) {
