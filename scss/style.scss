@@ -1,11 +1,13 @@
 @CHARSET "UTF-8";
 
+@import 'fonts';
 @import 'general';
 @import 'items';
 @import 'sliders';
 @import 'typography';
 @import 'utilities';
 @import 'media-queries';
+
 body.professional {
 	@import 'professional';
 }

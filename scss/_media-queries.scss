@@ -11,9 +11,7 @@ $screen-lg-max: 992px;
 $screen-xl-max: 1200px;
 
 @media (max-width: $screen-sm-max) {
-  .sliders {
-    display: none!important;
-  }
+
 }
 
 @media (max-width: $screen-md-max) {
@@ -21,7 +19,9 @@ $screen-xl-max: 1200px;
 }
 
 @media (max-width: $screen-lg-max) {
-
+  .item__sliders, .section__header-tools {
+    display: none!important;
+  }
 }
 
 @media (max-width: $screen-xl-max) {
