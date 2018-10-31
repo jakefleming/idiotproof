@@ -16,6 +16,7 @@
   flex-grow: 1;
   width: 100%;
   .testarea {
+    box-sizing: border-box;
     border: none;
     display: block;
     width: 100%;

@@ -14,8 +14,6 @@ $pro-font-stack: "system";
 $pro-unit: 6px; //probably stick to even numbers here since this number is sometimes divided
 $pro-radius: $pro-unit;
 
-
-
 &.loaded {
 	font-family: $pro-font-stack;
 	color: $pro-black;

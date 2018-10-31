@@ -231,7 +231,7 @@ function setStage(thisStage) {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
-                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<textarea data-autoresize id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -240,7 +240,7 @@ function setStage(thisStage) {
                                     }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
-                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<textarea data-autoresize id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -266,6 +266,15 @@ function setStage(thisStage) {
         }
         stageButtons.innerHTML = buttonhtml;
         article.innerHTML = html;
+        jQuery.each(jQuery('textarea[data-autoresize]'), function() {
+          var offset = this.offsetHeight - this.clientHeight;
+
+          var resizeTextarea = function(el) {
+              jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+          };
+          resizeTextarea(this);
+          jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
+      });
         $("#style__opentype-features").html(styles);
 
     });

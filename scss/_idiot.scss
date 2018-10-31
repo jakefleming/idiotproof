@@ -1,0 +1,214 @@
+//Styles for IdiotProofed
+$idiot-white: #f9f4f2;
+$idiot-lightestgray: darken($idiot-white, 2%);
+$idiot-lightergray: darken($idiot-white, 5%);
+$idiot-lightgray: darken($idiot-white, 10%);
+$idiot-gray: darken($idiot-white, 15%);
+$idiot-darkishgray: darken($idiot-white, 18%);
+$idiot-darkgray: darken($idiot-white, 24%);
+$idiot-darkergray: darken($idiot-white, 40%);
+$idiot-black: #061117;
+$idiot-almostblack: lighten($idiot-black, 4%);
+
+$idiot-yellow: #efba16;
+$idiot-orange: #f24b1f;
+$idiot-pink: #e47f7d;
+
+$idiot-darkblue: #14374a;
+$idiot-blue: lighten($idiot-darkblue, 10%);
+
+$idiot-font-stack: "Gooper Text";
+
+$idiot-unit: 8px; //probably stick to even numbers here since this number is sometimes divided
+$idiot-radius: $idiot-unit;
+
+&.loaded {
+	font-family: $idiot-font-stack;
+	color: $idiot-black;
+	background: $idiot-darkblue;
+}
+
+//typography
+.h3 {
+	letter-spacing: .02em;
+}
+.item__proof {
+	.h3 {
+		color: $idiot-lightergray;
+		margin-top: 0px;
+	}
+}
+.h6 {
+	letter-spacing: .06em;
+}
+
+.section__header-app {
+	color: #4d494d;
+	background: $idiot-black;
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	padding-bottom: 0px;
+	.btn__print, .btn__professional {
+		border: none;
+		box-shadow: none;
+		display: block;
+		font-size: 24px;
+		width: 40px;
+		line-height: 24px;
+		padding: $idiot-unit;
+	}
+	.btn__professional {
+		background: $idiot-orange;
+	}
+	.btn__print {
+		background: $idiot-yellow;
+	}
+}
+.section__footer-app {
+	a {
+		color: $idiot-pink;
+	}
+}
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+//Buttons
+.btn {
+	letter-spacing: .01em;
+	font-family: $idiot-font-stack;
+	text-decoration: none;
+	color: $idiot-black;
+	font-size: 10px;
+	padding: $idiot-unit $idiot-unit*3;
+	border: 0px;
+	margin: $idiot-unit/2 $idiot-unit/2;
+	display: inline-block;
+	background: $idiot-pink;
+	box-shadow: 0px 0px 1px rgba(0,0,0,0.1);
+	border-radius: $idiot-unit*2;
+	cursor: pointer;
+	outline: none;
+	&:active {
+	 	border-color: $idiot-gray;
+	 	background: $idiot-lightergray;
+		box-shadow: 0px 0px 1px rgba(0,0,0,0.65);
+	}
+	&:disabled {
+		color: $idiot-gray;
+		background: linear-gradient(top, $idiot-lightergray, $idiot-lightestgray);
+	}
+}
+.btn__setfont {
+      overflow:hidden;
+      max-width: 125px;
+      direction:rtl;
+      white-space: nowrap;
+	text-overflow: ellipsis;
+	&:hover {
+		direction:ltr;
+	}
+}
+
+.tab {
+	letter-spacing: .02em;
+	font-family: $idiot-font-stack;
+	text-decoration: none;
+	color: $idiot-blue;
+	font-size: 10px;
+	padding: $idiot-unit $idiot-unit*3;
+	border: 0px solid $idiot-black;
+	border-bottom: 0;
+	border-radius: $idiot-radius $idiot-radius 0 0;
+	margin: 4px 4px;
+	display: inline-block;
+	background: $idiot-almostblack;
+
+	cursor: pointer;
+	outline: none;
+	margin-bottom: 0;
+	&.active {
+		background: $idiot-darkblue;
+		color: $idiot-white;
+		box-shadow: 0px 0px 0px rgba(0,0,0,0.05);
+	}
+	&:disabled {
+		color: $idiot-gray;
+		background: linear-gradient(top, $idiot-lightergray, $idiot-lightestgray);
+	}
+}
+
+//tools
+
+
+
+.section__header-tools {
+	border: 0px;
+	border-radius: $idiot-radius;
+	text-align: center;
+	.btn {
+		border: none;
+		box-shadow: none;
+		display: block;
+		font-size: 24px;
+		line-height: 24px;
+		padding: $idiot-unit;
+		margin: 8px;
+	}
+}
+
+.section__header-tools {
+
+}
+
+// slider styles
+.item__sliders {
+  border-radius: 0px;
+  color: $idiot-pink;
+  padding: $idiot-unit*4;
+  padding-right: 2rem;
+  display: none;
+  max-width: 300px;
+  margin-right: 0px;
+  background: $idiot-almostblack;
+  .item__sliders-wrapper {
+	  position: sticky;
+	  top: 88px;
+  }
+  span {
+  	float: right;
+  	font-size: 9px;
+  	color: $idiot-blue;
+  	letter-spacing: .12em;
+  	font-weight: bold;
+  }
+  .btn {
+	  width: 32px;
+	  color: $idiot-pink;
+	  letter-spacing: .12em;
+	  font-weight: 500;
+	  background: $idiot-blue;
+	  padding: 10px 0px 10px 0px;
+  }
+}
+input[type=range]::-webkit-slider-thumb {
+  background: $idiot-orange;
+}
+input[type=range] {
+  background: $idiot-darkblue;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: $idiot-blue;
+}
+
+.header__sliders {
+  display: none;
+  max-width: 300px;
+}
+
+//item
+.item__proof {
+	border-radius: 0px;
+}
