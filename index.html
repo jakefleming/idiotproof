@@ -20,18 +20,19 @@
     <style id="style__opentype-features"></style>
     <style id="style__fvar-animation"></style>
 </head>
-<body id="body__idiotproofed" class="body__idiotproofed tools-visible">
-    <header id="section__header-app" class="section__header-app u__flex">
-        <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
-            <!-- upload or auto load goes here -->
+<body id="body__idiotproofed" class="body__idiotproofed professional tools-visible">
+    <header id="section__header-app" class="section__header-app">
+        <div class="u__flex">
+              <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
+                  <!-- upload or auto load goes here -->
+              </div>
+              <div class="u__flex-grow-1 t__right">
+                  <button title="Print/Save a PDF" class="btn btn__print" onclick="javascript:window.print()">💾&#xFE0E;</button>
+                  <button title="ProffessionalProofer Mode" class="btn btn__professional" onclick="toggleClass('body__idiotproofed', 'professional')">👔&#xFE0E;</button>
+              </div>
         </div>
         <div id="section__header-stage-buttons" class="u__flex-grow-1 t__center">
             <!-- stage set buttons go here -->
-        </div>
-        <div class="u__flex-grow-1 t__right">
-            <button class="btn btn__print" onclick="javascript:window.print()">Print/Save PDF</button>
-            <button class="btn btn__professional" onclick="toggleClass('body__idiotproofed', 'professional')">Professional Mode</button>
-            
         </div>
     </header>
 

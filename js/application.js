@@ -180,7 +180,7 @@ function setStage(thisStage) {
                     taglist = preserveUnique(taglist);
 
                     for(var title in proof[stage]) {
-                        if (stage === "FEAT" && !taglist.includes(title)) {
+                        if (stage === "Features" && !taglist.includes(title)) {
                               continue;
                         } else {
                               var textClass = whichFontSize(proof[stage][title]);
@@ -215,19 +215,19 @@ function setStage(thisStage) {
                               html += '<div class="add-item-above"><button class="btn" onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
                               html += '<div class="remove-item-this"><button class="btn" onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
                               //toggle feature button
-                              if (stage === "FEAT") {
-                                    html += '<div class="turn-off-feature"><button onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">Feature</button></div>';
+                              if (stage === "Features") {
+                                    html += '<div class="turn-off-feature"><button class="btn" title="Turn on and off feature preview" onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
                               html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
                               html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">rt</button></div>';
+                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
                               html += '</div>';
                               //close tools
                               html += '</div>';
                               html += '</div>';
                               html += '<div class="item__proof">';
-                              if (stage === "FEAT") {
+                              if (stage === "Features") {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
@@ -259,9 +259,9 @@ function setStage(thisStage) {
                       html += '<div class="item u__flex t__center"><div class="item__proof">No features found! :...(</div></div>';
                 }
                if (stage === thisStage) {
-                     buttonhtml += '<button class="btn active btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+                     buttonhtml += '<button class="tab active tab__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
                } else {
-                     buttonhtml += '<button class="btn btn__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+                     buttonhtml += '<button class="tab tab__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
                }
         }
         stageButtons.innerHTML = buttonhtml;
@@ -361,17 +361,15 @@ function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
                 for (f = 0; f < fvarSupport.length; f++) {
                     if (property !== fvarSupport[f]) {
                         var fvalue = document.getElementById(id+"-slider-"+fvarSupport[f]).value;
-                        fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue;
-                    }
-                    if (f != fvarSupport.length - 1) {
-                        fvarcss += ", ";
+                        fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue+",";
                     }
                  }
+                 fvarcss = fvarcss.substring(0, fvarcss.length - 1);
                 addKeyFrames(
                     property+'infinite',
-                    '0%, 100% {font-variation-settings:"'+property+'" '+value+' '+fvarcss+';}' +
-                    '25% {font-variation-settings:"'+property+'" '+minValue+' '+fvarcss+';}' +
-                    '50% {font-variation-settings:"'+property+'" '+maxValue+' '+fvarcss+';}'
+                    '0%, 100% {font-variation-settings:"'+property+'" '+value+', '+fvarcss+';}' +
+                    '25% {font-variation-settings:"'+property+'" '+minValue+', '+fvarcss+';}' +
+                    '50% {font-variation-settings:"'+property+'" '+maxValue+', '+fvarcss+';}'
                 );
             }
             $("#style__fvar-animation").html(styles);
@@ -512,7 +510,7 @@ window.onload = function() {
             for(var a=0; a<fonts.length; a++) {
                   var thisFontSource = fonts[a];
                   var thisFontFamily = thisFontSource.replace('.', '-');
-                  html += '<button class="btn btn__setfont" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontSource+'</button>';
+                  html += '<button class="btn btn__setfont" title="'+thisFontSource+'" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontSource+'</button>';
                   style += '@font-face { font-family: "'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
             }
             fileButtonParent.innerHTML = html;
