@@ -5,7 +5,7 @@ Stable release at http://idiotproofed.com.
 
 Created by [Very Cool Studio](https://verycoolstudio.com) and [Jake Fleming](https://www.futurefonts.xyz/jake-fleming).
 
-Idiot Proofed was made so we'd never have to open InDesign again. It works best locally, where gulp can watch for changes to fonts, but also works just great in browser. On font selection Idiot Proofed takes a wild guess at where you're at in your proofing process, what opentype features are available in your font, and delivers proofing material accordingly in three broad stages. 
+Idiot Proofed was made so we'd never have to open InDesign again. It works best locally, where gulp can watch for changes to fonts. On font selection Idiot Proofed takes a wild guess at where you're at in your proofing process, what opentype features are available in your font, and delivers proofing material accordingly. 
 
 ## The Stages
 1. Hamburgers — minumum rhythm sense character set
