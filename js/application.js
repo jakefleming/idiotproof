@@ -404,7 +404,7 @@ function displayFontData(fontFamily) {
             } else if (gimLength >= 400 ) {
                 window.proofingPhase = "Diacritics";
             } else {
-                window.proofingPhase = "Spacing Pairs";
+                window.proofingPhase = "Spacing";
             }
         }
         // Determine if TTF or OTF
