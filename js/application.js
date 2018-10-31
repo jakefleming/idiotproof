@@ -398,11 +398,11 @@ function displayFontData(fontFamily) {
             var gim = font.tables.cmap.glyphIndexMap;
             var gimLength = Object.keys(gim).length;
             if (gimLength <= 100 ) {
-                window.proofingPhase = "HAMB";
+                window.proofingPhase = "Hamburgers";
             } else if (gimLength >= 400 ) {
-                window.proofingPhase = "DIAC";
+                window.proofingPhase = "Diacritics";
             } else {
-                window.proofingPhase = "OHNO";
+                window.proofingPhase = "Spacing Pairs";
             }
         }
         // Determine if TTF or OTF

@@ -1,1 +1,12 @@
-
+fonts/ignore/MediumRareSans-Black.otf 
+fonts/ignore/MediumRareSans-Semibold.otf 
+fonts/ignore/MediumRareSans-Medium.otf 
+fonts/ignore/MediumRareSans-Extrathin.otf 
+fonts/ignore/MediumRareSans-Extrabold.otf 
+fonts/ignore/MediumRareSans-Bold.otf 
+fonts/ignore/MediumRareSans-Regular.otf 
+fonts/ignore/MediumRareSans-DemiBlack.otf 
+fonts/ignore/MediumRareSans-Light.otf 
+fonts/ignore/MediumRareSans-Thin.otf 
+fonts/GoitersGX.ttf 
+fonts/gooper-VF.ttf 

@@ -52,7 +52,7 @@ $idiot-radius: $idiot-unit;
 	.btn__print, .btn__professional {
 		border: none;
 		box-shadow: none;
-		display: block;
+		display: inline-block;
 		font-size: 24px;
 		width: 40px;
 		line-height: 24px;
@@ -98,7 +98,6 @@ $idiot-radius: $idiot-unit;
 	}
 	&:disabled {
 		color: $idiot-gray;
-		background: linear-gradient(top, $idiot-lightergray, $idiot-lightestgray);
 	}
 }
 .btn__setfont {
@@ -136,7 +135,6 @@ $idiot-radius: $idiot-unit;
 	}
 	&:disabled {
 		color: $idiot-gray;
-		background: linear-gradient(top, $idiot-lightergray, $idiot-lightestgray);
 	}
 }
 
@@ -156,6 +154,7 @@ $idiot-radius: $idiot-unit;
 		line-height: 24px;
 		padding: $idiot-unit;
 		margin: 8px;
+		float: right;
 	}
 }
 

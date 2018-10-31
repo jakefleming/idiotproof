@@ -38,7 +38,7 @@ $pro-radius: $pro-unit;
 	color: #4d494d;
 	position: sticky;
 	top: 0;
-	background: $pro-darkergray;
+	background: $pro-gray;
 	z-index: 1;
 	padding-bottom: 0px;
 }
@@ -87,19 +87,20 @@ $pro-radius: $pro-unit;
 	color: $pro-black;
 	font-size: 10px;
 	padding: $pro-unit $pro-unit*2;
-	border: 1px solid $pro-black;
 	border-bottom: 0;
 	border-radius: $pro-radius $pro-radius 0 0;
 	margin: 2px 2px;
 	display: inline-block;
 	background: $pro-gray;
-
+	border: 0px;
 	cursor: pointer;
 	outline: none;
 	margin-bottom: 0;
+	&:active {
+		border: 0px;
+	}
 	&.active {
 		background: $pro-white;
-		box-shadow: 0px 0px 0px rgba(0,0,0,0.05);
 	}
 	&:disabled {
 		color: $pro-gray;
