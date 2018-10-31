@@ -4,6 +4,7 @@
 // * save pdf to google drive?
 
 var font = null;
+window.proofingPhase = "Hamburgers";
 
 var fontFormats = {
     truetype: 'ttf',
