@@ -232,7 +232,7 @@ function setStage(thisStage) {
                               if (stage === "Features") {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
-                                    html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
+                                    html += '<h3 class="h3" title="'+proof[stage][title].definition+'">'+title+'</h3>';
                                     html += '<textarea data-autoresize id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
