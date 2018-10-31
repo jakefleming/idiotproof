@@ -63,6 +63,7 @@ function uint8ToBase64(buffer) {
 // }
 function localStorageClear() {
     localStorage.clear();
+    localStorage.setItem('proofingPhase', 'Hamburgers');
     location.reload();
 }
 function whichFontSize(thisString) {
