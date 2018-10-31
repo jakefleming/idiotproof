@@ -50,6 +50,7 @@ $idiot-radius: $idiot-unit;
 	z-index: 1;
 	padding-bottom: 0px;
 	.btn__print, .btn__professional {
+		color: $idiot-black;
 		border: none;
 		box-shadow: none;
 		display: inline-block;
@@ -80,17 +81,22 @@ $idiot-radius: $idiot-unit;
 	letter-spacing: .01em;
 	font-family: $idiot-font-stack;
 	text-decoration: none;
-	color: $idiot-black;
+	color: $idiot-pink;
 	font-size: 10px;
 	padding: $idiot-unit $idiot-unit*3;
-	border: 0px;
+	border: 1px solid $idiot-almostblack;
 	margin: $idiot-unit/2 $idiot-unit/2;
 	display: inline-block;
-	background: $idiot-pink;
+	background: $idiot-almostblack;
 	box-shadow: 0px 0px 1px rgba(0,0,0,0.1);
 	border-radius: $idiot-unit*2;
 	cursor: pointer;
 	outline: none;
+	&.active {
+		background: $idiot-pink;
+		border: 1px solid $idiot-pink;
+		color: $idiot-black;
+	}
 	&:active {
 	 	border-color: $idiot-gray;
 	 	background: $idiot-lightergray;
@@ -165,7 +171,7 @@ $idiot-radius: $idiot-unit;
 // slider styles
 .item__sliders {
   border-radius: 0px;
-  color: $idiot-pink;
+  color: $idiot-blue;
   padding: $idiot-unit*4;
   padding-right: 2rem;
   display: none;
@@ -184,12 +190,11 @@ $idiot-radius: $idiot-unit;
   	font-weight: bold;
   }
   .btn {
-	  width: 32px;
-	  color: $idiot-pink;
+	  padding: 10px 12px;
+	  color: $idiot-almostblack;
 	  letter-spacing: .12em;
 	  font-weight: 500;
 	  background: $idiot-blue;
-	  padding: 10px 0px 10px 0px;
   }
 }
 input[type=range]::-webkit-slider-thumb {
