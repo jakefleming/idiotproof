@@ -115,7 +115,12 @@ function removeElementsByID(IDName){
 }
 function saveData(id, value) {
     if (typeof(Storage) !== "undefined") {
-        localStorage.setItem(id, value);
+          if (value !== "thisContent") {
+                localStorage.setItem(id, value);
+          } else {
+                var thisContent = $('#'+id).text();
+                localStorage.setItem(id, thisContent);
+          }
     }
 }
 //Meat and potatoes
@@ -221,9 +226,14 @@ function setStage(thisStage) {
                                     html += '<div class="turn-off-feature"><button class="btn" title="Turn on and off feature preview" onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '<div class="case-uppercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
+                              html += '<div class="case-capitalize"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
+                              html += '<div class="case-lowercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '</div>';
+                              html += '<div class="u__flex btn__wrapper">';
+                              html += '<div class="column-one"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">|</button></div>';
+                              html += '<div class="column-two"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">||</button></div>';
+                              html += '<div class="column-three"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">|||</button></div>';
                               html += '</div>';
                               //close tools
                               html += '</div>';
@@ -233,7 +243,7 @@ function setStage(thisStage) {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3" title="'+proof[stage][title].definition+'">'+title+'</h3>';
-                                    html += '<textarea data-autoresize id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -242,7 +252,7 @@ function setStage(thisStage) {
                                     }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
-                                    html += '<textarea data-autoresize id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -250,7 +260,7 @@ function setStage(thisStage) {
                                            html += proof[stage][title];
                                     }
                               }
-                              html += '</textarea>';
+                              html += '</div>';
                               html += '</div>';
                               html += '</div>';
                         }
@@ -268,15 +278,6 @@ function setStage(thisStage) {
         }
         stageButtons.innerHTML = buttonhtml;
         article.innerHTML = html;
-        jQuery.each(jQuery('textarea[data-autoresize]'), function() {
-          var offset = this.offsetHeight - this.clientHeight;
-
-          var resizeTextarea = function(el) {
-              jQuery(el).css('height', 'auto').css('height', el.scrollHeight + offset);
-          };
-          resizeTextarea(this);
-          jQuery(this).on('keyup input', function() { resizeTextarea(this); }).removeAttr('data-autoresize');
-      });
         $("#style__opentype-features").html(styles);
 
     });
@@ -569,4 +570,11 @@ window.onload = function() {
         $('.body__idiotproofed').toggleClass("tools-visible");
     });
     document.body.className += " loaded";
+    // if (localStorage.getItem('professionalMode')) {
+    //         // Check for local storage settings
+    //       document.body.className += " professional";
+    // } else {
+    //         var fontFamilySource = "fonts/"+fonts[fonts.length - 1];
+    //         var fontFamily = thisFontFamily;
+    // }
 }
