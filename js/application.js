@@ -230,10 +230,10 @@ function setStage(thisStage) {
                               html += '<div class="case-capitalize"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
                               html += '<div class="case-lowercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
                               html += '</div>';
-                              html += '<div class="u__flex btn__wrapper">';
-                              html += '<div class="column-one"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">|</button></div>';
-                              html += '<div class="column-two"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">||</button></div>';
-                              html += '<div class="column-three"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">|||</button></div>';
+                              html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
+                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">☱</button>';
+                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">☷</button>';
+                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">☵</button>';
                               html += '</div>';
                               //close tools
                               html += '</div>';
@@ -569,6 +569,12 @@ window.onload = function() {
     $('#btn__view-tools-toggle').on('click', function(e) {
         $('.body__idiotproofed').toggleClass("tools-visible");
     });
+    //Tools buttons active class
+    $('.btn__wrapper').on('click', '.btn', function() {
+      console.log("hey");
+      $(this).addClass('active').siblings().removeClass('active');
+    });
+
     document.body.className += " loaded";
     // if (localStorage.getItem('professionalMode')) {
     //         // Check for local storage settings
