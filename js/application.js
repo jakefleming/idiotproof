@@ -220,7 +220,7 @@ function setStage(thisStage) {
                               // font value check localstorage
                               if (localStorage.getItem(sliderID+'-fontSize-val')) {
                                     var fontSize = localStorage.getItem(sliderID+'-fontSize-val');
-                                    inlineStyle += 'font-size: '+fontSize+'px;';
+                                    inlineStyle += 'font-size: '+fontSize+'pt;';
                               } else {
                                       var fontSize = whichFontSize(textClass);
                               }
@@ -323,13 +323,13 @@ function insertField(aboveHere) {
 
 function passStyleValue(id,property,value) {
       if (property === "fontSize" || property === "lineHeight" || property === "letterSpacing") {
-            document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
             saveData(id+"-slider-"+property+"-val", value);
             if (property === "fontSize") {
-                  value = value+"px";
+                  value = value+"pt";
             } else if (property === "letterSpacing") {
                   value = value+"em";
             }
+            document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
       } else {
             saveData(id+property, value);
       }
