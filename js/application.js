@@ -2,6 +2,28 @@
 // * Select multiple fonts server side
 // * Drag and drop?
 // * save pdf to google drive?
+// * Sliders attach to parent item class instead of ID of actual text contentEditable
+// * Overall sliders
+// * Letter spacing and Line Height often “undefined” instead of “0”
+// * Pts instead of pixels
+// * Occasionally the “Ease” button doesn’t fire on the first click. Once it's on, it's on forever. Is there no way to turn it off once triggered? If so, I couldn’t find it.
+// * Can’t switch between 2 <-> 3 columns. Always have to switch back to one column first.
+// * Are the settings—like line height—supposed to persist between tabs? Some tabs they do and some tabs they don’t.
+// * Pt sizes IN proof
+// * “Choose file” is a little unclear. What kinds of files are acceptable? A prompt with files types would help. Having a drag and drop area (rather than just drag to button) would be rad as well.
+// * Add “Enabled” states for buttons
+// * Add Tool Tips (Hover description) for all buttons
+// * bug: font won't load if there's no designer name
+// * 4. Switching tabs at the top — `Hamburgers` `Spacing` etc — erases formatting
+// * 7. I think you might need some WYSIWYG action. These two things are quite different:
+// * 8. It might be worth treating the sections as paragraphs, not separate pages. ie, having 26 pages with a single small paragraph isn't ideal:
+// * OpenType feature proofing. For example, it's useless to proof a block of smallcaps as one huge paragraph. It's better to proof them as they'd actually be used, something like this:
+
+//Left field
+// * I usually proof from the “UFO”, ie using Test Install with RoboFont. If this was an RF extension… I would be v happy. Unless the web version could work with fonts installed on the system?
+// * How about multiple fonts? For tracing drawing/spacing consistency across a family?
+// * It would be nice to have also kind of friendly names for features. I think they mostly have comments like # Lowercase, a.alt, is it possible to access them?
+
 
 var font = null;
 window.proofingPhase = "Hamburgers";
@@ -243,7 +265,7 @@ function setStage(thisStage) {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h3 class="h3" title="'+proof[stage][title].definition+'">'+title+'</h3>';
-                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -252,7 +274,7 @@ function setStage(thisStage) {
                                     }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
-                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -424,8 +446,8 @@ function displayFontData(fontFamily) {
                 } else {
                     var postScriptName = "Font Name";
                 }
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true">'+designerName+'</h6>';
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true">'+postScriptName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true" spellcheck="false">'+designerName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true" spellcheck="false">'+postScriptName+'</h6>';
                 styles += '.t__importedfontfamily { font-family: "'+fontFamily+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
                 document.getElementById('section__header-names').innerHTML = nameHtml;

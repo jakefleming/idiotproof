@@ -17,11 +17,11 @@
   width: 100%;
   .testarea {
     box-sizing: border-box;
+    white-space: pre-line;
     border: none;
     display: block;
     width: 100%;
     height: auto;
-    resize: none;
     -webkit-appearance:none;
   }
 }
