@@ -8,6 +8,9 @@
 @import 'utilities';
 @import 'media-queries';
 
+body:not(.professional) {
+	@import 'idiot';
+}
 body.professional {
 	@import 'professional';
 }

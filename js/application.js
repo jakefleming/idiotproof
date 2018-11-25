@@ -2,8 +2,31 @@
 // * Select multiple fonts server side
 // * Drag and drop?
 // * save pdf to google drive?
+// * Sliders attach to parent item class instead of ID of actual text contentEditable
+// * Overall sliders
+// * Letter spacing and Line Height often “undefined” instead of “0”
+// * Pts instead of pixels
+// * Occasionally the “Ease” button doesn’t fire on the first click. Once it's on, it's on forever. Is there no way to turn it off once triggered? If so, I couldn’t find it.
+// * Can’t switch between 2 <-> 3 columns. Always have to switch back to one column first.
+// * Are the settings—like line height—supposed to persist between tabs? Some tabs they do and some tabs they don’t.
+// * Pt sizes IN proof
+// * “Choose file” is a little unclear. What kinds of files are acceptable? A prompt with files types would help. Having a drag and drop area (rather than just drag to button) would be rad as well.
+// * Add “Enabled” states for buttons
+// * Add Tool Tips (Hover description) for all buttons
+// * bug: font won't load if there's no designer name
+// * 4. Switching tabs at the top — `Hamburgers` `Spacing` etc — erases formatting
+// * 7. I think you might need some WYSIWYG action. These two things are quite different:
+// * 8. It might be worth treating the sections as paragraphs, not separate pages. ie, having 26 pages with a single small paragraph isn't ideal:
+// * OpenType feature proofing. For example, it's useless to proof a block of smallcaps as one huge paragraph. It's better to proof them as they'd actually be used, something like this:
+
+//Left field
+// * I usually proof from the “UFO”, ie using Test Install with RoboFont. If this was an RF extension… I would be v happy. Unless the web version could work with fonts installed on the system?
+// * How about multiple fonts? For tracing drawing/spacing consistency across a family?
+// * It would be nice to have also kind of friendly names for features. I think they mostly have comments like # Lowercase, a.alt, is it possible to access them?
+
 
 var font = null;
+window.proofingPhase = "Hamburgers";
 
 var fontFormats = {
     truetype: 'ttf',
@@ -62,6 +85,7 @@ function uint8ToBase64(buffer) {
 // }
 function localStorageClear() {
     localStorage.clear();
+    localStorage.setItem('proofingPhase', 'Hamburgers');
     location.reload();
 }
 function whichFontSize(thisString) {
@@ -113,7 +137,12 @@ function removeElementsByID(IDName){
 }
 function saveData(id, value) {
     if (typeof(Storage) !== "undefined") {
-        localStorage.setItem(id, value);
+          if (value !== "thisContent") {
+                localStorage.setItem(id, value);
+          } else {
+                var thisContent = $('#'+id).text();
+                localStorage.setItem(id, thisContent);
+          }
     }
 }
 //Meat and potatoes
@@ -219,9 +248,14 @@ function setStage(thisStage) {
                                     html += '<div class="turn-off-feature"><button class="btn" title="Turn on and off feature preview" onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="turn-off-feature"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '<div class="case-uppercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
+                              html += '<div class="case-capitalize"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
+                              html += '<div class="case-lowercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '</div>';
+                              html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
+                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">☱</button>';
+                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">☷</button>';
+                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">☵</button>';
                               html += '</div>';
                               //close tools
                               html += '</div>';
@@ -230,8 +264,8 @@ function setStage(thisStage) {
                               if (stage === "Features") {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
-                                    html += '<h3 class="h3">'+title+' <span class="tooltip tooltip__features">'+proof[stage][title].definition+'</span></h3>';
-                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<h3 class="h3" title="'+proof[stage][title].definition+'">'+title+'</h3>';
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -240,7 +274,7 @@ function setStage(thisStage) {
                                     }
                               } else {
                                     html += '<h3 class="h3">'+title+'</h3>';
-                                    html += '<textarea id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" onkeyup="saveData(\''+testAreaID+'\', this.value)">';
+                                    html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
                                           html += localStorage.getItem(testAreaID);
@@ -248,7 +282,7 @@ function setStage(thisStage) {
                                            html += proof[stage][title];
                                     }
                               }
-                              html += '</textarea>';
+                              html += '</div>';
                               html += '</div>';
                               html += '</div>';
                         }
@@ -389,11 +423,11 @@ function displayFontData(fontFamily) {
             var gim = font.tables.cmap.glyphIndexMap;
             var gimLength = Object.keys(gim).length;
             if (gimLength <= 100 ) {
-                window.proofingPhase = "HAMB";
+                window.proofingPhase = "Hamburgers";
             } else if (gimLength >= 400 ) {
-                window.proofingPhase = "DIAC";
+                window.proofingPhase = "Diacritics";
             } else {
-                window.proofingPhase = "OHNO";
+                window.proofingPhase = "Spacing";
             }
         }
         // Determine if TTF or OTF
@@ -412,8 +446,8 @@ function displayFontData(fontFamily) {
                 } else {
                     var postScriptName = "Font Name";
                 }
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true">'+designerName+'</h6>';
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true">'+postScriptName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true" spellcheck="false">'+designerName+'</h6>';
+                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true" spellcheck="false">'+postScriptName+'</h6>';
                 styles += '.t__importedfontfamily { font-family: "'+fontFamily+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
                 document.getElementById('section__header-names').innerHTML = nameHtml;
@@ -557,5 +591,18 @@ window.onload = function() {
     $('#btn__view-tools-toggle').on('click', function(e) {
         $('.body__idiotproofed').toggleClass("tools-visible");
     });
+    //Tools buttons active class
+    $('.btn__wrapper').on('click', '.btn', function() {
+      console.log("hey");
+      $(this).addClass('active').siblings().removeClass('active');
+    });
+
     document.body.className += " loaded";
+    // if (localStorage.getItem('professionalMode')) {
+    //         // Check for local storage settings
+    //       document.body.className += " professional";
+    // } else {
+    //         var fontFamilySource = "fonts/"+fonts[fonts.length - 1];
+    //         var fontFamily = thisFontFamily;
+    // }
 }

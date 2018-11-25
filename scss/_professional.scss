@@ -14,8 +14,6 @@ $pro-font-stack: "system";
 $pro-unit: 6px; //probably stick to even numbers here since this number is sometimes divided
 $pro-radius: $pro-unit;
 
-
-
 &.loaded {
 	font-family: $pro-font-stack;
 	color: $pro-black;
@@ -40,7 +38,7 @@ $pro-radius: $pro-unit;
 	color: #4d494d;
 	position: sticky;
 	top: 0;
-	background: $pro-darkergray;
+	background: $pro-gray;
 	z-index: 1;
 	padding-bottom: 0px;
 }
@@ -55,7 +53,7 @@ $pro-radius: $pro-unit;
 	color: $pro-black;
 	font-size: 10px;
 	padding: $pro-unit $pro-unit*3;
-	border: 0px;
+	border: 1px solid $pro-white;
 	margin: $pro-unit/2 $pro-unit/2;
 	display: inline-block;
 	background: $pro-white;
@@ -63,6 +61,10 @@ $pro-radius: $pro-unit;
 	border-radius: $pro-unit*2;
 	cursor: pointer;
 	outline: none;
+	&.active {
+		background: $pro-gray;
+		border: 1px solid $pro-darkgray;
+	}
 	&:active {
 	 	border-color: $pro-gray;
 	 	background: $pro-lightergray;
@@ -89,19 +91,20 @@ $pro-radius: $pro-unit;
 	color: $pro-black;
 	font-size: 10px;
 	padding: $pro-unit $pro-unit*2;
-	border: 1px solid $pro-black;
 	border-bottom: 0;
 	border-radius: $pro-radius $pro-radius 0 0;
 	margin: 2px 2px;
 	display: inline-block;
 	background: $pro-gray;
-
+	border: 0px;
 	cursor: pointer;
 	outline: none;
 	margin-bottom: 0;
+	&:active {
+		border: 0px;
+	}
 	&.active {
 		background: $pro-white;
-		box-shadow: 0px 0px 0px rgba(0,0,0,0.05);
 	}
 	&:disabled {
 		color: $pro-gray;

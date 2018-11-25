@@ -5,3 +5,17 @@
   font-weight: 300;
   src: local(".SFNSText-Light"), local(".HelveticaNeueDeskInterface-Light"), local(".LucidaGrandeUI"), local("Ubuntu Light"), local("Segoe UI Light"), local("Roboto-Light"), local("DroidSans"), local("Tahoma");
 }
+@font-face {
+  font-family: "Gooper Text";
+  font-style: normal;
+  font-weight: 300;
+  src: url("../src/fonts/GooperText-Regular.woff2") format("woff2"),
+       url("../src/fonts/GooperText-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "Gooper Text";
+  font-style: bold;
+  font-weight: 500;
+  src: url("../src/fonts/GooperText-Semibold.woff2") format("woff2"),
+       url("../src/fonts/GooperText-Semibold.woff") format("woff");
+}

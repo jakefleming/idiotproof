@@ -9,6 +9,10 @@ button, .btn {
 	display: none!important;
 }
 // Basic style tweaking
+.item__proof {
+	padding: 0px;
+	border: 0px #fff !important;
+}
 .item {
 	box-shadow: 0px 0px 0px;
 	margin: 0px;
@@ -18,8 +22,15 @@ button, .btn {
 #section__header-names {
 	position: fixed;
 	padding: 0px;
+	padding-top: 5px;
+	padding-bottom: 5px;
 	width: 100vw;
 	bottom: -20px;
+	background: #fff;
+	z-index: 20;
+}
+#section__footer-app {
+	display: none;
 }
 
 .page-break {

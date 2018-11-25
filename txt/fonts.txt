@@ -1,0 +1,5 @@
+fonts/ignore/AICA2NeubrunnRoman-Medium.otf 
+fonts/ignore/AICA2NeubrunnRoman-Light.otf 
+fonts/ignore/AICA2NeubrunnRoman-Regular.otf 
+fonts/GoitersGX.ttf 
+fonts/gooper-VF.ttf 
