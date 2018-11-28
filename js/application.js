@@ -1,25 +1,29 @@
-//To Do
+// To Do
 // * Select multiple fonts server side
+// * Saving font blob on local storage?
 // * Drag and drop?
-// * save pdf to google drive?
 // * Sliders attach to parent item class instead of ID of actual text contentEditable
 // * Overall sliders
 // * Letter spacing and Line Height often “undefined” instead of “0”
 // * Pts instead of pixels
 // * Occasionally the “Ease” button doesn’t fire on the first click. Once it's on, it's on forever. Is there no way to turn it off once triggered? If so, I couldn’t find it.
+// * Get rid of ease button
 // * Can’t switch between 2 <-> 3 columns. Always have to switch back to one column first.
 // * Are the settings—like line height—supposed to persist between tabs? Some tabs they do and some tabs they don’t.
+// * Overview has same ID
 // * Pt sizes IN proof
 // * “Choose file” is a little unclear. What kinds of files are acceptable? A prompt with files types would help. Having a drag and drop area (rather than just drag to button) would be rad as well.
 // * Add “Enabled” states for buttons
 // * Add Tool Tips (Hover description) for all buttons
-// * bug: font won't load if there's no designer name
 // * 4. Switching tabs at the top — `Hamburgers` `Spacing` etc — erases formatting
 // * 7. I think you might need some WYSIWYG action. These two things are quite different:
 // * 8. It might be worth treating the sections as paragraphs, not separate pages. ie, having 26 pages with a single small paragraph isn't ideal:
 // * OpenType feature proofing. For example, it's useless to proof a block of smallcaps as one huge paragraph. It's better to proof them as they'd actually be used, something like this:
 
-//Left field
+// Bugs
+// * bug: font won't load if there's no designer name
+
+// Left field
 // * I usually proof from the “UFO”, ie using Test Install with RoboFont. If this was an RF extension… I would be v happy. Unless the web version could work with fonts installed on the system?
 // * How about multiple fonts? For tracing drawing/spacing consistency across a family?
 // * It would be nice to have also kind of friendly names for features. I think they mostly have comments like # Lowercase, a.alt, is it possible to access them?
@@ -186,7 +190,6 @@ function setStage(thisStage) {
                                 }
                                 html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
                                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
-                                html += '<button onclick="animatefvarValue(\''+testAreaID+'\', \''+tag+'\', \''+defaultValue+'\', \''+min+'\', \''+max+'\', \''+fvarSupport+'\')" class="btn">ease</button>';
                                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                                 if (b != font.tables.fvar.axes.length - 1) {
                                       fvarStyle += ", ";
@@ -361,56 +364,6 @@ function passfvarValue(id,property,value,fvarSupport) {
       $('#' + id).css('font-variation-settings', fvarcss);
 }
 
-var isAnimating = null;
-function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
-        document.getElementById(id+"-slider-"+property+"-val").value=value;
-        //generate insert keyframe animation based on value
-        var styles = '',
-            addKeyFrames = null;
-        if (isAnimating !== null) {
-            $("#style__fvar-animation").html('');
-            isAnimating = null;
-        } else {
-            addKeyFrames = function(name, frames){
-                if (CSSRule.WEBKIT_KEYFRAMES_RULE) { // WebKit
-                    styles += "@-webkit-keyframes " + name + " {" + frames + "}";
-                } else if (CSSRule.MOZ_KEYFRAMES_RULE) { // Mozilla
-                    styles += "@-moz-keyframes " + name + " {" + frames + "}";
-                } else if (CSSRule.KEYFRAMES_RULE) { // W3C
-                    styles += "@keyframes " + name + " {" + frames + "}";
-                }
-            }
-            if (!(Array.isArray(fvarSupport))){
-                fvarSupport = fvarSupport.split(',');
-            }
-            var fvarcss = "";
-            if (fvarSupport.length == 1) {
-                 addKeyFrames(
-                    property+'infinite',
-                    '0%, 100% {font-variation-settings:"'+property+'" '+value+';}' +
-                    '25% {font-variation-settings:"'+property+'" '+minValue+';}' +
-                    '50% {font-variation-settings:"'+property+'" '+maxValue+';}'
-                );
-            } else {
-                for (f = 0; f < fvarSupport.length; f++) {
-                    if (property !== fvarSupport[f]) {
-                        var fvalue = document.getElementById(id+"-slider-"+fvarSupport[f]).value;
-                        fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue+",";
-                    }
-                 }
-                 fvarcss = fvarcss.substring(0, fvarcss.length - 1);
-                addKeyFrames(
-                    property+'infinite',
-                    '0%, 100% {font-variation-settings:"'+property+'" '+value+', '+fvarcss+';}' +
-                    '25% {font-variation-settings:"'+property+'" '+minValue+', '+fvarcss+';}' +
-                    '50% {font-variation-settings:"'+property+'" '+maxValue+', '+fvarcss+';}'
-                );
-            }
-            $("#style__fvar-animation").html(styles);
-            $('#' + id).css("font-variation-settings","unset").css('animation',  property+'infinite 4s ease-in-out infinite');
-            isAnimating = true;
-        }
-}
 function displayFontData(fontFamily) {
 
     var tablename, table, property, value, tag;
@@ -606,4 +559,58 @@ window.onload = function() {
     //         var fontFamilySource = "fonts/"+fonts[fonts.length - 1];
     //         var fontFamily = thisFontFamily;
     // }
+}
+
+
+
+// Specimen maker
+var isAnimating = null;
+function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
+        document.getElementById(id+"-slider-"+property+"-val").value=value;
+        //generate insert keyframe animation based on value
+        var styles = '',
+            addKeyFrames = null;
+        if (isAnimating !== null) {
+            $("#style__fvar-animation").html('');
+            isAnimating = null;
+        } else {
+            addKeyFrames = function(name, frames){
+                if (CSSRule.WEBKIT_KEYFRAMES_RULE) { // WebKit
+                    styles += "@-webkit-keyframes " + name + " {" + frames + "}";
+                } else if (CSSRule.MOZ_KEYFRAMES_RULE) { // Mozilla
+                    styles += "@-moz-keyframes " + name + " {" + frames + "}";
+                } else if (CSSRule.KEYFRAMES_RULE) { // W3C
+                    styles += "@keyframes " + name + " {" + frames + "}";
+                }
+            }
+            if (!(Array.isArray(fvarSupport))){
+                fvarSupport = fvarSupport.split(',');
+            }
+            var fvarcss = "";
+            if (fvarSupport.length == 1) {
+                 addKeyFrames(
+                    property+'infinite',
+                    '0%, 100% {font-variation-settings:"'+property+'" '+value+';}' +
+                    '25% {font-variation-settings:"'+property+'" '+minValue+';}' +
+                    '50% {font-variation-settings:"'+property+'" '+maxValue+';}'
+                );
+            } else {
+                for (f = 0; f < fvarSupport.length; f++) {
+                    if (property !== fvarSupport[f]) {
+                        var fvalue = document.getElementById(id+"-slider-"+fvarSupport[f]).value;
+                        fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue+",";
+                    }
+                 }
+                 fvarcss = fvarcss.substring(0, fvarcss.length - 1);
+                addKeyFrames(
+                    property+'infinite',
+                    '0%, 100% {font-variation-settings:"'+property+'" '+value+', '+fvarcss+';}' +
+                    '25% {font-variation-settings:"'+property+'" '+minValue+', '+fvarcss+';}' +
+                    '50% {font-variation-settings:"'+property+'" '+maxValue+', '+fvarcss+';}'
+                );
+            }
+            $("#style__fvar-animation").html(styles);
+            $('#' + id).css("font-variation-settings","unset").css('animation',  property+'infinite 4s ease-in-out infinite');
+            isAnimating = true;
+        }
 }
