@@ -28,3 +28,12 @@ body {
   background: white;
   box-shadow: 0 6px 24px $border-color;
 }
+
+.section__footer-app * {
+  color: $gray-color-dark;
+}
+
+.section__footer-app p {
+  font-size: .6rem;
+  color: $gray-color-dark;
+}
