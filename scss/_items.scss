@@ -11,7 +11,9 @@
 .item__proof {
   word-break: break-all;
   background: white;
+  // border: 1px solid $border-color;
   border-radius: 2px;
+  box-shadow: 0 6px 24px $border-color;
   padding: 4rem;
   flex-grow: 1;
   width: 100%;

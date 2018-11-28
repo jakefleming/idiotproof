@@ -21,37 +21,55 @@
     <style id="style__fvar-animation"></style>
 </head>
 <body id="body__idiotproofed" class="body__idiotproofed professional tools-visible">
-    <header id="section__header-app" class="section__header-app">
-        <div class="u__flex">
-              <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
-                  <!-- upload or auto load goes here -->
-              </div>
-              <div class="u__flex-grow-1 t__right">
-                  <button title="Print/Save a PDF" class="btn btn__print" onclick="javascript:window.print()">💾&#xFE0E;</button>
-                  <button title="ProffessionalProofer Mode" class="btn btn__professional" onclick="toggleClass('body__idiotproofed', 'professional')">👔&#xFE0E;</button>
-              </div>
-        </div>
-        <div id="section__header-stage-buttons" class="u__flex-grow-1 t__center">
-            <!-- stage set buttons go here -->
-        </div>
-    </header>
-
-    <header id="section__header-names" class="section__header-names u__flex"></header>
-    <div id="section__header-tools" class="section__header-tools">
-        <button id="btn__view-tools-toggle" class="btn btn__view-tools-toggle">🎚️&#xFE0E;</button>
-        <button id="btn__edit-reset" type="button" class="btn btn__edit-reset" onclick="localStorageClear()">🔃&#xFE0E;</button>
-        <div id="header__sliders" class="header__sliders">
-            <!-- header level controls -->
-        </div>
+  <div class="off-canvas">
+    <div class="off-canvas-sidebar" id="sidebar-demo">
+      <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
+          <!-- upload or auto load goes here -->
+      </div>
     </div>
-    <article id="section__article-app" class="container">
-        <!-- proofing goes here -->
-    </article>
-    <footer id="section__footer-app" class="section__footer-app container u__flex t__center">
-        <div class="u__flex-grow-1">
-            <h6 class="h6">Idiot Proofed was created by <a href="https://www.verycoolstudio.com/">Very Cool Studio</a> and <a href="https://www.futurefonts.xyz/jake-fleming">Jake Fleming</a> in 2018. It was created so that we'd never need to open InDesign again. <a href="https://github.com/jakefleming/idiotproof">Help us make it better</a>.</h6>
-            <h6 class="h6">Idiot Proofed <span class="version">V0.2.1</span></h6>
+    <a class="off-canvas-overlay" href="#close"></a>
+    <div class="off-canvas-content p-0">
+      <section class="mb-2">
+        <div class="container grid-xl">
+          <header id="section__header-app" class="navbar p-2">
+            <div class="navbar-section mb-2">
+              Idiot Proofed
+            </div>
+            <div class="navbar-section mb-2">
+              <div class="u__flex-grow-1 t__right">
+                <button id="btn__view-tools-toggle" class="btn btn__view-tools-toggle btn-lg">🎚️&#xFE0E;</button>
+                <button id="btn__edit-reset" type="button" class="btn btn__edit-reset btn-lg" onclick="localStorageClear()">🔃&#xFE0E;</button>
+                <button title="Print/Save a PDF" class="btn btn-primary btn__print btn-lg" onclick="javascript:window.print()">💾&#xFE0E;</button>
+                <button title="ProffessionalProofer Mode" class="btn btn__professional btn-lg d-none" onclick="toggleClass('body__idiotproofed', 'professional')">👔&#xFE0E;</button>
+              </div>
+            </div>
+          </header>
         </div>
-    </footer>
+        <div class="container grid-xl">
+          <header id="section__header-names" class="section__header-names u__flex p-2"></header>
+          <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
+              <!-- upload or auto load goes here -->
+          </div>
+        </div>
+        <div class="container grid-sm">
+          <ul id="section__header-stage-buttons" class="u__flex-grow-1 t__center tab tab-block">
+              <!-- stage set buttons go here -->
+          </ul>
+        </div>
+      </section>
+
+      <div class="container grid-xl">
+        <article id="section__article-app" class="container">
+            <!-- proofing goes here -->
+        </article>
+      </div>
+      <footer id="section__footer-app" class="section__footer-app container u__flex t__center">
+          <div class="u__flex-grow-1">
+              <h6 class="h6">Idiot Proofed was created by <a href="https://www.verycoolstudio.com/">Very Cool Studio</a> and <a href="https://www.futurefonts.xyz/jake-fleming">Jake Fleming</a> in 2018. It was created so that we'd never need to open InDesign again. <a href="https://github.com/jakefleming/idiotproof">Help us make it better</a>.</h6>
+              <h6 class="h6">Idiot Proofed <span class="version">V0.2.1</span></h6>
+          </div>
+      </footer>
+    </div>
+  </div>
 </body>
 </html>

@@ -1,7 +1,5 @@
 body {
-  background: #f4f4f4;
-	color: #000001;
-  margin: 0;
+  background: $gray-color-light;
   //more graceful loadin of proofing stuff
   .item {
     transform-origin: top center;
@@ -17,46 +15,16 @@ body {
   }
 }
 
-// container styles
-.container {
-  padding: 1rem;
+.btn {
+  font-weight: 100;
 }
 
-// header styles
-.section__header-names, .section__header-app {
-  padding: .5rem 1rem;
+.tab {
+  border: 0;
+  margin-bottom: 2rem;
 }
 
-
-.body__idiotproofed {
-  &.tools-visible {
-    .item__sliders, .header__sliders {
-      display: block;
-      //max-height: 200px;
-    }
-  }
-}
-
-// proofing sections
-.section__proofing {
-	display: block;
-  + .section__proofing {
-    margin-top: 4rem;
-  }
-}
-
-// view tools toggle
-.section__header-tools {
-  display: block;
-  position: fixed;
-  z-index: 1;
-  bottom: 10px;
-  right: .5rem;
-  text-align: right;
-  float: right;
-  .btn {
-    display: block;
-  	font-size: 24px;
-  	line-height: 24px;
-  }
+.off-canvas-sidebar {
+  background: white;
+  box-shadow: 0 6px 24px $border-color;
 }

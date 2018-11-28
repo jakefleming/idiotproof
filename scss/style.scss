@@ -1,19 +1,23 @@
 @CHARSET "UTF-8";
 
 @import 'fonts';
+
+
+@import 'spectre/spectre';
+
 @import 'general';
 @import 'items';
-@import 'sliders';
+// @import 'sliders';
 @import 'typography';
 @import 'utilities';
 @import 'media-queries';
 
-body:not(.professional) {
-	@import 'idiot';
-}
-body.professional {
-	@import 'professional';
-}
+// body:not(.professional) {
+// 	@import 'idiot';
+// }
+// body.professional {
+// 	@import 'professional';
+// }
 
 @media print {
   @import 'print';

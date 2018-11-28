@@ -233,7 +233,7 @@ function setStage(thisStage) {
                                     inlineStyle += 'letter-spacing: '+letterSpacing+'em;';
                               }
                               html += '<div id="'+testAreaParent+'" class="item u__flex">';
-                              html += '<div class="item__sliders"><div class="item__sliders-wrapper">';
+                              html += '<div class="item__sliders mr-2 pt-2"><div class="item__sliders-wrapper">';
                               html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
                               html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
                               html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
@@ -241,21 +241,21 @@ function setStage(thisStage) {
                               addVariableSliders();
                               //plus minus buttons
                               html += '<div class="u__flex btn__wrapper">';
-                              html += '<div class="add-item-above"><button class="btn" onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-                              html += '<div class="remove-item-this"><button class="btn" onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
+                              html += '<div class="add-item-above mr-1 mb-1"><button class="btn btn-link" onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
+                              html += '<div class="remove-item-this mr-1 mb-1"><button class="btn btn-link" onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
                               //toggle feature button
                               if (stage === "Features") {
-                                    html += '<div class="turn-off-feature"><button class="btn" title="Turn on and off feature preview" onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">♫&#xFE0E;</button></div>';
+                                    html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
-                              html += '<div class="case-uppercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
-                              html += '<div class="case-capitalize"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="case-lowercase"><button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '<div class="case-uppercase mr-1 mb-1"><button class="btn btn-link" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
+                              html += '<div class="case-capitalize mr-1 mb-1"><button class="btn btn-link" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
+                              html += '<div class="case-lowercase mr-1 mb-1"><button class="btn btn-link" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
                               html += '</div>';
                               html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
-                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">☱</button>';
-                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">☷</button>';
-                              html += '<button class="btn" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">☵</button>';
+                              html += '<button class="btn btn-link mr-1 mb-1" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">☱</button>';
+                              html += '<button class="btn btn-link mr-1 mb-1" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">☷</button>';
+                              html += '<button class="btn btn-link mr-1 mb-1" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">☵</button>';
                               html += '</div>';
                               //close tools
                               html += '</div>';
@@ -264,7 +264,7 @@ function setStage(thisStage) {
                               if (stage === "Features") {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
-                                    html += '<h3 class="h3" title="'+proof[stage][title].definition+'">'+title+'</h3>';
+                                    html += '<h6 class="h6 text-gray" title="'+proof[stage][title].definition+'">'+title+'</h6>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
@@ -273,7 +273,7 @@ function setStage(thisStage) {
                                            html +=  proof[stage][title].sample;
                                     }
                               } else {
-                                    html += '<h3 class="h3">'+title+'</h3>';
+                                    html += '<h6 class="h6 text-gray">'+title+'</h6>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
@@ -293,9 +293,9 @@ function setStage(thisStage) {
                       html += '<div class="item u__flex t__center"><div class="item__proof">No features found! :...(</div></div>';
                 }
                if (stage === thisStage) {
-                     buttonhtml += '<button class="tab active tab__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+                     buttonhtml += '<li class="tab-item active tab__setstage" onclick="setStage(\''+stage+'\')"><a class="#">'+stage+'</a></li>';
                } else {
-                     buttonhtml += '<button class="tab tab__setstage" onclick="setStage(\''+stage+'\')">'+stage+'</button>';
+                     buttonhtml += '<li class="tab-item tab__setstage" onclick="setStage(\''+stage+'\')"><a class="#">'+stage+'</a></li>';
                }
         }
         stageButtons.innerHTML = buttonhtml;
@@ -447,7 +447,8 @@ function displayFontData(fontFamily) {
                     var postScriptName = "Font Name";
                 }
                 nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__left" contenteditable="true" spellcheck="false">'+designerName+'</h6>';
-                nameHtml += '<h6 class="h6 section__header-name u__flex-grow-1 t__center" contenteditable="true" spellcheck="false">'+postScriptName+'</h6>';
+
+                nameHtml += '<a class="off-canvas-toggle h6 section__header-name u__flex-grow-1 t__center p-sticky" href="#sidebar-demo" spellcheck="false">'+postScriptName+'</a>';
                 styles += '.t__importedfontfamily { font-family: "'+fontFamily+'" }';
                 nameHtml += '<h6 class="h6 section__header-name  u__flex-grow-1 t__right">'+utc+'</h6>';
                 document.getElementById('section__header-names').innerHTML = nameHtml;
@@ -544,7 +545,7 @@ window.onload = function() {
             for(var a=0; a<fonts.length; a++) {
                   var thisFontSource = fonts[a];
                   var thisFontFamily = thisFontSource.replace('.', '-');
-                  html += '<button class="btn btn__setfont" title="'+thisFontSource+'" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontSource+'</button>';
+                  html += '<span class="btn__setfont chip d-block" title="'+thisFontSource+'" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontSource.replace('ignore/','') +'</span>';
                   style += '@font-face { font-family: "'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
             }
             fileButtonParent.innerHTML = html;
