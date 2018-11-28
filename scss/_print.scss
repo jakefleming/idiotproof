@@ -64,3 +64,8 @@ body {
   /* this affects the margin in the printer settings */
   margin: 15mm 25mm 15mm 25mm!important;
 }
+
+// Explicits
+.no-print {
+	display: none!important;
+}
