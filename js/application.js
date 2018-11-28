@@ -236,7 +236,7 @@ function setStage(thisStage) {
                                     inlineStyle += 'letter-spacing: '+letterSpacing+'em;';
                               }
                               html += '<div id="'+testAreaParent+'" class="item u__flex">';
-                              html += '<div class="item__sliders mr-2 pt-2"><div class="item__sliders-wrapper">';
+                              html += '<div class="item__sliders mr-6 pt-2"><div class="item__sliders-wrapper">';
                               html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
                               html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
                               html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';

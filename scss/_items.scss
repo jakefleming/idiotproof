@@ -3,20 +3,22 @@
   display: flex;
   white-space: normal;
   align-items: stretch;
+  justify-content: center;
   + .item {
     margin-top: 1rem;
   }
 }
 
 .item__proof {
-  word-break: break-all;
+  // word-break: break-all;
   background: white;
   // border: 1px solid $border-color;
   border-radius: 2px;
   box-shadow: 0 6px 24px $border-color;
   padding: 4rem;
-  flex-grow: 1;
+  // flex-grow: 1;
   width: 100%;
+  max-width: 8.5in;
   .testarea {
     box-sizing: border-box;
     white-space: pre-line;

@@ -1,45 +1,66 @@
-// Hide shit
-#section__header-app {
-	display: none;
+// Basic Style Tweaking
+
+body {
+	background: none;
+	padding: 0;
+	margin: 0;
+	* {
+		color: black!important;
+		padding: 0!important;
+		margin: 0!important;
+	}
+	.text-gray {
+		color: lightgray;
+	}
 }
-button, .btn {
-	display: none;
-}
-.sliders {
-	display: none!important;
-}
-// Basic style tweaking
-.item__proof {
-	padding: 0px;
-	border: 0px #fff !important;
-}
-.item {
-	box-shadow: 0px 0px 0px;
-	margin: 0px;
-	padding: 0px;
-	page-break-inside: avoid;
-}
+
 #section__header-names {
+	background: transparent;
 	position: fixed;
 	padding: 0px;
-	padding-top: 5px;
-	padding-bottom: 5px;
 	width: 100vw;
-	bottom: -20px;
-	background: #fff;
+	bottom: -2mm;
 	z-index: 20;
+	font-size: .5rem;
 }
-#section__footer-app {
+
+.section__header-name {
+	font-size: .8rem;
+	text-align: center;
+}
+
+.item__proof {
+	box-shadow: none;
+}
+
+// Hide Stuff
+#section__header-stage-buttons, .off-canvas-sidebar, .navbar, .item__sliders, #section__footer-app, button, .btn {
 	display: none;
 }
 
-.page-break {
+// Page Breaks
+.item {
 	page-break-after: always;
 	page-break-inside: avoid;
-	clear:both;
+	width: 100%;
+	max-width: initial;
+	padding: 0 0mm 0 5mm!important;
 }
-.page-break-before {
-	page-break-before: always;
-	page-break-inside: avoid;
-	clear:both;
+
+.item:last-child {
+	page-break-after: auto!important;
+}
+
+// Fixing Random Height problems
+.off-canvas .off-canvas-content, .off-canvas, body, html {
+	height: auto!important;
+}
+
+// Page margin
+@page
+{
+  size: auto;   /* auto is the initial value */
+
+  /* this affects the margin in the printer settings */
+  margin: 15mm 25mm 15mm 25mm!important;
 }
