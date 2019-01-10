@@ -1,33 +1,3 @@
-// To Do
-// * Select multiple fonts server side
-// * Saving font blob on local storage?
-// * Drag and drop?
-// * Sliders attach to parent item class instead of ID of actual text contentEditable
-// * Overall sliders
-// * Letter spacing and Line Height often “undefined” instead of “0”
-// * Pts instead of pixels
-// * Occasionally the “Ease” button doesn’t fire on the first click. Once it's on, it's on forever. Is there no way to turn it off once triggered? If so, I couldn’t find it.
-// * Get rid of ease button
-// * Can’t switch between 2 <-> 3 columns. Always have to switch back to one column first.
-// * Are the settings—like line height—supposed to persist between tabs? Some tabs they do and some tabs they don’t.
-// * Overview has same ID
-// * Pt sizes IN proof
-// * “Choose file” is a little unclear. What kinds of files are acceptable? A prompt with files types would help. Having a drag and drop area (rather than just drag to button) would be rad as well.
-// * Add “Enabled” states for buttons
-// * Add Tool Tips (Hover description) for all buttons
-// * 4. Switching tabs at the top — `Hamburgers` `Spacing` etc — erases formatting
-// * 7. I think you might need some WYSIWYG action. These two things are quite different:
-// * 8. It might be worth treating the sections as paragraphs, not separate pages. ie, having 26 pages with a single small paragraph isn't ideal:
-// * OpenType feature proofing. For example, it's useless to proof a block of smallcaps as one huge paragraph. It's better to proof them as they'd actually be used, something like this:
-
-// Bugs
-// * bug: font won't load if there's no designer name
-
-// Left field
-// * I usually proof from the “UFO”, ie using Test Install with RoboFont. If this was an RF extension… I would be v happy. Unless the web version could work with fonts installed on the system?
-// * How about multiple fonts? For tracing drawing/spacing consistency across a family?
-// * It would be nice to have also kind of friendly names for features. I think they mostly have comments like # Lowercase, a.alt, is it possible to access them?
-
 
 var font = null;
 window.proofingPhase = "Hamburgers";
@@ -94,17 +64,17 @@ function localStorageClear() {
 }
 function whichFontSize(thisString) {
     if (thisString === "t__size-xxl") {
-        return "140";
+        return "140pt";
     } else if (thisString === "t__size-xl") {
-        return "100";
+        return "100pt";
     } else if (thisString === "t__size-l") {
-        return "84";
+        return "84pt";
     } else if (thisString === "t__size-m") {
-        return "56";
+        return "56pt";
     } else if (thisString === "t__size-s") {
-        return "28";
+        return "28pt";
     } else if (thisString === "t__size-xs") {
-        return "14";
+        return "14pt";
     } else {
           var charCount = thisString.length;
           if (charCount < 25 ) {
@@ -181,16 +151,16 @@ function setStage(thisStage) {
                                 var max = font.tables.fvar.axes[b].maxValue;
                                 var tag = font.tables.fvar.axes[b].tag;
                                 var name = font.tables.fvar.axes[b].name.en;
-                                console.log(testAreaID+'-slider-'+tag+'-val');
-                                if (localStorage.getItem(testAreaID+'-slider-'+tag+'-val')) {
-                                    var defaultValue = localStorage.getItem(testAreaID+'-slider-'+tag+'-val');
+                                if (localStorage.getItem(itemID+'-slider-'+tag+'-val')) {
+                                    var defaultValue = localStorage.getItem(itemID+'-slider-'+tag+'-val');
                                     fvarStyle += '\''+tag+'\' '+defaultValue+' ';
                                 } else {
                                     var defaultValue = font.tables.fvar.axes[b].defaultValue;
+                                    fvarStyle += '\''+tag+'\' '+defaultValue+' ';
                                 }
                                 html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
                                 html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
-                                html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+testAreaID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
+                                html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+itemID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                                 if (b != font.tables.fvar.axes.length - 1) {
                                       fvarStyle += ", ";
                                 }
@@ -217,8 +187,8 @@ function setStage(thisStage) {
                         } else {
                               var textClass = whichFontSize(proof[stage][title]);
                               var testAreaID = 'section__proofing-'+title;
-                              var sliderID = testAreaID+'-slider';
-                              var testAreaParent = 'item--'+title;
+                              var itemID = 'item--'+title;
+                              var sliderID = itemID+'-slider';
                               var inlineStyle = '';
                               // font value check localstorage
                               if (localStorage.getItem(sliderID+'-fontSize-val')) {
@@ -230,35 +200,44 @@ function setStage(thisStage) {
                               if (localStorage.getItem(sliderID+'-lineHeight-val')) {
                                     var lineHeight = localStorage.getItem(sliderID+'-lineHeight-val');
                                     inlineStyle += 'line-height: '+lineHeight+';';
+                              } else {
+                                    var lineHeight = '1.2';
+                                    inlineStyle += 'line-height: 1.2;';
                               }
                               if (localStorage.getItem(sliderID+'-letterSpacing-val')) {
                                     var letterSpacing = localStorage.getItem(sliderID+'-letterSpacing-val');
                                     inlineStyle += 'letter-spacing: '+letterSpacing+'em;';
+                              } else {
+                                    var letterSpacing = '0em';
+                                    inlineStyle += 'letter-spacing: 0em;';
                               }
-                              html += '<div id="'+testAreaParent+'" class="item u__flex">';
+                              html += '<div id="'+itemID+'" class="item u__flex">';
                               html += '<div class="item__sliders mr-6 pt-2"><div class="item__sliders-wrapper">';
-                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+testAreaID+'\', \'fontSize\', this.value)">';
-                              html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="5.0" step="0.05" value="'+lineHeight+'" oninput="passStyleValue(\''+testAreaID+'\', \'lineHeight\', this.value)">';
-                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+testAreaID+'\', \'letterSpacing\', this.value)">';
+                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+itemID+'\', \'fontSize\', this.value)">';
+                              html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="3.0" step="0.01" value="'+lineHeight+'" oninput="passStyleValue(\''+itemID+'\', \'lineHeight\', this.value)">';
+                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+itemID+'\', \'letterSpacing\', this.value)">';
                               //Variable sliders
                               addVariableSliders();
                               //plus minus buttons
                               html += '<div class="u__flex btn__wrapper">';
-                              html += '<div class="add-item-above mr-1 mb-1 d-none"><button class="btn btn-link" onclick="insertField(\''+testAreaParent+'\')">+</button></div>';
-                              html += '<div class="remove-item-this mr-1 mb-1 d-none"><button class="btn btn-link" onclick="removeElementsByID(\''+testAreaParent+'\')">-</button></div>';
+                              html += '<div class="add-item-above mr-1 mb-1 d-none"><button class="btn btn-link" onclick="insertField(\''+itemID+'\')">+</button></div>';
+                              html += '<div class="remove-item-this mr-1 mb-1 d-none"><button class="btn btn-link" onclick="removeElementsByID(\''+itemID+'\')">-</button></div>';
                               //toggle feature button
                               if (stage === "Features") {
-                                    html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+testAreaID+'\', \''+testAreaID+'\')">♫&#xFE0E;</button></div>';
+                                    html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+itemID+'\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
-                              html += '<div class="case-uppercase mr-1 mb-1"><button class="btn btn-link" title="Uppercase" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
-                              html += '<div class="case-capitalize mr-1 mb-1"><button class="btn btn-link" title="Capitalize" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="case-lowercase mr-1 mb-1"><button class="btn btn-link" title="Lowercase" onclick="passStyleValue(\''+testAreaID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '<div class="case-uppercase mr-1 mb-1"><button class="btn btn-link" title="Uppercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
+                              html += '<div class="case-capitalize mr-1 mb-1"><button class="btn btn-link" title="Capitalize" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
+                              html += '<div class="case-lowercase mr-1 mb-1"><button class="btn btn-link" title="Lowercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
                               html += '</div>';
                               html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
-                              html += '<button class="btn btn-link mr-1 mb-1" title="1 column layout" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'1\')">☱</button>';
-                              html += '<button class="btn btn-link mr-1 mb-1" title="2 column layout" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'2\')">☷</button>';
-                              html += '<button class="btn btn-link mr-1 mb-1" title="3 column layout" onclick="passStyleValue(\''+testAreaID+'\',\'column-count\', \'3\')">☵</button>';
+                              html += '<button class="btn btn-link mr-1 mb-1" title="1 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'1\')">☱</button>';
+                              html += '<button class="btn btn-link mr-1 mb-1" title="2 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'2\')">☷</button>';
+                              html += '<button class="btn btn-link mr-1 mb-1" title="3 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'3\')">☵</button>';
+                              html += '</div>';
+                              html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
+                              html += '<button class="btn btn-secondary mr-1 mb-1" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
                               html += '</div>';
                               //close tools
                               html += '</div>';
@@ -267,7 +246,7 @@ function setStage(thisStage) {
                               if (stage === "Features") {
                                     styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
-                                    html += '<h6 class="h6 text-gray" title="'+proof[stage][title].definition+'">'+title+'</h6>';
+                                    html += '<h6 class="h6 text-gray" title="'+proof[stage][title].definition+'">'+title+'<span class="testarea-values"></span></h6>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
@@ -324,24 +303,28 @@ function insertField(aboveHere) {
     $("#"+aboveHere).parent().prepend(thisClone);
 }
 
-function passStyleValue(id,property,value) {
+function passStyleValue(itemID,property,value) {
       if (property === "fontSize" || property === "lineHeight" || property === "letterSpacing") {
-            saveData(id+"-slider-"+property+"-val", value);
+            saveData(itemID+"-slider-"+property+"-val", value);
             if (property === "fontSize") {
-                  value = value+"pt";
+                  value += "pt";
             } else if (property === "letterSpacing") {
-                  value = value+"em";
+                  value += "em";
             }
-            document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
+            document.getElementById(itemID+"-slider-"+property+"-val").innerHTML=value;
       } else {
-            saveData(id+property, value);
+            saveData(itemID+property, value);
       }
-
-      document.getElementById(id).style[property] = value;
+      if (property === "idiocracy") {
+            var css = $("#"+itemID+" .testarea").attr("style");
+            $( ".testarea" ).attr("style", css);
+      } else {
+            $( "#"+itemID+" .testarea" ).css(property,value);
+      }
 }
-function passfvarValue(id,property,value,fvarSupport) {
-      document.getElementById(id+"-slider-"+property+"-val").innerHTML=value;
-      saveData(id+"-slider-"+property+"-val", value);
+function passfvarValue(itemID,property,value,fvarSupport) {
+      document.getElementById(itemID+"-slider-"+property+"-val").innerHTML=value;
+      saveData(itemID+"-slider-"+property+"-val", value);
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
       }
@@ -353,7 +336,7 @@ function passfvarValue(id,property,value,fvarSupport) {
                    if (property == fvarSupport[f]) {
                         fvarcss += "'"+property+"' "+value;
                   } else {
-                        var fvalue = document.getElementById(id+"-slider-"+fvarSupport[f]).value;
+                        var fvalue = document.getElementById(itemID+"-slider-"+fvarSupport[f]).value;
                         fvarcss += "'"+String(fvarSupport[f])+"' "+fvalue;
                   }
                   if (f != fvarSupport.length - 1) {
@@ -361,7 +344,7 @@ function passfvarValue(id,property,value,fvarSupport) {
                   }
              }
       }
-      $('#' + id).css('font-variation-settings', fvarcss);
+      $("#"+itemID+" .testarea").css('font-variation-settings', fvarcss);
 }
 
 function displayFontData(fontFamily) {
@@ -565,8 +548,8 @@ window.onload = function() {
 
 // Specimen maker
 var isAnimating = null;
-function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
-        document.getElementById(id+"-slider-"+property+"-val").value=value;
+function animatefvarValue(itemID,property,value,minValue,maxValue,fvarSupport) {
+        document.getElementById(itemID+"-slider-"+property+"-val").value=value;
         //generate insert keyframe animation based on value
         var styles = '',
             addKeyFrames = null;
@@ -610,7 +593,7 @@ function animatefvarValue(id,property,value,minValue,maxValue,fvarSupport) {
                 );
             }
             $("#style__fvar-animation").html(styles);
-            $('#' + id).css("font-variation-settings","unset").css('animation',  property+'infinite 4s ease-in-out infinite');
+            $('#' + itemID).css("font-variation-settings","unset").css('animation',  property+'infinite 4s ease-in-out infinite');
             isAnimating = true;
         }
 }

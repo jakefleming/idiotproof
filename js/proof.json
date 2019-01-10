@@ -1,11 +1,11 @@
 {
     "Hamburgers": {
-        "overview": "HAMBURGEDFONTSIVhamburgedfontsiv",
-        "spacing": "HHAHOAOO HHBHOBOO HHDHODOO HHEHOEOO HHFHOFOO HHGHOGOO HHHHOHOO HHIHOIOO HHMHOMOO HHNHONOO HHOHOOOO HHRHOROO HHSHOSOO HHTHOTOO HHUHOUOO HHVHOVOO hhahoaoo hhbhoboo hhdhodoo hhehoeoo hhfhofoo hhghogoo hhhhohoo hhihoioo hhlholoo hhmhomoo hhnhonoo hhohoooo hhrhoroo hhshosoo hhthotoo hhuhouoo hhvhovoo",
-        "trio": "Aho Bho Dho Eho Fho Hho Iho Lho Mho Nho Oho Rho Sho Tho Uho Vho Aon Bon Don Eon Fon Hon Ion Lon Mon Non Oon Ron Son Ton Uon Von"
+        "hamburgedfontsiv": "HAMBURGEDFONTSIVhamburgedfontsiv",
+        "hamburged-spacing": "HHAHOAOO HHBHOBOO HHDHODOO HHEHOEOO HHFHOFOO HHGHOGOO HHHHOHOO HHIHOIOO HHMHOMOO HHNHONOO HHOHOOOO HHRHOROO HHSHOSOO HHTHOTOO HHUHOUOO HHVHOVOO hhahoaoo hhbhoboo hhdhodoo hhehoeoo hhfhofoo hhghogoo hhhhohoo hhihoioo hhlholoo hhmhomoo hhnhonoo hhohoooo hhrhoroo hhshosoo hhthotoo hhuhouoo hhvhovoo",
+        "hamburged-trio": "Aho Bho Dho Eho Fho Hho Iho Lho Mho Nho Oho Rho Sho Tho Uho Vho Aon Bon Don Eon Fon Hon Ion Lon Mon Non Oon Ron Son Ton Uon Von"
     },
     "Spacing": {
-        "overview": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:; -‘’“” ?!0123456789",
+        "basic-set": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz.,:; -‘’“” ?!0123456789",
         "spacing": "HHAHOAOO \nHHBHOBOO \nHHCHOCOO \nHHDHODOO \nHHEHOEOO \nHHFHOFOO \nHHGHOGOO \nHHHHOHOO \nHHIHOIOO \nHHJHOJOO \nHHKHOKOO \nHHLHOLOO \nHHMHOMOO \nHHNHONOO \nHHOHOOOO \nHHPHOPOO \nHHQHOQOO \nHHRHOROO \nHHSHOSOO \nHHTHOTOO \nHHUHOUOO \nHHVHOVOO \nHHWHOWOO \nHHXHOXOO \n \nHHYHOYOO \nHH&HO&OO \nHHZHOZOO \nHH@HO@OO \nHHẞHOẞOO \nHAHBHCHDHEHFHGHHHIHJHKHHLHMHNHOHHPHQH \nHRHSHTHUHVHWHXHYHZHẞH \nOAOBOCODOEOFOGOHOIOJOKOLOMONOOOPOQO \nOROSOTOUOVOWOXOYOZOẞO \nhhahoaoo \nhhbhoboo \nhhchocoo \nhhdhodoo \nhhehoeoo \nhhfhofoo \nhhghogoo \nhhhhohoo \nhhihoioo \nhhjhojoo \nhhkhokoo \nhhlholoo \nhhmhomoo \nhhnhonoo \nhhohoooo \nhhphopoo \nhhqhoqoo \nhhrhoroo \nhhshosoo \nhhßhoßoo \nhhthotoo \nhhuhouoo \nhhvhovoo \nhhwhowoo \nhhxhoxoo \nhhyhoyoo \nhhzhozoo \nhh@ho@oo \nhhðhoðoo \nnnoonnecnncennbnndnnbdnnpqnnpðnn \noaobocodoeofogohoiojokoolomono \noopoqorosoßotouovoowoxoyozoðo \nnanbncndnenfngnhninjnknnlnmnnn \nnonpnqnrnsnßntnunvnwnxnynznðn \nhahbhchdhehfhghhhihjhkhhlhmhnh \nhohphqhrhshßhthuhvhwhxhyhzhðh",
         "trio": "Aho Bho Cho Dho Eho Fho Gho Hho Iho Jho Kho Lho Mho Nho Oho Pho Qho Rho Sho Tho Uho Vho Who Xho Yho ZhoAon Bon Con Don Eon Fon Gon Hon Ion Jon Kon Lon Mon Non Oon Pon Qon Ron Son Ton Uon Von Won Xon Yon Zon",
         "extra": "Grumpy wizards make toxic brew for the evil Queen and Jack."
