@@ -40,7 +40,7 @@ body {
 
 // Page Breaks
 .item {
-	page-break-after: always;
+	break-inside: avoid;
 	page-break-inside: avoid;
 	width: 100%;
 	max-width: initial;
