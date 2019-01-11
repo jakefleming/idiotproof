@@ -16,6 +16,7 @@ $slider-thumb-shadow: 'ass';
   margin-right: 1rem;
   .item__sliders-wrapper {
       position: sticky;
+      min-width: 300px;
       top: 4rem;
   }
 }

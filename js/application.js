@@ -512,7 +512,7 @@ window.onload = function() {
             setFont('fonts/gooper-VF.ttf', 'gooper-VF-ttf');
             $('#style__fontface').html('@font-face { font-family: "gooper-VF-ttf"; src: url("fonts/gooper-VF.ttf");}');
             // watch for user upload
-            fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div>';
+            fileButtonParent.innerHTML = '<input id="fontInput" type="file"><div id="message"></div><div class="text-gray p mt-2">Idiot Proofed currently accepts a single font file, including <br/>variable fonts. The file is not uploaded. Fonts are stored <br/>in your browser, preferences are saved via <br/>browser localStorage.</div>';
             var fileButton = document.getElementById('fontInput');
             fileButton.addEventListener('change', onReadFile, false);
 
