@@ -15,7 +15,7 @@ var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');
 // Utility functions
 //------------------------
 function toggleClass(thisID, thisClass) {
-      document.getElementById(thisID).classList.toggle(thisClass);
+      $("#"+thisID+' .testarea').toggleClass(thisClass);
 }
 function preserveUnique(a) {
     var seen = {};
@@ -213,9 +213,9 @@ function setStage(thisStage) {
                               }
                               html += '<div id="'+itemID+'" class="item u__flex">';
                               html += '<div class="item__sliders mr-6 pt-2"><div class="item__sliders-wrapper">';
-                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+itemID+'\', \'fontSize\', this.value)">';
+                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'pt</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+itemID+'\', \'fontSize\', this.value)">';
                               html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="3.0" step="0.01" value="'+lineHeight+'" oninput="passStyleValue(\''+itemID+'\', \'lineHeight\', this.value)">';
-                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+itemID+'\', \'letterSpacing\', this.value)">';
+                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'em</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+itemID+'\', \'letterSpacing\', this.value)">';
                               //Variable sliders
                               addVariableSliders();
                               //plus minus buttons
@@ -224,7 +224,7 @@ function setStage(thisStage) {
                               html += '<div class="remove-item-this mr-1 mb-1 d-none"><button class="btn btn-link" onclick="removeElementsByID(\''+itemID+'\')">-</button></div>';
                               //toggle feature button
                               if (stage === "Features") {
-                                    html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+itemID+'\')">♫&#xFE0E;</button></div>';
+                                    html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+itemID+'-feat\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
                               html += '<div class="case-uppercase mr-1 mb-1"><button class="btn btn-link" title="Uppercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
@@ -244,9 +244,9 @@ function setStage(thisStage) {
                               html += '</div>';
                               html += '<div class="item__proof">';
                               if (stage === "Features") {
-                                    styles += "."+testAreaID+' { font-feature-settings: "'+title+'" 1;}';
+                                    styles += "."+itemID+'-feat { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
-                                    html += '<h6 class="h6 text-gray" title="'+proof[stage][title].definition+'">'+title+'<span class="testarea-values"></span></h6>';
+                                    html += '<h6 class="h6 text-gray" title="'+proof[stage][title].definition+'" contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'<span class="testarea-values"></span></h6>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
@@ -255,7 +255,7 @@ function setStage(thisStage) {
                                            html +=  proof[stage][title].sample;
                                     }
                               } else {
-                                    html += '<h6 class="h6 text-gray">'+title+'</h6>';
+                                    html += '<h6 class="h6 text-gray" contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'<span class="testarea-values"></span></h6>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
@@ -375,7 +375,7 @@ function displayFontData(fontFamily) {
                 if (font.names.designer) {
                     var designerName = font.names.designer.en;
                 } else {
-                    var designerName = "Designer Name";
+                    var designerName = "No Designer Name :(";
                 }
                 if (font.names.postScriptName) {
                     var postScriptName = font.names.postScriptName.en;
