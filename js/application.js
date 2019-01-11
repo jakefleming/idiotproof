@@ -64,17 +64,17 @@ function localStorageClear() {
 }
 function whichFontSize(thisString) {
     if (thisString === "t__size-xxl") {
-        return "140pt";
+        return "140";
     } else if (thisString === "t__size-xl") {
-        return "100pt";
+        return "100";
     } else if (thisString === "t__size-l") {
-        return "84pt";
+        return "84";
     } else if (thisString === "t__size-m") {
-        return "56pt";
+        return "56";
     } else if (thisString === "t__size-s") {
-        return "28pt";
+        return "28";
     } else if (thisString === "t__size-xs") {
-        return "14pt";
+        return "14";
     } else {
           var charCount = thisString.length;
           if (charCount < 25 ) {
@@ -159,7 +159,7 @@ function setStage(thisStage) {
                                     fvarStyle += '\''+tag+'\' '+defaultValue+' ';
                                 }
                                 html += '<label for="'+sliderID+'-'+tag+'">'+name+' </label>';
-                                html += '<span id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
+                                html += '<span class="t__right" id="'+sliderID+'-'+tag+'-val">'+defaultValue+'</span>';
                                 html += '<input id="'+sliderID+'-'+tag+'" type="range" class="slider" min="'+min+'" max="'+max+'" value="'+defaultValue+'" oninput="passfvarValue(\''+itemID+'\', \''+tag+'\', this.value, \''+fvarSupport+'\')">';
                                 if (b != font.tables.fvar.axes.length - 1) {
                                       fvarStyle += ", ";
@@ -213,9 +213,9 @@ function setStage(thisStage) {
                               }
                               html += '<div id="'+itemID+'" class="item u__flex">';
                               html += '<div class="item__sliders mr-6 pt-2"><div class="item__sliders-wrapper">';
-                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span id="'+sliderID+'-fontSize-val">'+fontSize+'pt</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+itemID+'\', \'fontSize\', this.value)">';
-                              html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="3.0" step="0.01" value="'+lineHeight+'" oninput="passStyleValue(\''+itemID+'\', \'lineHeight\', this.value)">';
-                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'em</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+itemID+'\', \'letterSpacing\', this.value)">';
+                              html += '<label for="'+sliderID+'-fontSize">Font Size </label><span class="t__right" id="'+sliderID+'-fontSize-val">'+fontSize+'pt</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+itemID+'\', \'fontSize\', this.value)">';
+                              html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span class="t__right" id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="3.0" step="0.01" value="'+lineHeight+'" oninput="passStyleValue(\''+itemID+'\', \'lineHeight\', this.value)">';
+                              html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span class="t__right" id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+itemID+'\', \'letterSpacing\', this.value)">';
                               //Variable sliders
                               addVariableSliders();
                               //plus minus buttons
