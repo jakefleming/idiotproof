@@ -421,7 +421,7 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
 
 
 function onReadFile(e) {
-    if (e.target.files.length > 1 & location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname === "") {
+    if (e.target.files.length > 1) {
          var html = '',
               style = '';
          var files = e.target.files;
