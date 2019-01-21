@@ -321,9 +321,18 @@ function passStyleValue(itemID,property,value) {
       } else {
             $( "#"+itemID+" .testarea" ).css(property,value);
       }
+      //update inline text
+      if ($("#"+itemID+" .testarea-values").has("."+property).length) {
+            $("#"+itemID+" .testarea-values"+" ."+property).html(" "+property+": "+value);
+      } else {
+            var html = "<span class='"+property+"'> "+property+": "+value+"</span>";
+            $("#"+itemID+" .testarea-values").append(html);
+      }
 }
 function passfvarValue(itemID,property,value,fvarSupport) {
+      // update text values
       document.getElementById(itemID+"-slider-"+property+"-val").innerHTML=value;
+      // save in local storage
       saveData(itemID+"-slider-"+property+"-val", value);
       if (!(Array.isArray(fvarSupport))){
             fvarSupport = fvarSupport.split(',');
@@ -345,6 +354,13 @@ function passfvarValue(itemID,property,value,fvarSupport) {
              }
       }
       $("#"+itemID+" .testarea").css('font-variation-settings', fvarcss);
+      //update inline text
+      if ($("#"+itemID+" .testarea-values").has(".fvar").length) {
+            $("#"+itemID+" .testarea-values .fvar").html(fvarcss);
+      } else {
+            var html = "<span class='fvar'>"+fvarcss+"</span>";
+            $("#"+itemID+" .testarea-values").append(html);
+      }
 }
 
 function displayFontData(fontFamily) {
