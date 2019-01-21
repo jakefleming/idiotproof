@@ -421,13 +421,11 @@ function onFontLoaded(font, fontFamilySource, fontFamily) {
 
 
 function onReadFile(e) {
+      var html = '',
+           style = '',
+           file = e.target.files[0],
+           files = e.target.files;
     if (e.target.files.length > 1) {
-         var html = '',
-              style = '';
-         var files = e.target.files;
-         var file = e.target.files[0];
-         var filesUploaded = 0;
-         var firstFile_fontFamily = "";
          for(var i=0; i<e.target.files.length; i++) {
            var f = files[i];
            var reader = new FileReader;
@@ -451,7 +449,6 @@ function onReadFile(e) {
           reader.readAsArrayBuffer(f);
     }
    } else {
-          var file = e.target.files[0];
           var reader = new FileReader();
           reader.onload = function(e) {
               try {
