@@ -13,7 +13,7 @@ fonts/ignore/CardinalGrotesqueWide-ExtraBoldRound15.otf
 fonts/ignore/BruphyText-Regular.ttf 
 fonts/ignore/CardinalGrotesqueSemiCondensed-ExtraBoldRound6.otf 
 fonts/ignore/CardinalGrotesque-ExtraBoldRound6.otf 
-fonts/ignore/BruphyText-SemiBold.ttf 
+fonts/ignore/BruphyText-Semibold.ttf 
 fonts/ignore/CardinalGrotesque-ExtraBoldRound15.otf 
 fonts/ignore/CardinalGrotesqueSemiCondensed-ExtraBoldRound15.otf 
 fonts/ignore/CardinalGrotesqueWide-ExtraBoldRound9.otf 
