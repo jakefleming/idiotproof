@@ -246,7 +246,7 @@ function setStage(thisStage) {
                               if (stage === "Features") {
                                     styles += "."+itemID+'-feat { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
-                                    html += '<h6 class="h6 text-gray" title="'+proof[stage][title].definition+'" contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'<span class="testarea-values"></span></h6>';
+                                    html += '<h6 class="h6" title="'+proof[stage][title].definition+'" contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'</h6><span class="testarea-values small"> <span class="fontSize">fontSize: '+fontSize+'pt</span> <span class="lineHeight">lineHeight: '+lineHeight+'</span> <span class="letterSpacing">letterSpacing: '+letterSpacing+'</span></span>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
@@ -255,7 +255,7 @@ function setStage(thisStage) {
                                            html +=  proof[stage][title].sample;
                                     }
                               } else {
-                                    html += '<h6 class="h6 text-gray" contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'<span class="testarea-values"></span></h6>';
+                                    html += '<h6 contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'</h6><span class="testarea-values small"> <span class="fontSize">fontSize: '+fontSize+'pt</span> <span class="lineHeight">lineHeight: '+lineHeight+'</span> <span class="letterSpacing">letterSpacing: '+letterSpacing+'</span></span>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contentEditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
                                     // content check localstorage
                                     if (localStorage.getItem(testAreaID)) {
