@@ -44,7 +44,19 @@ h2 {
 h3 .tooltip {
   display: block;
 }
-
+#section__header-stage-buttons {
+	letter-spacing: .04em;
+}
+.item__sliders-wrapper {
+      letter-spacing: .035em;
+	.t__right {
+		float: right;
+	}
+}
+.btn {
+	letter-spacing: .035em;
+}
 h6.h6 {
 	font-weight: 300;
+	letter-spacing: .01em;
 }
