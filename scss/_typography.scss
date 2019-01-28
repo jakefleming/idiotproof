@@ -37,6 +37,7 @@
 }
 
 // headings
+
 h2 {
   text-align: center;
 }
@@ -44,8 +45,9 @@ h2 {
 h3 .tooltip {
   display: block;
 }
-#section__header-stage-buttons {
+#section__header-stage-buttons, .testarea-values {
 	letter-spacing: .04em;
+	font-feature-settings: "tnum" 1;
 }
 .item__sliders-wrapper {
       letter-spacing: .035em;
