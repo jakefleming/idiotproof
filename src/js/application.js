@@ -7,7 +7,7 @@ var fontFormats = {
     opentype: 'otf',
 }
 
-var json = "js/proof.json";
+var json = "src/js/proof.json";
 
 var utc = new Date().toJSON().slice(0,10).replace(/-/g,'/');
 var utcNoSlash = new Date().toJSON().slice(0,10).replace(/-/g,'');

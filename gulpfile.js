@@ -9,7 +9,7 @@ var uglify = require('gulp-uglify');
 var exec = require('child_process').exec;
 
 gulp.task('css', function(){
-  return gulp.src('scss/style.scss', {sourcemap: true})
+  return gulp.src('src/scss/style.scss', {sourcemap: true})
     .pipe(sourcemaps.init())
     .pipe(sass({
       style: 'expanded',
@@ -26,12 +26,12 @@ gulp.task('css', function(){
 });
 
 gulp.task('js', function(){
-  return gulp.src('js/application.js')
+  return gulp.src('src/js/application.js')
     // .pipe(sourcemaps.init())
     .pipe(concat('application-min.js'))
     // .pipe(sourcemaps.write())
     .pipe(uglify())
-    .pipe(gulp.dest('./js'))
+    .pipe(gulp.dest('./src/js'))
     .pipe(browserSync.stream())
 });
 
@@ -50,8 +50,8 @@ gulp.task('browser-sync', ['css'], function() {
 });
 
 gulp.task('watch', function() {
-      gulp.watch('scss/**/*.scss', ['css']);
-      gulp.watch('js/**/*.js', ['js']);
+      gulp.watch('src/scss/**/*.scss', ['css']);
+      gulp.watch('src/js/**/*.js', ['js']);
       gulp.watch('*.html', browserSync.reload);
       // Fonts Added or Deleted
       gulp.watch("fonts/**/*.{otf,ttf}", function(event){
