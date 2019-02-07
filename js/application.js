@@ -219,26 +219,24 @@ function setStage(thisStage) {
                               //Variable sliders
                               addVariableSliders();
                               //plus minus buttons
-                              html += '<div class="u__flex btn__wrapper">';
-                              html += '<div class="add-item-above mr-1 mb-1 d-none"><button class="btn btn-link" onclick="insertField(\''+itemID+'\')">+</button></div>';
-                              html += '<div class="remove-item-this mr-1 mb-1 d-none"><button class="btn btn-link" onclick="removeElementsByID(\''+itemID+'\')">-</button></div>';
+                              html += '<div id="btn__wrapper-case" class="u__flex btn__wrapper">';
+                              html += '<button class="btn btn-link add-item-above mr-1 mb-1 d-none" onclick="insertField(\''+itemID+'\')">+</button>';
+                              html += '<button class="btn btn-link remove-item-this mr-1 mb-1 d-none" onclick="removeElementsByID(\''+itemID+'\')">-</button>';
                               //toggle feature button
                               if (stage === "Features") {
                                     html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+itemID+'-feat\')">♫&#xFE0E;</button></div>';
                               }
                               // other style buttons
-                              html += '<div class="case-uppercase mr-1 mb-1"><button class="btn btn-link" title="Uppercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'uppercase\')">TT</button></div>';
-                              html += '<div class="case-capitalize mr-1 mb-1"><button class="btn btn-link" title="Capitalize" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'capitalize\')">Tt</button></div>';
-                              html += '<div class="case-lowercase mr-1 mb-1"><button class="btn btn-link" title="Lowercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'lowercase\')">tt</button></div>';
+                              html += '<button class="btn btn-link textTransform-uppercase mr-1 mb-1" title="Uppercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'uppercase\')">TT</button>';
+                              html += '<button class="btn btn-link textTransform-capitalize mr-1 mb-1" title="Capitalize" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'capitalize\')">Tt</button>';
+                              html += '<button class="btn btn-link textTransform-lowercase mr-1 mb-1" title="Lowercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'lowercase\')">tt</button>';
                               html += '</div>';
                               html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
-                              html += '<button class="btn btn-link mr-1 mb-1" title="1 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'1\')">☱</button>';
-                              html += '<button class="btn btn-link mr-1 mb-1" title="2 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'2\')">☷</button>';
-                              html += '<button class="btn btn-link mr-1 mb-1" title="3 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'3\')">☵</button>';
+                              html += '<button class="btn btn-link column-count-1 mr-1 mb-1" title="1 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'1\')">☱</button>';
+                              html += '<button class="btn btn-link column-count-2 mr-1 mb-1" title="2 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'2\')">☷</button>';
+                              html += '<button class="btn btn-link column-count-3 mr-1 mb-1" title="3 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'3\')">☵</button>';
                               html += '</div>';
-                              html += '<div id="btn__wrapper-columns" class="u__flex btn__wrapper">';
                               html += '<button class="btn btn-secondary mr-1 mb-1" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
-                              html += '</div>';
                               //close tools
                               html += '</div>';
                               html += '</div>';
@@ -328,6 +326,7 @@ function passStyleValue(itemID,property,value) {
             var html = "<span class='"+property+"'> "+property+": "+value+"</span>";
             $("#"+itemID+" .testarea-values").append(html);
       }
+      $(".btn."+property+"-"+value).addClass('active').siblings(".btn").removeClass('active');
 }
 function passfvarValue(itemID,property,value,fvarSupport) {
       // update text values
@@ -555,7 +554,6 @@ function localLoad() {
                   var fontFamily = thisFontFamily;
           }
           setFont(fontFamilySource, fontFamily);
-          document.getElementById("btn__setfont-"+fontFamily).classList.add('active');
           $('#style__fontface').append(style);
 
           // check local storage values
@@ -586,10 +584,6 @@ window.onload = function() {
     });
     $('#btn__view-tools-toggle').on('click', function(e) {
         $('.body__idiotproofed').toggleClass("tools-visible");
-    });
-    //Tools buttons active class
-    $('.btn__wrapper').on('click', '.btn', function() {
-      $(this).addClass('active').siblings().removeClass('active');
     });
 
     document.body.className += " loaded";
