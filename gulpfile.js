@@ -21,7 +21,7 @@ gulp.task('css', function(){
     })
     .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest('css'))
+    .pipe(gulp.dest('src/css'))
     .pipe(browserSync.stream())
 });
 
