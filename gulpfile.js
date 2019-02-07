@@ -37,7 +37,7 @@ gulp.task('js', function(){
 
 gulp.task('update-fontlist', function() {
     console.log('Updating List of Fonts');
-    var child = exec("sh listfonts.sh");
+    var child = exec("sh src/listfonts.sh");
 });
 
 gulp.task('browser-sync', ['css'], function() {

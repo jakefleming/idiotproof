@@ -1,0 +1,16 @@
+fonts/ignore/BruphyText-Bold.otf 
+fonts/ignore/BruphyText-Light.ttf 
+fonts/ignore/CardinalGrotesqueGX.ttf 
+fonts/ignore/BruphyText-Thin.otf 
+fonts/ignore/AICA16DecorativeScriRegular.otf 
+fonts/ignore/BruphyText-Medium.otf 
+fonts/ignore/BruphyText-Thin.ttf 
+fonts/ignore/BruphyText-Medium.ttf 
+fonts/ignore/BruphyText-Bold.ttf 
+fonts/ignore/BruphyText-Light.otf 
+fonts/ignore/BruphyText-Regular.otf 
+fonts/ignore/BruphyText-SemiBold.otf 
+fonts/ignore/BruphyText-Regular.ttf 
+fonts/ignore/BruphyText-Semibold.ttf 
+fonts/GoitersGX.ttf 
+fonts/gooper-VF.ttf 

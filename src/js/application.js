@@ -528,7 +528,7 @@ function localLoad() {
       var html = '';
       var style = '';
       var allFontFilesInFolder = '';
-      $.get( "../txt/fonts.txt", {}, function( data ) {
+      $.get( "../src/txt/fonts.txt", {}, function( data ) {
           allFontFilesInFolder = data.split("fonts/");
           var fonts = [];
           for(var a=0; a<allFontFilesInFolder.length; a++) {
