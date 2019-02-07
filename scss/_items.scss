@@ -30,6 +30,10 @@
   }
 }
 
-// .add-item-above {
-//   display: none;
-// }
+.item__sliders {
+  min-width: 160px;
+  &-wrapper {
+    position: sticky;
+    top:1rem;
+  }
+}

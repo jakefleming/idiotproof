@@ -1,0 +1,108 @@
+$slider-bg: rgba(0,0,0,.1);
+$slider-h:  4px;
+$slider-r: 1000px;
+$slider-thumb-border: 0px solid black;
+$slider-thumb-h: 16px;
+$slider-thumb-w: 16px;
+$slider-thumb-radius: 1000px;
+$slider-thumb-shadow: 'ass';
+
+// slider styles
+.item__sliders {
+  border-radius: 2px;
+  padding: 2rem;
+  display: none;
+  max-width: 300px;
+  min-width: 160px;
+  margin-right: 1rem;
+  .item__sliders-wrapper {
+      position: sticky;
+      min-width: 300px;
+      top: 4rem;
+  }
+}
+.header__sliders {
+  display: none;
+  max-width: 300px;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  margin: 18px 0;
+  width: 100%;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: $slider-h;
+  cursor: pointer;
+  animate: 0.2s;
+  background: $slider-bg;
+  border-radius: $slider-r;
+}
+input[type=range]::-webkit-slider-thumb {
+  border: $slider-thumb-border;
+  box-shadow: $slider-thumb-shadow;
+  height: $slider-thumb-h;
+  width: $slider-thumb-w;
+  border-radius: $slider-thumb-radius;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -7px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #367ebd;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: $slider-h;
+  cursor: pointer;
+  animate: 0.2s;
+  background: $slider-bg;
+  border-radius: $slider-r;
+}
+input[type=range]::-moz-range-thumb {
+  border: $slider-thumb-border;
+  box-shadow: $slider-thumb-shadow;
+  height: $slider-thumb-h;
+  width: $slider-thumb-w;
+  border-radius: $slider-thumb-radius;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: $slider-h;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #2a6495;
+  border-radius: 2.6px;
+}
+input[type=range]::-ms-fill-upper {
+  background: $slider-bg;
+  border-radius: 2.6px;
+}
+input[type=range]::-ms-thumb {
+  border: $slider-thumb-border;
+  box-shadow: $slider-thumb-shadow;
+  height: $slider-thumb-h;
+  width: $slider-thumb-w;
+  border-radius: $slider-thumb-radius;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: $slider-bg;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #367ebd;
+}
