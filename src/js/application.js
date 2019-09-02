@@ -538,10 +538,13 @@ function localLoad() {
              }
           }
           preserveUnique(fonts)
+          fonts.sort();
           for(var a=0; a<fonts.length; a++) {
-                var thisFontSource = fonts[a];
-                var thisFontFamily = thisFontSource.replace('.', '-');
-                html += '<span class="btn__setfont chip d-block" title="'+thisFontSource+'" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontSource.replace('ignore/','') +'</span>';
+                var thisFontSource = fonts[a],
+                     thisFontType = thisFontSource.split('.').pop();
+                     thisFontName = thisFontSource.replace('ignore/','').replace('-',' ').replace(/([A-Z])/g, ' $1').trim(),
+                     thisFontFamily = thisFontSource.replace('.', '-');
+                html += '<div class="btn__setfont chip d-block" title="'+thisFontSource+'" id="btn__setfont-'+thisFontFamily+'" onclick="setFont(\'fonts/'+thisFontSource+'\', \''+thisFontFamily+'\')">'+thisFontName.substring(0, thisFontName.length - 4)+'<span class="float-right">'+thisFontType+'</span></div>';
                 style += '@font-face { font-family: "'+thisFontFamily+'"; src: url("fonts/'+thisFontSource+'");}';
           }
           fileButtonParent.innerHTML = html;
@@ -578,6 +581,7 @@ window.onload = function() {
     //Active button toggles
     $('#section__header-file-buttons').on('click', '.btn__setfont', function() {
         $(this).addClass('active').siblings().removeClass('active');
+        $(this).addClass('visited');
     });
     $('#section__header-stage-buttons').on('click', '.btn__setstage', function() {
         $(this).addClass('active').siblings().removeClass('active');

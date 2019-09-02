@@ -2,3 +2,18 @@
   background-color: $primary-color;
   color: #fff;
 }
+.btn__setfont {
+      span {
+            opacity: .35;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 8.5px;
+      }
+      &.visited:not(.active) {
+           border-bottom: 2px solid $border-color;
+           &:before {
+                 content: "✓ ";
+           }
+     }
+     // box-shadow: inset 0 0 0 ($border-width*2) $border-color;
+}
