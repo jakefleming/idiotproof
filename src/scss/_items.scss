@@ -1,6 +1,5 @@
 // item styles
-.item {
-  display: flex;
+.item > .u__flex {
   white-space: normal;
   align-items: stretch;
   justify-content: center;
@@ -10,6 +9,7 @@
 }
 
 .item__proof {
+  position: relative;
   // word-break: break-all;
   background: white;
   // border: 1px solid $border-color;
@@ -28,6 +28,11 @@
     height: auto;
     -webkit-appearance:none;
   }
+  .btn.remove-item-this {
+       position: absolute;
+       right: 20px;
+       top: 20px;
+ }
 }
 
 .item__sliders {

@@ -172,6 +172,7 @@ function setStage(thisStage) {
                   }
                     html = '';
                     gsubFeatures = font.tables.gsub.features;
+                    console.log(gsubFeatures);
                     var taglist = [];
                     for (var i in gsubFeatures) {
                         if (gsubFeatures[i].tag !== "aalt") {
@@ -190,6 +191,7 @@ function setStage(thisStage) {
                               var itemID = 'item--'+title;
                               var sliderID = itemID+'-slider';
                               var inlineStyle = '';
+
                               // font value check localstorage
                               if (localStorage.getItem(sliderID+'-fontSize-val')) {
                                     var fontSize = localStorage.getItem(sliderID+'-fontSize-val');
@@ -211,17 +213,17 @@ function setStage(thisStage) {
                                     var letterSpacing = '0em';
                                     inlineStyle += 'letter-spacing: 0em;';
                               }
-                              html += '<div id="'+itemID+'" class="item u__flex">';
+                              html += '<div id="'+itemID+'" class="item">';
+                              html += '<button class="btn btn-link add-item-above chip" onclick="insertField(\''+itemID+'\')">+ Add Proof Window</button>';
+                              html += '<div class="u__flex">';
                               html += '<div class="item__sliders mr-6 pt-2"><div class="item__sliders-wrapper">';
                               html += '<label for="'+sliderID+'-fontSize">Font Size </label><span class="t__right" id="'+sliderID+'-fontSize-val">'+fontSize+'pt</span><input id="'+sliderID+'-fontSize" type="range" class="slider" min="4" max="160" step="2" value="'+fontSize+'" oninput="passStyleValue(\''+itemID+'\', \'fontSize\', this.value)">';
                               html += '<label for="'+sliderID+'-lineHeight">Line Height </label><span class="t__right" id="'+sliderID+'-lineHeight-val">'+lineHeight+'</span><input id="'+sliderID+'-lineHeight" type="range" class="slider" min="0.6" max="3.0" step="0.01" value="'+lineHeight+'" oninput="passStyleValue(\''+itemID+'\', \'lineHeight\', this.value)">';
                               html += '<label for="'+sliderID+'-letterSpacing">Letter Spacing </label><span class="t__right" id="'+sliderID+'-letterSpacing-val">'+letterSpacing+'</span><input id="'+sliderID+'-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="'+letterSpacing+'" oninput="passStyleValue(\''+itemID+'\', \'letterSpacing\', this.value)">';
                               //Variable sliders
                               addVariableSliders();
-                              //plus minus buttons
+
                               html += '<div id="btn__wrapper-case" class="u__flex btn__wrapper">';
-                              html += '<button class="btn btn-link add-item-above mr-1 mb-1 d-none" onclick="insertField(\''+itemID+'\')">+</button>';
-                              html += '<button class="btn btn-link remove-item-this mr-1 mb-1 d-none" onclick="removeElementsByID(\''+itemID+'\')">-</button>';
                               //toggle feature button
                               if (stage === "Features") {
                                     html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+itemID+'-feat\')">♫&#xFE0E;</button></div>';
@@ -241,6 +243,7 @@ function setStage(thisStage) {
                               html += '</div>';
                               html += '</div>';
                               html += '<div class="item__proof">';
+                              html += '<button class="btn btn-link remove-item-this" onclick="removeElementsByID(\''+itemID+'\')">×</button>';
                               if (stage === "Features") {
                                     styles += "."+itemID+'-feat { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
@@ -262,6 +265,7 @@ function setStage(thisStage) {
                                            html += proof[stage][title];
                                     }
                               }
+                              html += '</div>';
                               html += '</div>';
                               html += '</div>';
                               html += '</div>';
@@ -295,10 +299,11 @@ function insertField(aboveHere) {
     console.log(thisCloneId);
     thisCloneId = thisCloneId.replace("item--", "");
     console.log(thisCloneId);
-    thisClone.html().replace(thisCloneId, fieldcount);
-    thisClone.children("textarea").text("eff yeah");
 
     $("#"+aboveHere).parent().prepend(thisClone);
+    var thisCloneHeight = thisClone.height();
+    thisClone.css('height','auto');
+    thisClone.css('height','0px').animate({height: thisCloneHeight}, 600);
 }
 
 function passStyleValue(itemID,property,value) {
