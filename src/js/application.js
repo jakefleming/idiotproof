@@ -173,11 +173,10 @@ function setStage(thisStage) {
                   }
                     html = '';
                     gsubFeatures = font.tables.gsub.features;
-                    console.log(gsubFeatures);
                     var taglist = [];
                     for (var i in gsubFeatures) {
+                        var tag = gsubFeatures[i].tag;
                         if (gsubFeatures[i].tag !== "aalt") {
-                              var tag = gsubFeatures[i].tag;
                               taglist.push(tag);
                         }
                     }
@@ -236,11 +235,19 @@ function setStage(thisStage) {
                               html += '<button class="btn btn-link column-count-3 mr-1 mb-1" title="3 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'3\')">☵</button>';
                               html += '</div>';
                               //add features checkboxes
-                              html += '<div class="btn__wrapper">';
-                              for (var i in gsubFeatures) {
-                                    var tag = gsubFeatures[i].tag;
-                                    styles += "."+tag+'-feat { font-feature-settings: "'+tag+'" 1;}';
-                                    html += '<div class="btn btn-link chip d-block" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+tag+'-feat\')">'+tag+' <span class="float-right">'+tag+'</span></div>';
+                              html += '<div class="btn__wrapper t_left mt-3">';
+                              console.log(taglist);
+                              for (t = 0; t < taglist.length; t++) {
+                                    var tag = taglist[t];
+                                    console.log(tag);
+                                    if (proof["Features"][tag]["abstract"]) {
+                                          var name = proof["Features"][tag]["abstract"];
+                                    } else {
+                                          var name = "undefined";
+                                    }
+                                    html += '<div class="btn__setfont mt-1 d-block">';
+                                    html += '<input id="'+itemID+'-checkbox-'+tag+'" type="checkbox" name="" onclick="passfeatValue(\''+itemID+'\', \''+tag+'\', \''+taglist+'\')"> ';
+                                    html += name+' <span class="float-right">'+tag+'</span></div>';
                               }
                               html += '</div>';
                               html += '<button class="btn btn-secondary mr-1 mb-1 mt-6" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
@@ -355,6 +362,7 @@ function passfvarValue(itemID,property,value,fvarSupport) {
              }
       }
       $("#"+itemID+" .testarea").css('font-variation-settings', fvarcss);
+      console.log(fvarcss);
       //update inline text
       if ($("#"+itemID+" .testarea-values").has(".fvar").length) {
             $("#"+itemID+" .testarea-values .fvar").html(fvarcss);
@@ -362,6 +370,22 @@ function passfvarValue(itemID,property,value,fvarSupport) {
             var html = "<span class='fvar'>"+fvarcss+"</span>";
             $("#"+itemID+" .testarea-values").append(html);
       }
+}
+
+function passfeatValue(itemID,feature,featureSupport) {
+      var featcss = "",
+           featSupport = featureSupport.split(',');
+      // save in local storage
+      saveData(itemID+feature+"-val", featcss);
+      for (f = 0; f < featSupport.length; f++) {
+             if (document.getElementById(itemID+"-checkbox-"+featSupport[f]).checked) {
+                  featcss += "'"+featSupport[f]+"',";
+            }
+       }
+       featcss = featcss.slice(0, featcss.length - 1);
+       console.log("#"+itemID+" .testarea");
+       console.log(featcss);
+      $("#"+itemID+" .testarea").css('font-feature-settings', featcss);
 }
 
 function displayFontData(fontFamily) {
