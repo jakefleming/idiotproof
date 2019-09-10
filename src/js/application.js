@@ -107,7 +107,8 @@ function removeElementsByClass(className){
     }
 }
 function removeElementsByID(IDName){
-    document.getElementById(IDName).outerHTML = "";
+      var removeThis = $("#"+IDName);
+      removeThis.slideUp('slow', function(){ removeThis.remove(); });
 }
 function saveData(id, value) {
     if (typeof(Storage) !== "undefined") {
@@ -224,10 +225,6 @@ function setStage(thisStage) {
                               addVariableSliders();
 
                               html += '<div id="btn__wrapper-case" class="u__flex btn__wrapper">';
-                              //toggle feature button
-                              if (stage === "Features") {
-                                    html += '<div class="turn-off-feature"><button class="btn btn-link" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+itemID+'-feat\')">♫&#xFE0E;</button></div>';
-                              }
                               // other style buttons
                               html += '<button class="btn btn-link textTransform-uppercase mr-1 mb-1" title="Uppercase" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'uppercase\')">TT</button>';
                               html += '<button class="btn btn-link textTransform-capitalize mr-1 mb-1" title="Capitalize" onclick="passStyleValue(\''+itemID+'\',\'textTransform\', \'capitalize\')">Tt</button>';
@@ -238,14 +235,21 @@ function setStage(thisStage) {
                               html += '<button class="btn btn-link column-count-2 mr-1 mb-1" title="2 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'2\')">☷</button>';
                               html += '<button class="btn btn-link column-count-3 mr-1 mb-1" title="3 column layout" onclick="passStyleValue(\''+itemID+'\',\'column-count\', \'3\')">☵</button>';
                               html += '</div>';
-                              html += '<button class="btn btn-secondary mr-1 mb-1" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
+                              //add features checkboxes
+                              html += '<div class="btn__wrapper">';
+                              for (var i in gsubFeatures) {
+                                    var tag = gsubFeatures[i].tag;
+                                    styles += "."+tag+'-feat { font-feature-settings: "'+tag+'" 1;}';
+                                    html += '<div class="btn btn-link chip d-block" title="Turn on and off feature preview" onclick="toggleClass(\''+itemID+'\', \''+tag+'-feat\')">'+tag+' <span class="float-right">'+tag+'</span></div>';
+                              }
+                              html += '</div>';
+                              html += '<button class="btn btn-secondary mr-1 mb-1 mt-6" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
                               //close tools
                               html += '</div>';
                               html += '</div>';
                               html += '<div class="item__proof">';
                               html += '<button class="btn btn-link remove-item-this" onclick="removeElementsByID(\''+itemID+'\')">×</button>';
                               if (stage === "Features") {
-                                    styles += "."+itemID+'-feat { font-feature-settings: "'+title+'" 1;}';
                                     var textClass = whichFontSize(proof[stage][title].sample);
                                     html += '<h6 class="h6" title="'+proof[stage][title].definition+'" contentEditable="true" onkeyup="saveData(\''+testAreaID+'-title\', \'thisContent\')">'+title+'</h6><span class="testarea-values small"> <span class="fontSize">fontSize: '+fontSize+'pt</span> <span class="lineHeight">lineHeight: '+lineHeight+'</span> <span class="letterSpacing">letterSpacing: '+letterSpacing+'</span></span>';
                                     html += '<div id="'+testAreaID+'" style="'+inlineStyle+' '+fvarStyle+'" class="t__importedfontfamily '+textClass+' testarea" contenteditable="true" spellcheck="false" onkeyup="saveData(\''+testAreaID+'\', \'thisContent\')">';
@@ -290,17 +294,10 @@ function setStage(thisStage) {
     saveData("proofingPhase",thisStage);
 }
 
-var fieldcount = 0;
 function insertField(aboveHere) {
-    fieldcount += 1;
     console.log(aboveHere);
     var thisClone = jQuery("#"+aboveHere).clone();
-    var thisCloneId = thisClone.attr("id");
-    console.log(thisCloneId);
-    thisCloneId = thisCloneId.replace("item--", "");
-    console.log(thisCloneId);
-
-    $("#"+aboveHere).parent().prepend(thisClone);
+    $("#"+aboveHere).prepend(thisClone);
     var thisCloneHeight = thisClone.height();
     thisClone.css('height','auto');
     thisClone.css('height','0px').animate({height: thisCloneHeight}, 600);

@@ -28,7 +28,9 @@ a {
 
 .off-canvas-sidebar {
   background: white;
-  // box-shadow: 0 6px 24px $border-color;
+  position: sticky !important;
+  max-height: 100vh;
+  overflow-y: scroll;
 }
 
 .section__footer-app * {

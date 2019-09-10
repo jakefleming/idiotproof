@@ -16,6 +16,13 @@
            transition-delay:100ms;
      }
 }
+.btn.remove-item-this {
+      color: $bg-color-dark;
+      font-size: 30px;
+      &:hover {
+            color: $gray-color-dark;
+      }
+}
 
 .btn__setfont {
       span {
