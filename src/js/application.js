@@ -176,7 +176,7 @@ function setStage(thisStage) {
                     var taglist = [];
                     for (var i in gsubFeatures) {
                         var tag = gsubFeatures[i].tag;
-                        if (gsubFeatures[i].tag !== "aalt") {
+                        if (proof["Features"][tag] != undefined) {
                               taglist.push(tag);
                         }
                     }
@@ -238,14 +238,10 @@ function setStage(thisStage) {
                               html += '<div class="btn__wrapper t_left mt-3">';
                               for (t = 0; t < taglist.length; t++) {
                                     var tag = taglist[t];
-                                    if (proof["Features"][tag] === undefined) {
-                                          // empty
-                                    } else {
-                                          var name = proof["Features"][tag]["abstract"];
-                                          html += '<div class="btn__setfont mt-1 d-block">';
-                                          html += '<input id="'+itemID+'-checkbox-'+tag+'" type="checkbox" name="" onclick="passfeatValue(\''+itemID+'\', \''+tag+'\', \''+taglist+'\')"> ';
-                                          html += name+'<span class="float-right">'+tag+'</span></div>';
-                                    }
+                                    var name = proof["Features"][tag]["abstract"];
+                                    html += '<div class="btn__setfont mt-1 d-block">';
+                                    html += '<input id="'+itemID+'-checkbox-'+tag+'" type="checkbox" name="" onclick="passfeatValue(\''+itemID+'\', \''+tag+'\', \''+taglist+'\')"> ';
+                                    html += name+'<span class="float-right">'+tag+'</span></div>';
                               }
                               html += '</div>';
                               html += '<button class="btn btn-secondary mr-1 mb-1 mt-6" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
