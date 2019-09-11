@@ -236,18 +236,16 @@ function setStage(thisStage) {
                               html += '</div>';
                               //add features checkboxes
                               html += '<div class="btn__wrapper t_left mt-3">';
-                              console.log(taglist);
                               for (t = 0; t < taglist.length; t++) {
                                     var tag = taglist[t];
-                                    console.log(tag);
-                                    if (proof["Features"][tag]["abstract"]) {
-                                          var name = proof["Features"][tag]["abstract"];
+                                    if (proof["Features"][tag] === undefined) {
+                                          // empty
                                     } else {
-                                          var name = "undefined";
+                                          var name = proof["Features"][tag]["abstract"];
+                                          html += '<div class="btn__setfont mt-1 d-block">';
+                                          html += '<input id="'+itemID+'-checkbox-'+tag+'" type="checkbox" name="" onclick="passfeatValue(\''+itemID+'\', \''+tag+'\', \''+taglist+'\')"> ';
+                                          html += name+'<span class="float-right">'+tag+'</span></div>';
                                     }
-                                    html += '<div class="btn__setfont mt-1 d-block">';
-                                    html += '<input id="'+itemID+'-checkbox-'+tag+'" type="checkbox" name="" onclick="passfeatValue(\''+itemID+'\', \''+tag+'\', \''+taglist+'\')"> ';
-                                    html += name+' <span class="float-right">'+tag+'</span></div>';
                               }
                               html += '</div>';
                               html += '<button class="btn btn-secondary mr-1 mb-1 mt-6" title="Applies styles above to all text fields currently visable." onclick="passStyleValue(\''+itemID+'\',\'idiocracy\',\'global\')">Global Idiocracy</button>';
@@ -284,7 +282,6 @@ function setStage(thisStage) {
                     }
                 }
                 if (html === '') {
-                      console.log(html);
                       html += '<div class="item u__flex t__center"><div class="item__proof">No features found! :...(</div></div>';
                 }
                if (stage === thisStage) {
@@ -302,7 +299,6 @@ function setStage(thisStage) {
 }
 
 function insertField(aboveHere) {
-    console.log(aboveHere);
     var thisClone = jQuery("#"+aboveHere).clone();
     $("#"+aboveHere).prepend(thisClone);
     var thisCloneHeight = thisClone.height();
@@ -362,7 +358,6 @@ function passfvarValue(itemID,property,value,fvarSupport) {
              }
       }
       $("#"+itemID+" .testarea").css('font-variation-settings', fvarcss);
-      console.log(fvarcss);
       //update inline text
       if ($("#"+itemID+" .testarea-values").has(".fvar").length) {
             $("#"+itemID+" .testarea-values .fvar").html(fvarcss);
@@ -373,18 +368,17 @@ function passfvarValue(itemID,property,value,fvarSupport) {
 }
 
 function passfeatValue(itemID,feature,featureSupport) {
-      var featcss = "",
-           featSupport = featureSupport.split(',');
-      // save in local storage
-      saveData(itemID+feature+"-val", featcss);
+      var featSupport = featureSupport.split(',');
+      var featcss = "";
+
       for (f = 0; f < featSupport.length; f++) {
              if (document.getElementById(itemID+"-checkbox-"+featSupport[f]).checked) {
                   featcss += "'"+featSupport[f]+"',";
+                  // save in local storage
+                  // saveData(itemID+"-feature-"+featSupport[f], featSupport[f]);
             }
        }
-       featcss = featcss.slice(0, featcss.length - 1);
-       console.log("#"+itemID+" .testarea");
-       console.log(featcss);
+       featcss = featcss.replace(/,\s*$/, "");
       $("#"+itemID+" .testarea").css('font-feature-settings', featcss);
 }
 
@@ -586,11 +580,11 @@ function localLoad() {
           $('#style__fontface').append(style);
 
           // check local storage values
-          var i;
-          console.log("local storage");
-          for (i = 0; i < localStorage.length; i++)   {
-             console.log(localStorage.key(i) + "=[" + localStorage.getItem(localStorage.key(i)) + "]");
-          }
+          // var i;
+          // console.log("local storage");
+          // for (i = 0; i < localStorage.length; i++)   {
+          //    console.log(localStorage.key(i) + "=[" + localStorage.getItem(localStorage.key(i)) + "]");
+          // }
 
       }, "text");
 }
