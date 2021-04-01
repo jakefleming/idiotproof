@@ -34,9 +34,9 @@ const js = function(){
     .pipe(browserSync.stream())
 };
 
-const updateFontlist = function(done) {
-    console.log('Updating List of Fonts');
-    return exec("sh src/listfonts.sh");
+const updateFontlist = function() {
+  console.log('Updating List of Fonts');
+  return exec("sh src/listfonts.sh");
 };
 
 const browserInit = function(done) {
@@ -57,22 +57,22 @@ const browserReload = function(done) {
 }
 
 const watchFiles = function(done) {
-      watch('src/scss/**/*.scss', css);
-      watch([
-        'src/js/**/*.js',
-        '!src/js/**/*-min.js'
-      ], js);
-      watch('*.html', browserReload);
-      watch('fonts/**/*.{otf,ttf}', {
-          events: ['add', 'unlink'],
-        }, updateFontlist);
-      watch('fonts/**/*.{otf,ttf}', {
-        events: ['change'],
-      }, js);
-      watch('src/txt/**/*.txt', {
-        delay: 300
-      }, js);
-      done();
+  watch('src/scss/**/*.scss', css);
+  watch([
+    'src/js/**/*.js',
+    '!src/js/**/*-min.js'
+  ], js);
+  watch('*.html', browserReload);
+  watch('fonts/**/*.{otf,ttf}', {
+      events: ['add', 'unlink'],
+    }, updateFontlist);
+  watch('fonts/**/*.{otf,ttf}', {
+    events: ['change'],
+  }, js);
+  watch('src/txt/**/*.txt', {
+    delay: 300
+  }, js);
+  done();
 };
 
 // DEFAULT
