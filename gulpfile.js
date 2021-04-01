@@ -46,7 +46,7 @@ const browserInit = function(done) {
       baseDir: './'
     }
   });
-  done()
+  done();
 };
 
 const browserUpdate = series(css, browserInit);
@@ -58,15 +58,20 @@ const browserReload = function(done) {
 
 const watchFiles = function(done) {
       watch('src/scss/**/*.scss', css);
-      watch('src/js/**/*.js', js);
+      watch([
+        'src/js/**/*.js',
+        '!src/js/**/*-min.js'
+      ], js);
       watch('*.html', browserReload);
       watch('fonts/**/*.{otf,ttf}', {
           events: ['add', 'unlink'],
         }, updateFontlist);
       watch('fonts/**/*.{otf,ttf}', {
-        events: 'change',
+        events: ['change'],
       }, js);
-      watch('txt/**/*.txt', {delay: 300}, js);
+      watch('src/txt/**/*.txt', {
+        delay: 300
+      }, js);
       done();
 };
 
