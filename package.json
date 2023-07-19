@@ -18,13 +18,13 @@
   },
   "homepage": "https://github.com/jakefleming/idiotproof#readme",
   "devDependencies": {
-    "browser-sync": "^2.26.3",
-    "gulp-autoprefixer": "^6.0.0",
+    "browser-sync": "^2.27.9",
+    "gulp-autoprefixer": "^8.0.0",
     "gulp-concat": "^2.6.1",
-    "gulp-notify": "^3.2.0",
-    "gulp-sass": "^4.0.2",
-    "gulp-sourcemaps": "^2.6.4",
-    "gulp-uglify": "^3.0.1"
+    "gulp-notify": "^4.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2"
   },
   "dependencies": {
     "gulp": "^4.0.2"

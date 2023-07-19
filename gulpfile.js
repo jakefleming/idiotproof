@@ -3,17 +3,12 @@ var concat = require('gulp-concat');
 var sourcemaps = require('gulp-sourcemaps');
 var browserSync = require('browser-sync').create();
 var autoprefixer = require('gulp-autoprefixer');
-var sass = require('gulp-sass');
 var uglify = require('gulp-uglify');
 var { exec } = require('child_process');
 
 const css = function(){
   return src('src/scss/style.scss', {sourcemap: true})
     .pipe(sourcemaps.init())
-    .pipe(sass({
-      style: 'expanded',
-      includePaths: ['scss']
-    }))
     .on('error', function (err){
       console.log(err.toString());
       this.emit('end');

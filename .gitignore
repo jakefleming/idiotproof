@@ -4,3 +4,5 @@ node_modules
 *.codekit3
 fonts/ignore/*
 txt/*
+Src/txt/*
+src/txt/fonts.txt
