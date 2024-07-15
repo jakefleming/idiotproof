@@ -5,28 +5,57 @@ var browserSync = require('browser-sync').create();
 var autoprefixer = require('gulp-autoprefixer');
 var uglify = require('gulp-uglify');
 var { exec } = require('child_process');
+var webpack = require('webpack');
+var webpackStream = require('webpack-stream');
+var sass = require('gulp-sass')(require('sass'));
+const cleanCSS = require('gulp-clean-css');  // Add this line
 
 const css = function(){
-  return src('src/scss/style.scss', {sourcemap: true})
+  return src('src/scss/style.scss', {sourcemaps: true})
     .pipe(sourcemaps.init())
-    .on('error', function (err){
-      console.log(err.toString());
-      this.emit('end');
-    })
+    .pipe(sass().on('error', sass.logError))
     .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-    .pipe(sourcemaps.write())
+    .pipe(cleanCSS())  // Add this line to minify the CSS
+    .pipe(sourcemaps.write('./'))
     .pipe(dest('src/css'))
-    .pipe(browserSync.stream())
+    .pipe(browserSync.stream());
 };
 
-const js = function(){
-  return src('src/js/application.js')
-    // .pipe(sourcemaps.init())
-    .pipe(concat('application-min.js'))
-    // .pipe(sourcemaps.write())
-    .pipe(uglify())
-    .pipe(dest('./src/js'))
-    .pipe(browserSync.stream())
+const webpackConfig = {
+  mode: 'production',  // Adds minification
+  entry: './src/js/index.js',
+  output: {
+    filename: 'application.js'
+  },
+  devtool: 'source-map', //to prevent eval()
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env']
+          }
+        }
+      },
+      {
+        test: /\.json$/,
+        type: 'json'
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.js', '.json']
+  }
+};
+
+const js = function() {
+  return src('src/js/index.js')
+    .pipe(webpackStream(webpackConfig, webpack))
+    .pipe(dest('./src/js'))  // This will output application.js (minified)
+    .pipe(browserSync.stream());
 };
 
 const updateFontlist = function() {

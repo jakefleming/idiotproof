@@ -1,71 +1,153 @@
-// Basic Style Tweaking
-
-body {
-	background: none;
-	padding: 0;
-	margin: 0;
+@media print {
+	// Reset styles
 	* {
-		color: black!important;
-		padding: 0!important;
-		margin: 0!important;
+	  background: transparent !important;
+	  color: #000;
+	  box-shadow: none !important;
+	  text-shadow: none !important;
+	  filter: none !important;
+	  -ms-filter: none !important;
 	}
-	.text-gray {
-		color: lightgray;
+  
+	body {
+	  margin: 0;
+	  padding: 0;
+	  line-height: 1.4;
+	  font-size: 12pt;
+	  background: none;
 	}
-}
+  
+	// Layout adjustments
+	.off-canvas .off-canvas-content,
+	.off-canvas,
+	body,
+	html {
+	  height: auto !important;
+	  width: 100% !important;
+	  overflow: visible !important;
+	}
 
-#section__header-names {
-	background: transparent;
-	position: fixed;
-	padding: 0px;
-	width: 100vw;
-	bottom: -2mm;
-	z-index: 20;
-	font-size: .5rem;
-}
+	// Override container styles
+	.container,
+	.container-fluid,
+	.container-sm,
+	.container-md,
+	.container-lg,
+	.container-xl {
+		width: 100% !important;
+		max-width: none !important;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
 
-.section__header-name {
-	font-size: .8rem;
-	text-align: center;
-}
+	// Ensure full-width for common layout elements
+	.row,
+	.col,
+	[class^="col-"] {
+		width: 100% !important;
+		max-width: none !important;
+		flex: 0 0 100% !important;
+	}
+  
+	// Header styles
+	#section__header-names {
+	  position: fixed;
+	  bottom: 0;
+	  left: 0;
+	  width: 100%;
+	  text-align: center;
+	  z-index: 100;
+	  padding: 0;
+	  margin: 0;
+	}
+  
+	.section__header-name {
+	  font-size: 10pt;
+	  margin-bottom: 5mm;
+	}
 
-.item__proof {
-	box-shadow: none;
-}
+	// Content styles
+	.item {
+	  break-inside: avoid;
+	  page-break-inside: avoid;
+	  width: 100% !important;
+	  max-width: 100% !important;
+	  padding: 0 !important;
+	  margin: 0 !important;
+	}
+  
+	.item__proof {
+	  box-shadow: none !important;
+	  border: none !important;
+	  padding: 0 !important;
+	  width: 100% !important;
+	  max-width: 100% !important;
+	}
+  
+	// Hide unnecessary elements
+	#section__header-stage-buttons,
+	.off-canvas-sidebar,
+	.navbar,
+	.item__sliders,
+	#section__footer-app,
+	button,
+	.btn,
+	.no-print {
+	  display: none !important;
+	}
+  
+	// Typography adjustments
+	h1, h2, h3, h4, h5, h6 {
+	  page-break-after: avoid;
+	  page-break-inside: avoid;
+	}
+  
+	h1 { font-size: 24pt; }
+	h2 { font-size: 20pt; }
+	h3 { font-size: 16pt; }
+	h4, h5, h6 { font-size: 10pt; margin-bottom: 0; }
+  
+	p, h2, h3 {
+	  orphans: 3;
+	  widows: 3;
+	}
 
-// Hide Stuff
-#section__header-stage-buttons, .off-canvas-sidebar, .navbar, .item__sliders, #section__footer-app, button, .btn {
-	display: none;
-}
-
-// Page Breaks
-.item {
-	break-inside: avoid;
-	page-break-inside: avoid;
-	width: 100%;
-	max-width: initial;
-	padding: 0 0mm 0 5mm!important;
-}
-
-.item:last-child {
-	page-break-after: auto!important;
-}
-
-// Fixing Random Height problems
-.off-canvas .off-canvas-content, .off-canvas, body, html {
-	height: auto!important;
-}
-
-// Page margin
-@page
-{
-  size: auto;   /* auto is the initial value */
-
-  /* this affects the margin in the printer settings */
-  margin: 15mm 25mm 15mm 25mm!important;
-}
-
-// Explicits
-.no-print {
-	display: none!important;
-}
+	h6, .item__proof .testarea-values, #section__header-names {
+		font-size: 10pt !important;
+	}
+  
+	// Links
+	a, a:visited {
+	  text-decoration: underline;
+	}
+  
+	a[href]:after {
+	  content: " (" attr(href) ")";
+	}
+  
+	a[href^="#"]:after,
+	a[href^="javascript:"]:after {
+	  content: "";
+	}
+  
+	// Tables
+	thead {
+	  display: table-header-group;
+	}
+  
+	tr, img {
+	  page-break-inside: avoid;
+	}
+  
+	// Page settings
+	@page {
+	  padding: 4mm 5mm;
+	}
+  
+	// Ensure last item doesn't force an extra blank page
+	.item:last-child {
+	  page-break-after: auto;
+	}
+  }

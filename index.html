@@ -10,52 +10,50 @@
     <meta property="og:image" content="https://idiotproofed.com/images/facebook-share.jpg">
     <meta property="og:url" content="https://idiotproofed.com/">
     <link rel="shortcut icon" href="src/images/favicon.png" type="image/x-icon">
-    <script src="src/js/jquery.min.js"></script>
     <script src="src/js/opentype.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,1,200" rel="stylesheet" />
     <link rel="stylesheet" href="src/css/style.css">
-    <script src='src/js/application-min.js'></script>
+    <script src="src/js/application.js"></script>
     <style id="style__fontface"></style>
     <style id="style__fontfamily"></style>
     <style id="style__opentype-features"></style>
     <style id="style__fvar-animation"></style>
 </head>
 <body id="body__idiotproofed" class="body__idiotproofed professional tools-visible">
-  <div class="off-canvas off-canvas-sidebar-show">
+  <div class="off-canvas off-canvas-sidebar-show p-2">
     <div class="off-canvas-sidebar" id="sidebar-demo">
-      <div id="section__header-file-buttons" class="p-2 u__flex-grow-1 t__left">
+      <div id="section__header-file-buttons" class="d-flex-grow t__left">
           <!-- upload or auto load goes here -->
       </div>
     </div>
     <a class="off-canvas-overlay" href="#close"></a>
     <div class="off-canvas-content p-0">
-
       <section class="mb-2">
         <div class="container grid-xl">
-          <header id="section__header-app" class="navbar p-2">
-            <div class="navbar-section mb-2">
-              <title class="u__hidden">Idiot Proofed</title>
-              <img width="190px" height="auto" src="src/images/logo.png"/>
+          <header id="section__header-app" class="navbar d-flex justify-content-between">
+            <div class="navbar-section">
+              <title>Idiot Proofed</title>
+              <img width="174px" height="auto" src="src/images/logo.png"/>
             </div>
-            <div class="navbar-section mb-2">
-              <div class="u__flex-grow-1 t__right">
-                <!-- <button id="btn__view-tools-toggle" class="btn btn__view-tools-toggle btn-lg">🎚️&#xFE0E;</button> -->
-                <button title="Reset All Edits" id="btn__edit-reset" type="button" class="btn btn__edit-reset btn-lg" onclick="localStorageClear()">🔃&#xFE0E;</button>
-                <button title="Print/Save a PDF" class="btn btn-primary btn__print btn-lg" onclick="javascript:window.print()">💾&#xFE0E;</button>
-                <!-- <button title="ProffessionalProofer Mode" class="btn btn__professional btn-lg" onclick="toggleClass('body__idiotproofed', 'professional')">👔&#xFE0E;</button> -->
+            <div class="navbar-section">
+              <div class="d-flex g-1">
+                <button title="Reset All Edits" id="btn__reset-local-storage" type="button" class="btn btn__edit-reset d-flex ">Reset <span class="material-symbols-outlined">history</span></button>
+                <button title="Print/Save a PDF" class="btn btn__print d-flex " onclick="javascript:window.print()">Print PDF <span class="material-symbols-outlined">print</span></button>
+                <button title="Change mode" id="btn__mode-toggle" class="btn btn__print d-flex">Mode <span class="material-symbols-outlined">light_mode</span></button>
               </div>
             </div>
           </header>
+          <header id="section__header-names" class="section__header-names d-flex invisible"></header>
         </div>
         <div class="container grid-xl">
-          <header id="section__header-names" class="section__header-names u__flex p-2"></header>
-          <div id="section__header-file-buttons" class="u__flex-grow-1 t__left">
+          <div id="section__header-file-buttons" class="d-flex-grow t__left">
               <!-- upload or auto load goes here -->
           </div>
         </div>
         <div class="container grid-sm">
-          <ul id="section__header-stage-buttons" class="u__flex-grow-1 t__center tab tab-block">
+          <div id="section__header-stage-buttons" class="d-flex flex-row t__center tab tab-block">
               <!-- stage set buttons go here -->
-          </ul>
+          </div>
         </div>
       </section>
 
@@ -64,11 +62,11 @@
             <!-- proofing goes here -->
         </article>
       </div>
-      <footer id="section__footer-app" class="section__footer-app container u__flex t__center">
+      <footer id="section__footer-app" class="section__footer-app container d-flex t__center">
         <div class="container grid-sm py-16">
-          <div class="u__flex-grow-1">
+          <div class="d-flex-grow">
             <p>Idiot Proofed was created by <a href="https://www.verycoolstudio.com/">Very Cool Studio</a> and <a href="https://www.futurefonts.xyz/jake-fleming">Jake Fleming</a> in 2018. It was created so that we'd never need to open InDesign again. <a href="https://github.com/jakefleming/idiotproof">Help us make it better</a>.</p>
-            <h5>Idiot Proofed <span class="version">V0.2.6</span></h5>
+            <h5>Idiot Proofed <span class="version">V0.3.0</span></h5>
           </div>
         </div>
       </footer>

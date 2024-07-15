@@ -1,0 +1,116 @@
+// _layout.scss
+
+// Off-canvas sidebar
+.off-canvas {
+	display: flex;
+	flex-flow: nowrap;
+	height: 100vh;
+	position: relative;
+	width: 100%;
+  
+	.off-canvas-sidebar {
+	  bottom: 0;
+	  min-width: 10rem;
+	  max-width: 200px;
+	  overflow-y: auto;
+	  position: fixed;
+	  top: 0;
+	  transition: transform 0.25s ease;
+	  z-index: 200;
+	  left: 0;
+	  transform: translateX(-100%);
+  
+	  &.active {
+		transform: translateX(0);
+	  }
+  
+	  @media (min-width: #{$breakpoint-lg}) {
+		position: sticky;
+		transform: translateX(0);
+	  }
+	}
+  
+	.off-canvas-content {
+	  flex: 1 1 auto;
+	  height: 100%;
+	  overflow-y: scroll;
+	  padding: var(--content-padding, 0.4rem 0.4rem 0.4rem 4rem);
+	}
+  }
+  
+  // Section header
+  .section__header-app {
+	background: var(--header-bg, #061117);
+	color: var(--header-color, #4d494d);
+	position: sticky;
+	top: 0;
+	z-index: var(--z-index-header, 100);
+	padding-bottom: 0;
+  
+  }
+  
+  // Section footer
+  .section__footer-app {
+	a {
+	  color: var(--footer-link-color, #e47f7d);
+	}
+  }
+
+
+// Tab styles
+.tab {
+	border-bottom: .05rem solid var(--border-color);
+	display: flex;
+	flex-wrap: none;
+	list-style: none;
+	margin: 0px;
+  
+	&.tab-block {
+	  .tab-item {
+		flex: 1 0 auto;
+		text-align: center;
+	  }
+	}
+  
+	.tab-item {
+	  margin-top: 0;
+  
+	  a {
+		border-bottom: 2px solid transparent;
+		color: var(--text-color);
+		display: block;
+		margin: 0;
+		margin-bottom:-2px;
+		padding: var(--idiot-unit) calc(var(--idiot-unit) * 2);
+		text-decoration: none;
+		transition: all var(--transition-duration, 0.3s) ease;
+  
+		&:focus,
+		&:hover {
+		  color: var(--link-color);
+		}
+	  }
+  
+	  &.active a {
+		border-bottom-color: var(--link-color);
+		color: var(--link-color);
+	  }
+	}
+  }
+  
+  #section__header-stage-buttons {
+	background-color: var(--background-color);
+	border-bottom: 1px solid var(--border-color);
+  
+	.tab-item {
+	  .stage-button {
+		font-weight: var(--font-weight-normal, 400);
+		font-size: var(--base-font-size);
+	  }
+  
+	  &.active .stage-button {
+		font-weight: var(--font-weight-bold, 700);
+	  }
+	}
+  }
+  
