@@ -20,6 +20,10 @@ import { CONFIG } from './config.js';
     return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
   };
   
+  export const sanitizeId = (id) => {
+    return id.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+  };
+
   export const localStorageClear = () => {
     localStorage.clear();
     localStorage.setItem('proofingPhase', CONFIG.defaultProofingPhase);

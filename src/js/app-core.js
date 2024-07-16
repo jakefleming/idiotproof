@@ -46,14 +46,18 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 };
 
 export const onReadFile = (event) => {
-  const files = event.target.files;
+	const files = event.target.files;
+	const fileButtonParent = document.getElementById('section__header-file-buttons');
+	fileButtonParent.innerHTML = '';
   
-  if (files.length > 1) {
-    Array.from(files).forEach(file => readSingleFile(file).catch(console.error));
-  } else if (files.length === 1) {
-    readSingleFile(files[0]).catch(console.error);
-  }
-};
+	Array.from(files).forEach(file => {
+	  const fileButton = document.createElement('div');
+	  fileButton.className = 'btn btn__setfont chip';
+	  fileButton.textContent = file.name;
+	  fileButton.onclick = () => readSingleFile(file);
+	  fileButtonParent.appendChild(fileButton);
+	});
+  };
 
 const readSingleFile = (file) => {
   return new Promise((resolve, reject) => {
@@ -557,19 +561,17 @@ export const generateStageButtons = (proof, currentStage) => {
 	setFont('fonts/gooper-VF.ttf', 'gooper-VF-ttf');
 	document.getElementById('style__fontface').innerHTML = '@font-face { font-family: "gooper-VF-ttf"; src: url("fonts/gooper-VF.ttf");}';
   
-	const fileButtonHtml = `
-	  <form class="box has-advanced-upload" method="post" action="" enctype="multipart/form-data">
-		<div class="box__input">
-		  <input id="fontInput" class="box__file" type="file" name="files[]" data-multiple-caption="{count} files selected" multiple />
-		</div>
-	  </form>
-	  <div id="message"></div>
-	  <div id="listfonts"></div>
-	`;
+	const fileInputHtml = `
+    <form class="box has-advanced-upload" method="post" action="" enctype="multipart/form-data">
+      <div class="box__input">
+        <input id="fontInput" class="box__file" type="file" name="files[]" data-multiple-caption="{count} files selected" multiple />
+      </div>
+    </form>
+  `;
   
-	fileButtonParent.innerHTML = fileButtonHtml;
-	document.getElementById('fontInput').addEventListener('change', onReadFile);
-  };
+  fileButtonParent.innerHTML = fileInputHtml;
+  document.getElementById('fontInput').addEventListener('change', onReadFile);
+};
   
   export const setupEventListeners = () => {
 	const fileButtons = document.getElementById('section__header-file-buttons');
