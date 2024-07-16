@@ -439,10 +439,9 @@ export const insertField = (aboveHere) => {
   
   export const passStyleValue = (itemID, property, value) => {
 	const elementIdSuffix = `-${property}-val`;
-	const element = document.getElementById(`${itemID}${elementIdSuffix}`);
+	const element = document.querySelector(`[id$="${itemID}${elementIdSuffix}"]`);
 	
 	if (['fontSize', 'lineHeight', 'letterSpacing'].includes(property)) {
-		
 	  saveData(`${itemID}${elementIdSuffix}`, value);
 	  if (property === 'fontSize') value += 'pt';
 	  if (property === 'letterSpacing') value += 'em';
@@ -460,7 +459,11 @@ export const insertField = (aboveHere) => {
 	}
   
 	updateInlineText(itemID, property, value);
-	updateActiveButton(property, value);
+  
+	// Only update active button for non-slider properties
+	if (!['fontSize', 'lineHeight', 'letterSpacing'].includes(property)) {
+	  updateActiveButton(property, value);
+	}
   };
   
   export const passfvarValue = (itemID, property, value, fvarSupport) => {
