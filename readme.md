@@ -1,4 +1,4 @@
-![Idiot Proofed](http://idiotproofed.com/src/images/github-share.jpg)
+![Idiot Proofed](http://idiotproofed.com/src/images/github-share.png)
 
 
 Stable release at http://idiotproofed.com.
@@ -12,7 +12,10 @@ Idiot Proofed was made so we'd never have to open InDesign again. It works best 
 2. Spacing — basic character set, `NOno` spacing control sets, and trio spacing controls
 3. Pangram — basic character set in panagrams
 4. Kerning — wider character set, common kerning problems, kerning trios, furniture
-5. Features — auto generated demonstration of features
+5. Diacritics — examples of diacritics accross a selection of latin languages
+6. Features — auto generated demonstration of features
+7. Greek — basic character set, selection of text focusing on each letter
+8. Cyrillic — basic character set, uppercase and lowercase spacing control sets
 
 ## How to install locally
 Clone this repository. If you have node installed and gulp installed go ahead and get the party started:
