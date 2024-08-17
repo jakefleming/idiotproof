@@ -284,18 +284,23 @@ export const setStage = (stage) => {
 	return html;
   };
   
-  const getStoredStyles = (sliderID, textClass) => {
-    const fontSize = localStorage.getItem(`${sliderID}-fontSize-val`) || whichFontSize(textClass);
-    const lineHeight = localStorage.getItem(`${sliderID}-lineHeight-val`) || '1.2';
-    const letterSpacing = localStorage.getItem(`${sliderID}-letterSpacing-val`) || '0em';
+// Modify the getStoredStyles function to include column properties
+const getStoredStyles = (itemID, textClass) => {
+	const fontSize = localStorage.getItem(`${itemID}-fontSize`) || whichFontSize(textClass);
+	const lineHeight = localStorage.getItem(`${itemID}-lineHeight`) || '1.2';
+	const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0em';
+	const columnCount = localStorage.getItem(`${itemID}-column-count`) || '1';
+	const columnGap = localStorage.getItem(`${itemID}-column-gap`) || '1em';
   
-    const inlineStyle = `
-      font-size: ${fontSize}pt;
-      line-height: ${lineHeight};
-      letter-spacing: ${letterSpacing};
-    `;
+	const inlineStyle = `
+	  font-size: ${fontSize}pt;
+	  line-height: ${lineHeight};
+	  letter-spacing: ${letterSpacing};
+	  column-count: ${columnCount};
+	  column-gap: ${columnGap};
+	`;
   
-    return { fontSize, lineHeight, letterSpacing, inlineStyle };
+	return { fontSize, lineHeight, letterSpacing, columnCount, columnGap, inlineStyle };
   };
   
   const generateFvarStyle = (itemID) => {
@@ -397,36 +402,49 @@ export const setStage = (stage) => {
 	}).join('\n');
   };
 
+  // Add new function to handle column updates
+window.updateColumns = (itemID) => {
+	const columnCount = document.getElementById(`${itemID}-column-count`).value;
+	const columnGap = document.getElementById(`${itemID}-column-gap`).value;
+	
+	passStyleValue(itemID, 'column-count', columnCount);
+	passStyleValue(itemID, 'column-gap', columnGap);
+  };
+
   const generateStyleButtons = (itemID) => `
-    <div id="btn__wrapper-case">
-		<label>Case</label>
-		<div class="d-flex g-1 btn__wrapper">
-      		<button class="btn btn-link textTransform-uppercase" title="Uppercase" onclick="passStyleValue('${itemID}','textTransform', 'uppercase')">TT</button>
-      		<button class="btn btn-link textTransform-capitalize" title="Capitalize" onclick="passStyleValue('${itemID}','textTransform', 'capitalize')">Tt</button>
-      		<button class="btn btn-link textTransform-lowercase" title="Lowercase" onclick="passStyleValue('${itemID}','textTransform', 'lowercase')">tt</button>
-		</div>
+  <div id="btn__wrapper-case">
+    <label>Case</label>
+    <div class="d-flex g-1 btn__wrapper">
+      <button class="btn btn-link textTransform-uppercase" title="Uppercase" onclick="passStyleValue('${itemID}','textTransform', 'uppercase')">TT</button>
+      <button class="btn btn-link textTransform-capitalize" title="Capitalize" onclick="passStyleValue('${itemID}','textTransform', 'capitalize')">Tt</button>
+      <button class="btn btn-link textTransform-lowercase" title="Lowercase" onclick="passStyleValue('${itemID}','textTransform', 'lowercase')">tt</button>
     </div>
-    <div id="btn__wrapper-columns">
-		<label>Columns</label>
-		<div class="d-flex g-1 btn__wrapper">
-      		<button class="btn btn-link column-count-1" title="1 column layout" onclick="passStyleValue('${itemID}','column-count', '1')"><span class="material-symbols-outlined">subject</span></button>
-      		<button class="btn btn-link column-count-2" title="2 column layout" onclick="passStyleValue('${itemID}','column-count', '2')"><span class="material-symbols-outlined">view_column_2</span></button>
-      		<button class="btn btn-link column-count-3" title="3 column layout" onclick="passStyleValue('${itemID}','column-count', '3')"><span class="material-symbols-outlined">view_week</span></button>
-		</div>
+  </div>
+  <div id="btn__wrapper-columns">
+    <label>Columns</label>
+    <div class="d-flex g-1 btn__wrapper">
+	<span class="text-small">Count</span>
+      <input class="input" type="number" id="${itemID}-column-count" min="1" max="6" value="1" onchange="updateColumns('${itemID}')" style="width: 50px;">
+	<span class="text-small">Gap</span>
+      <input class="input" type="text" id="${itemID}-column-gap" value="10px" onchange="updateColumns('${itemID}')" style="width: 50px;">
     </div>
-  `;
+  </div>
+`;
+
+
   
-  const generateFeatureCheckboxes = (itemID, proof, taglist) => {
+const generateFeatureCheckboxes = (itemID, proof, taglist) => {
 	const uniqueTags = [...new Set(taglist)];
 	return `
-	<label>Features</label>  
-	<div class="btn__wrapper d-flex flex-column g-1">
+	  <label>Features</label>  
+	  <div class="btn__wrapper d-flex flex-wrap g-0">
 		${uniqueTags.map(tag => {
 		  const name = proof["Features"][tag]["abstract"];
 		  return `
-			<div class="btn__setfont d-flex justify-content-between">
+			<div class="chip d-flex align-items-center justify-content-between d-flex-grow" onclick="document.getElementById('${itemID}-checkbox-${tag}').click()">
 			  <input id="${itemID}-checkbox-${tag}" type="checkbox" onclick="passfeatValue('${itemID}', '${tag}', '${uniqueTags.join(',')}')">
-			  ${name}<span class="d-flex-grow text-right text-small">${tag}</span>
+			  <span class="d-flex-grow">${name}</span>
+			  <span class="tag-label text-small">${tag}</span>
 			</div>
 		  `;
 		}).join('')}
@@ -434,27 +452,65 @@ export const setStage = (stage) => {
 	`;
   };
   
+  
   const generateProofContent = (stage, title, proof, testAreaID, inlineStyle, fvarStyle, textClass) => {
-    if (stage === "Features") {
-      const definition = proof[stage][title].definition;
-      const sample = localStorage.getItem(testAreaID) || proof[stage][title].sample;
-      return `
-        <h6 class="h6" title="${definition}" contentEditable="true" onkeyup="saveData('${testAreaID}-title', 'thisContent')">${title}</h6>
-        <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
-        <div id="${testAreaID}" style="${inlineStyle} ${fvarStyle}" class="t__importedfontfamily ${textClass} testarea" contenteditable="true" spellcheck="false" onkeyup="saveData('${testAreaID}', 'thisContent')">
-          ${sample}
-        </div>
-      `;
-    } else {
-      const content = localStorage.getItem(testAreaID) || proof[stage][title];
-      return `
-        <h6 contentEditable="true" onkeyup="saveData('${testAreaID}-title', 'thisContent')">${title}</h6>
-        <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
-        <div id="${testAreaID}" style="${inlineStyle} ${fvarStyle}" class="t__importedfontfamily ${textClass} testarea" contentEditable="true" spellcheck="false" onkeyup="saveData('${testAreaID}', 'thisContent')">
-          ${content}
-        </div>
-      `;
-    }
+	const { fontSize, lineHeight, letterSpacing, columnCount, columnGap } = getStoredStyles(testAreaID, textClass);
+  
+	let content;
+	let headingContent;
+  
+	if (stage === "Features") {
+	  const definition = proof[stage][title].definition;
+	  const sample = localStorage.getItem(testAreaID) || proof[stage][title].sample;
+	  headingContent = `<h6 class="h6" title="${definition}" contentEditable="true" onkeyup="saveData('${testAreaID}-title', 'thisContent')">${title}</h6>`;
+	  content = sample;
+	} else {
+	  const storedContent = localStorage.getItem(testAreaID) || proof[stage][title];
+	  headingContent = `<h6 contentEditable="true" onkeyup="saveData('${testAreaID}-title', 'thisContent')">${title}</h6>`;
+	  content = storedContent;
+	}
+  
+	const html = `
+	  ${headingContent}
+	  <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
+	  <div id="${testAreaID}" style="${inlineStyle} ${fvarStyle}" class="t__importedfontfamily ${textClass} testarea" contenteditable="true" spellcheck="false" onkeyup="saveData('${testAreaID}', 'thisContent')">
+		${content}
+	  </div>
+	`;
+  
+	// Wrap the function in setTimeout to ensure it runs after the DOM has been updated
+	setTimeout(() => {
+	  // Set initial values for sliders
+	  const fontSizeSlider = document.getElementById(`${testAreaID}-fontSize`);
+	  const lineHeightSlider = document.getElementById(`${testAreaID}-lineHeight`);
+	  const letterSpacingSlider = document.getElementById(`${testAreaID}-letterSpacing`);
+	  
+	  if (fontSizeSlider) fontSizeSlider.value = fontSize.replace('pt', '');
+	  if (lineHeightSlider) lineHeightSlider.value = lineHeight;
+	  if (letterSpacingSlider) letterSpacingSlider.value = letterSpacing.replace('em', '');
+  
+	  // Set initial values for column inputs
+	  const columnCountInput = document.getElementById(`${testAreaID}-column-count`);
+	  const columnGapInput = document.getElementById(`${testAreaID}-column-gap`);
+	  
+	  if (columnCountInput) columnCountInput.value = columnCount;
+	  if (columnGapInput) columnGapInput.value = columnGap;
+  
+	  // Update the displayed values
+	  updateDisplayedValues(testAreaID, {fontSize, lineHeight, letterSpacing, columnCount, columnGap});
+	}, 0);
+  
+	return html;
+  };
+  
+  // Helper function to update displayed values
+  const updateDisplayedValues = (testAreaID, values) => {
+	Object.entries(values).forEach(([key, value]) => {
+	  const element = document.getElementById(`${testAreaID}-${key}-val`);
+	  if (element) {
+		element.textContent = value;
+	  }
+	});
   };
   
   const generateTestAreaValues = (inlineStyle) => {
@@ -515,8 +571,8 @@ export const insertField = (aboveHere) => {
 	const elementIdSuffix = `-${property}-val`;
 	const element = document.querySelector(`[id$="${itemID}${elementIdSuffix}"]`);
 	
-	if (['fontSize', 'lineHeight', 'letterSpacing'].includes(property)) {
-	  saveData(`${itemID}${elementIdSuffix}`, value);
+	if (['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
+	  saveData(`${itemID}-${property}`, value);
 	  if (property === 'fontSize') value += 'pt';
 	  if (property === 'letterSpacing') value += 'em';
 	  if (element) element.textContent = value;
@@ -535,7 +591,7 @@ export const insertField = (aboveHere) => {
 	updateInlineText(itemID, property, value);
   
 	// Only update active button for non-slider properties
-	if (!['fontSize', 'lineHeight', 'letterSpacing'].includes(property)) {
+	if (!['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
 	  updateActiveButton(property, value);
 	}
   };

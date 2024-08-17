@@ -202,3 +202,19 @@ input[type="range"] {
     }
   }
 }
+
+input[type="number"], input[type="text"] {
+  background-color: transparent;
+  outline: none;
+  color: var(--text-color);
+  font-size: var(--font-size-small, .8em);
+  font-weight: 500;
+  font-family: var(--idiot-font-stack, $idiot-font-stack);
+  border-radius: var(--input-border-radius, #{$idiot-radius});
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 2px solid var(--button-bg);
+  &:hover, &:focus {
+    color: var(--button-hover-text);
+    border: 2px solid var(--button-hover-bg);
+  }
+}
