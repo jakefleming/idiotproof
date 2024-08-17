@@ -20,12 +20,12 @@ window.passfeatValue = AppCore.passfeatValue;
 window.insertField = AppCore.insertField;
 window.localStorageClear = AppCore.localStorageClear;
 
-const init = () => {
+const init = (forceServerLoad = false) => {
 	try {
-	  if (['localhost', '127.0.0.1', ''].includes(location.hostname)) {
-		AppCore.localLoad();
-	  } else {
+	  if (forceServerLoad || !['localhost', '127.0.0.1', ''].includes(location.hostname)) {
 		AppCore.serverLoad();
+	  } else {
+		AppCore.localLoad();
 	  }
   
 	  AppCore.setupEventListeners();
@@ -36,4 +36,4 @@ const init = () => {
 	}
   };
 
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => init(false)); // Set to true to force serverLoad

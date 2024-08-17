@@ -12,12 +12,22 @@ import { CONFIG } from './config.js';
   
   export const showErrorMessage = (message) => {
     const el = document.getElementById('message');
-    el.style.display = message && message.trim().length > 0 ? 'block' : 'none';
-    el.textContent = message;
+    if (el) {
+      el.style.display = message && message.trim().length > 0 ? 'block' : 'none';
+      el.textContent = message;
+    } else {
+      console.error('Message element not found. Error message:', message);
+    }
   };
   
   export const uint8ToBase64 = (buffer) => {
-    return btoa(String.fromCharCode.apply(null, new Uint8Array(buffer)));
+    const chunk = 8192;
+    let result = '';
+    for (let i = 0; i < buffer.length; i += chunk) {
+      const slice = buffer.subarray(i, i + chunk);
+      result += String.fromCharCode.apply(null, slice);
+    }
+    return btoa(result);
   };
   
   export const sanitizeId = (id) => {

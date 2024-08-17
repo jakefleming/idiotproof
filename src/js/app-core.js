@@ -20,96 +20,129 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 	return new Promise((resolve, reject) => {
 	  try {
 		font = loadedFont;
-		window.URL.createObjectURL(new Blob([font], { type: 'application/zip' }));
+		console.log(`Font assigned globally: ${fontFamily}`);
+		
+		// Create and apply the font-face rule
+		const fontFaceRule = `
+		  @font-face {
+			font-family: '${fontFamily}';
+			src: url('${fontFamilySource}') format('${loadedFont.outlinesFormat === 'truetype' ? 'truetype' : 'opentype'}');
+		  }
+		`;
+		const style = document.createElement('style');
+		style.textContent = fontFaceRule;
+		document.head.appendChild(style);
+		console.log(`Font-face rule applied: ${fontFaceRule}`);
+  
 		window.fontFamily = fontFamily;
-	
+		console.log(`Window.fontFamily set to: ${fontFamily}`);
+  
 		displayFontData(fontFamily);
-	
+  
 		if (['localhost', '127.0.0.1', ''].includes(location.hostname)) {
-		localStorage.setItem('fontFamily', fontFamily);
-		localStorage.setItem('fontFamilySource', fontFamilySource);
+		  localStorage.setItem('fontFamily', fontFamily);
+		  localStorage.setItem('fontFamilySource', fontFamilySource);
+		  console.log(`Font information saved to localStorage`);
 		}
-	
+  
 		// If there's a pending stage, set it now
 		if (window.pendingStage) {
-		setStage(window.pendingStage);
-		window.pendingStage = null;
+		  setStage(window.pendingStage);
+		  window.pendingStage = null;
 		} else {
-		// Set a default stage if none is pending
-		setStage('Hamburgers');  // or whatever your default stage should be
+		  // Set a default stage if none is pending
+		  setStage('Hamburgers');  // or whatever your default stage should be
 		}
+		console.log(`Stage set successfully`);
 		resolve();
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
+	  } catch (error) {
+		console.error('Error in onFontLoaded:', error);
+		reject(error);
+	  }
+	});
+  };
 
 export const onReadFile = (event) => {
 	const files = event.target.files;
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	fileButtonParent.innerHTML = '';
   
-	Array.from(files).forEach(file => {
-	  const fileButton = document.createElement('div');
-	  fileButton.className = 'btn btn__setfont chip';
-	  fileButton.textContent = file.name;
-	  fileButton.onclick = () => readSingleFile(file);
-	  fileButtonParent.appendChild(fileButton);
+	Array.from(files).forEach(async file => {
+	  const button = await generateFontButton(file, 'server');
+	  fileButtonParent.appendChild(button);
+	});
+  
+	// Activate the first button automatically after all chips have loaded
+	setTimeout(() => {
+	  const firstButton = fileButtonParent.querySelector('.btn__setfont');
+	  if (firstButton) {
+		firstButton.click(); // Simulate a click on the first button
+	  }
+	}, 0);
+  };
+
+  const readSingleFile = (file) => {
+	return new Promise((resolve, reject) => {
+	  const reader = new FileReader();
+	  
+	  reader.onload = async (e) => {
+		try {
+		  console.log(`File read successfully: ${file.name}`);
+		  const font = opentype.parse(e.target.result);
+		  console.log(`Font parsed successfully: ${font.names.postScriptName.en}`);
+		  const fontFamily = font.names.postScriptName.en;
+		  const fontFamilySource = `fonts/${fontFamily}`;
+		  
+		  await onFontLoaded(font, fontFamilySource, fontFamily);
+  
+		  font.file = {
+			name: file.name,
+			lastModified: file.lastModified,
+			size: file.size,
+			type: file.type,
+		  };
+		  font.type = 'user:local';
+  
+		  const tempUint8array = new Uint8Array(e.target.result);
+		  const isVariableFont = font.tables.fvar !== undefined;
+  
+		  // Set the @font-face rule
+		  const fontFaceRule = `@font-face {font-family:'${fontFamily}'; src: url('data:font/ttf;base64,${uint8ToBase64(tempUint8array)}') format('truetype');}`;
+		  document.getElementById('style__fontface').innerHTML += fontFaceRule;
+		  console.log(`Font-face rule added: ${fontFaceRule}`);
+  
+		  console.log(`Loaded font: ${fontFamily}, Variable: ${isVariableFont}`);
+  
+		  showErrorMessage('');
+		  resolve();
+		} catch (err) {
+		  console.error('Error parsing font:', err);
+		  showErrorMessage(`Error loading font: ${err.message}`);
+		  reject(err);
+		}
+	  };
+  
+	  reader.onerror = (err) => {
+		console.error('Error reading file:', err);
+		showErrorMessage(err.toString());
+		reject(err);
+	  };
+  
+	  reader.readAsArrayBuffer(file);
 	});
   };
 
-const readSingleFile = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    
-    reader.onload = async (e) => {
-      try {
-        const font = opentype.parse(e.target.result);
-        const fontFamily = font.names.postScriptName.en;
-        const fontFamilySource = `fonts/${fontFamily}`;
-        
-        await onFontLoaded(font, fontFamilySource, fontFamily);
-
-        font.file = {
-          name: file.name,
-          lastModified: file.lastModified,
-          size: file.size,
-          type: file.type,
-        };
-        font.type = 'user:local';
-
-        const tempUint8array = new Uint8Array(e.target.result);
-        document.getElementById('style__fontface').innerHTML = 
-          `@font-face {font-family:'${fontFamily}'; src: url('data:;base64,${uint8ToBase64(tempUint8array)}') format('truetype');}`;
-
-        showErrorMessage('');
-        resolve();
-      } catch (err) {
-        showErrorMessage(err.toString());
-        console.error(err);
-        reject(err);
-      }
-    };
-
-    reader.onerror = (err) => {
-      showErrorMessage(err.toString());
-      reject(err);
-    };
-
-    reader.readAsArrayBuffer(file);
-  });
-};
-
-export const setFont = (fontFamilySource, fontFamily) => {
-	opentype.load(fontFamilySource, (err, loadedFont) => {
+export const setFont = (fontPath, fontName) => {
+	console.log(`Attempting to load font: ${fontName} from ${fontPath}`);
+	opentype.load(fontPath, (err, loadedFont) => {
 	  if (err) {
 		console.error('Error loading font:', err);
 		showErrorMessage(`Error loading font: ${err}`);
 	  } else {
+		console.log(`Font loaded successfully: ${fontName}`);
 		font = loadedFont; // Ensure this is set globally
 		try {
-		  onFontLoaded(loadedFont, fontFamilySource, fontFamily);
+		  onFontLoaded(loadedFont, fontPath, fontName);
 		  // After the font is loaded and processed, set the stage
 		  setStage(localStorage.getItem('proofingPhase') || 'Hamburgers');
 		} catch (error) {
@@ -271,7 +304,7 @@ export const setStage = (stage) => {
       const fvarSupport = font.tables.fvar.axes.map(axis => axis.tag);
       fvarStyle = 'font-variation-settings: ' + 
         font.tables.fvar.axes.map(axis => {
-          const storedValue = localStorage.getItem(`${itemID}-slider-${axis.tag}-val`);
+          const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
           const value = storedValue !== null ? storedValue : axis.defaultValue;
           return `'${axis.tag}' ${value}`;
         }).join(', ') + ';';
@@ -297,7 +330,7 @@ export const setStage = (stage) => {
     if (!font.tables.fvar) return '';
   
     return font.tables.fvar.axes.map(axis => {
-      const storedValue = localStorage.getItem(`${itemID}-slider-${axis.tag}-val`);
+      const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
       const value = storedValue !== null ? storedValue : axis.defaultValue;
       return `
         <label for="${sliderID}-${axis.tag}">${axis.name.en} </label>
@@ -307,13 +340,54 @@ export const setStage = (stage) => {
     }).join('');
   };
   
-  const generateFontButtons = (fonts) => {
-	return fonts.map(font => {
-	  const fontName = font.replace('.', '-');
-	  const fontType = font.split('.').pop();
-	  const displayName = font.replace('-', ' ').replace(/\.[^/.]+$/, "");
-	  return `<div class="btn__setfont chip btn d-flex justify-content-between" title="${font}" id="btn__setfont-${fontName}" onclick="setFont('fonts/${font}', '${fontName}')">${displayName}<span class="d-flex-grow text-small text-right">${fontType}</span></div>`;
-	}).join('');
+  export const generateFontButton = async (font, mode = 'local') => {
+	let fontName, fontPath, fontType, displayName, isVariable;
+  
+	if (mode === 'local') {
+	  fontName = font.replace('.', '-');
+	  fontPath = `fonts/${font}`;
+	  displayName = font.replace('-', ' ').replace(/\.[^/.]+$/, "");
+	  fontType = font.split('.').pop().toUpperCase();
+	  isVariable = await isVariableFont(fontPath);
+	} else { // server mode
+	  fontName = font.name.replace('.', '-');
+	  fontPath = URL.createObjectURL(font);
+	  displayName = font.name.replace('-', ' ').replace(/\.[^/.]+$/, "");
+	  fontType = font.name.split('.').pop().toUpperCase();
+	  isVariable = await isVariableFont(font);
+	}
+  
+	if (isVariable) {
+	  fontType = 'VF';
+	}
+  
+	const button = document.createElement('div');
+	button.className = 'btn__setfont chip btn d-flex justify-content-between';
+	button.title = mode === 'local' ? font : font.name;
+	button.id = `btn__setfont-${fontName}`;
+	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontType}</span>`;
+	button.onclick = () => setFont(fontPath, fontName);
+  
+	return button;
+  };
+  
+  const isVariableFont = async (font) => {
+	try {
+	  let arrayBuffer;
+	  if (typeof font === 'string') {
+		// Local mode: font is a path
+		const response = await fetch(font);
+		arrayBuffer = await response.arrayBuffer();
+	  } else {
+		// Server mode: font is a File object
+		arrayBuffer = await font.arrayBuffer();
+	  }
+	  const parsedFont = opentype.parse(arrayBuffer);
+	  return parsedFont.tables.fvar !== undefined;
+	} catch (error) {
+	  console.error('Error checking if font is variable:', error);
+	  return false;
+	}
   };
   
   const generateFontFaces = (fonts) => {
@@ -467,22 +541,30 @@ export const insertField = (aboveHere) => {
   };
   
   export const passfvarValue = (itemID, property, value, fvarSupport) => {
-	const element = document.getElementById(`${itemID}-slider-${property}-val`);
-	if (element) element.textContent = value;
-	
-	saveData(`${itemID}-slider-${property}-val`, value);
-	
-	const fvarSupportArray = fvarSupport.split(',');
-	let fvarcss = fvarSupportArray.map(tag => {
-	  const tagValue = tag === property ? value : document.getElementById(`${itemID}-slider-${tag}`).value;
-	  return `'${tag}' ${tagValue}`;
-	}).join(', ');
-  
-	const testarea = document.querySelector(`#${itemID} .testarea`);
-	testarea.style.fontVariationSettings = fvarcss;
-  
-	updateInlineText(itemID, 'fvar', fvarcss);
-  };
+    const element = document.getElementById(`${itemID}-${property}-val`);
+    if (element) {
+        element.textContent = value;
+    } else {
+        console.warn(`Element with ID ${itemID}-${property}-val not found.`);
+    }
+
+    saveData(`${itemID}-${property}-val`, value);
+
+    const fvarSupportArray = fvarSupport.split(',');
+    let fvarcss = fvarSupportArray.map(tag => {
+        const tagValue = tag === property ? value : document.getElementById(`${itemID}-${tag}`)?.value; // Use optional chaining
+        return `'${tag}' ${tagValue}`;
+    }).join(', ');
+
+    const testarea = document.querySelector(`#${itemID} .testarea`);
+    if (testarea) {
+        testarea.style.fontVariationSettings = fvarcss;
+    } else {
+        console.warn(`Test area with ID ${itemID} not found.`);
+    }
+
+    updateInlineText(itemID, 'fvar', fvarcss);
+};
   
   export const passfeatValue = (itemID, feature, featureSupport) => {
 	const featSupport = featureSupport.split(',');
@@ -538,21 +620,23 @@ export const generateStageButtons = (proof, currentStage) => {
   
 	fetch('../src/txt/fonts.txt')
 	  .then(response => response.text())
-	  .then(data => {
+	  .then(async data => {
 		const fonts = data.split('fonts/')
 		  .filter(font => font.trim() !== '')
 		  .map(font => font.trim());
   
 		const uniqueFonts = preserveUnique(fonts.sort());
-		const html = generateFontButtons(uniqueFonts);
-		const style = generateFontFaces(uniqueFonts);
+		
+		// Generate buttons asynchronously
+		const buttonPromises = uniqueFonts.map(font => generateFontButton(font, 'local'));
+		const buttons = await Promise.all(buttonPromises);
+		
+		// Append buttons to the parent element
+		buttons.forEach(button => fileButtonParent.appendChild(button));
   
-		fileButtonParent.innerHTML = html;
-		document.getElementById('style__fontface').innerHTML += style;
-  
+		// Set the default font
 		const fontFamilySource = localStorage.getItem('fontFamilySource') || `fonts/${uniqueFonts[uniqueFonts.length - 1]}`;
 		const fontFamily = localStorage.getItem('fontFamily') || fontFamilySource.replace('.', '-');
-  
 		setFont(fontFamilySource, fontFamily);
 	  })
 	  .catch(error => console.error('Error loading fonts:', error));
