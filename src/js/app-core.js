@@ -701,6 +701,10 @@ export const generateStageButtons = (proof, currentStage) => {
   export const serverLoad = () => {
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	
+	// Load the default Gooper font
+	setFont('fonts/gooper-VF.ttf', 'gooper-VF-ttf');
+	document.getElementById('style__fontface').innerHTML = '@font-face { font-family: "gooper-VF-ttf"; src: url("fonts/gooper-VF.ttf");}';
+  
 	const dragDropHtml = `
 	  <div id="drag-drop-area" class="drag-drop-area">
 		<p>Drag & drop font files here</p>
@@ -756,17 +760,39 @@ export const generateStageButtons = (proof, currentStage) => {
 	handleFiles(files);
   }
   
-  function handleFiles(files) {
-	files = [...files];
-	files.forEach(uploadFile);
-	files.forEach(previewFile);
+  function handleFiles(filesOrEvent) {
+	let files;
+	if (filesOrEvent instanceof Event) {
+	  files = filesOrEvent.target.files;
+	} else {
+	  files = filesOrEvent;
+	}
+  
+	files = Array.from(files);
+	
+	// Process all files
+	const uploadPromises = files.map(file => uploadFile(file));
+  
+	// After all files are processed, select the first font chip
+	Promise.all(uploadPromises).then(() => {
+	  setTimeout(() => {
+		const firstButton = document.querySelector('.btn__setfont');
+		if (firstButton) {
+		  firstButton.click();
+		}
+	  }, 100); // Short delay to ensure DOM is updated
+	});
   }
   
   function uploadFile(file) {
-	// Here you would typically upload the file to a server
-	// For now, we'll just pass it to onReadFile
-	onReadFile({ target: { files: [file] } });
+	return new Promise((resolve) => {
+	  onReadFile({ target: { files: [file] } });
+	  // Assume onReadFile is asynchronous and use a setTimeout to simulate its completion
+	  setTimeout(resolve, 50);
+	});
   }
+  
+  // Make sure onReadFile returns a Promise or is modified to work with this approach
   
   function previewFile(file) {
 	const reader = new FileReader();
