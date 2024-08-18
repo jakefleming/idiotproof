@@ -701,20 +701,82 @@ export const generateStageButtons = (proof, currentStage) => {
   export const serverLoad = () => {
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	
-	setFont('fonts/gooper-VF.ttf', 'gooper-VF-ttf');
-	document.getElementById('style__fontface').innerHTML = '@font-face { font-family: "gooper-VF-ttf"; src: url("fonts/gooper-VF.ttf");}';
+	const dragDropHtml = `
+	  <div id="drag-drop-area" class="drag-drop-area">
+		<p>Drag & drop font files here</p>
+		<p>or</p>
+		<label for="fontInput" class="file-input-label">Choose Files</label>
+		<input id="fontInput" type="file" class="file-input" multiple accept=".ttf,.otf" />
+	  </div>
+	`;
+	
+	fileButtonParent.innerHTML = dragDropHtml;
   
-	const fileInputHtml = `
-    <form class="box has-advanced-upload" method="post" action="" enctype="multipart/form-data">
-      <div class="box__input">
-        <input id="fontInput" class="box__file" type="file" name="files[]" data-multiple-caption="{count} files selected" multiple />
-      </div>
-    </form>
-  `;
+	const dragDropArea = document.getElementById('drag-drop-area');
+	const fileInput = document.getElementById('fontInput');
   
-  fileButtonParent.innerHTML = fileInputHtml;
-  document.getElementById('fontInput').addEventListener('change', onReadFile);
-};
+	// Prevent default drag behaviors
+	['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+	  dragDropArea.addEventListener(eventName, preventDefaults, false);
+	  document.body.addEventListener(eventName, preventDefaults, false);
+	});
+  
+	// Highlight drop area when item is dragged over it
+	['dragenter', 'dragover'].forEach(eventName => {
+	  dragDropArea.addEventListener(eventName, highlight, false);
+	});
+  
+	['dragleave', 'drop'].forEach(eventName => {
+	  dragDropArea.addEventListener(eventName, unhighlight, false);
+	});
+  
+	// Handle dropped files
+	dragDropArea.addEventListener('drop', handleDrop, false);
+  
+	// Handle selected files
+	fileInput.addEventListener('change', handleFiles, false);
+  };
+  
+  function preventDefaults(e) {
+	e.preventDefault();
+	e.stopPropagation();
+  }
+  
+  function highlight(e) {
+	document.getElementById('drag-drop-area').classList.add('highlight');
+  }
+  
+  function unhighlight(e) {
+	document.getElementById('drag-drop-area').classList.remove('highlight');
+  }
+  
+  function handleDrop(e) {
+	const dt = e.dataTransfer;
+	const files = dt.files;
+	handleFiles(files);
+  }
+  
+  function handleFiles(files) {
+	files = [...files];
+	files.forEach(uploadFile);
+	files.forEach(previewFile);
+  }
+  
+  function uploadFile(file) {
+	// Here you would typically upload the file to a server
+	// For now, we'll just pass it to onReadFile
+	onReadFile({ target: { files: [file] } });
+  }
+  
+  function previewFile(file) {
+	const reader = new FileReader();
+	reader.readAsDataURL(file);
+	reader.onloadend = function() {
+	  const img = document.createElement('img');
+	  img.src = reader.result;
+	  document.getElementById('drag-drop-area').appendChild(img);
+	}
+  }
   
   export const setupEventListeners = () => {
 	const fileButtons = document.getElementById('section__header-file-buttons');

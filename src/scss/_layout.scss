@@ -114,3 +114,48 @@
 	}
   }
   
+  .drag-drop-area {
+	height: 92vh;
+	border: 2px dashed var(--text-color);
+	border-radius: 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	text-align: center;
+	transition: all 0.3s ease;
+	background-color: var(--button-bg);
+  }
+  
+  .drag-drop-area.highlight {
+	border-color: var(--button-bg);
+	background-color: var(--background-color);
+  }
+  
+  .drag-drop-area p {
+	margin: 10px 0;
+	font-size: 1.2em;
+	color: #333;
+  }
+  
+  .file-input-label {
+	background-color: var(--button-bg);
+	padding: var(--spacing-xs) var(--spacing-sm);
+	border-radius: var(--border-radius);
+  }
+  
+  .file-input-label:hover {
+	background-color: white;
+  }
+  
+  .file-input {
+	display: none;
+  }
+  
+  .drag-drop-area img {
+	max-width: 50px;
+	max-height: 50px;
+	margin: 10px;
+	border-radius: 5px;
+  }

@@ -36,4 +36,4 @@ const init = (forceServerLoad = false) => {
 	}
   };
 
-document.addEventListener('DOMContentLoaded', () => init(false)); // Set to true to force serverLoad
+document.addEventListener('DOMContentLoaded', () => init(true)); // Set to true to force serverLoad
