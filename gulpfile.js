@@ -84,12 +84,15 @@ const watchFiles = function(done) {
   watch('src/scss/**/*.scss', css);
   watch([
     'src/js/**/*.js',
-    '!src/js/**/*-min.js'
+    '!src/js/**/*-min.js',
+    '!src/js/application.js',     // Exclude the output file
+    '!src/js/application.js.map', // Exclude the source map
+    '!src/js/**/*.LICENSE.txt'    // Exclude the license file
   ], js);
   watch('*.html', browserReload);
   watch('fonts/**/*.{otf,ttf}', {
-      events: ['add', 'unlink'],
-    }, updateFontlist);
+    events: ['add', 'unlink'],
+  }, updateFontlist);
   watch('fonts/**/*.{otf,ttf}', {
     events: ['change'],
   }, js);
