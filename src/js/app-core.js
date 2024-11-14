@@ -809,8 +809,9 @@ export const generateStageButtons = (proof, currentStage) => {
 	if (localStorageClearButton) {
 		localStorageClearButton.addEventListener('click', localStorageClear);
 	}
-  
 	setupPasteHandling();
+
+
   };
   
   const handleFileButtonClick = (event) => {

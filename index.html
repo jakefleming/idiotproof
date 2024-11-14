@@ -20,14 +20,14 @@
     <style id="style__fvar-animation"></style>
 </head>
 <body id="body__idiotproofed" class="body__idiotproofed tools-visible">
-  <div class="off-canvas off-canvas-sidebar-show p-2">
-    <div class="off-canvas-sidebar" id="sidebar-demo">
+  <div class="off-canvas off-canvas-sidebar-show">
+    <div class="off-canvas-sidebar p-2" id="sidebar-demo">
       <div id="section__header-file-buttons" class="d-flex-grow t__left">
           <!-- upload or auto load goes here -->
       </div>
     </div>
     <a class="off-canvas-overlay" href="#close"></a>
-    <div class="off-canvas-content p-0">
+    <div class="off-canvas-content p-2">
       <section class="mb-2">
         <div class="container grid-xl">
           <header id="section__header-app" class="navbar d-flex justify-content-between">
@@ -52,6 +52,7 @@
             </div>
             <div class="navbar-section">
               <div class="d-flex g-1">
+                <button title="Toggle typesetting menu" id="btn__view-tools-toggle" type="button" class="btn d-flex">Tools <span class="material-symbols-outlined">design_services</span></button>
                 <button title="Reset All Edits" id="btn__reset-local-storage" type="button" class="btn btn__edit-reset d-flex ">Reset <span class="material-symbols-outlined">history</span></button>
                 <button title="Print/Save a PDF" class="btn btn__print d-flex " onclick="javascript:window.print()">Print PDF <span class="material-symbols-outlined">print</span></button>
                 <button title="Change mode" id="btn__mode-toggle" class="btn btn__print d-flex">Mode <span class="material-symbols-outlined">light_mode</span></button>

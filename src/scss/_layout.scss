@@ -3,38 +3,44 @@
 // Off-canvas sidebar
 .off-canvas {
 	display: flex;
+	box-sizing: border-box;
 	flex-flow: nowrap;
-	height: 100vh;
 	position: relative;
 	width: 100%;
   
 	.off-canvas-sidebar {
-	  bottom: 0;
-	  min-width: 10rem;
-	  max-width: 200px;
+	  min-width: 0px;
+	  max-width: 0px;
 	  overflow-y: auto;
-	  position: fixed;
+	  position: sticky;
 	  top: 0;
+	  left: 0;
+	  bottom: 0;
+	  height: 100vh;
 	  transition: transform 0.25s ease;
 	  z-index: 200;
-	  left: 0;
 	  transform: translateX(-100%);
+	  scrollbar-width: thin;
+	  scrollbar-color: var(--border-color) var(--background-color);
+
   
-	  &.active {
+	  body.tools-visible & {
 		transform: translateX(0);
+		min-width: 10rem;
+		max-width: 200px;
 	  }
   
-	  @media (min-width: #{$breakpoint-lg}) {
-		position: sticky;
-		transform: translateX(0);
+	  @media (max-width: #{$breakpoint-lg}) {
+		body.tools-visible & {
+			max-width: 50px;
+		}
 	  }
 	}
   
 	.off-canvas-content {
 	  flex: 1 1 auto;
-	  height: 100%;
-	  overflow-y: scroll;
-	  padding: var(--content-padding, 0.4rem 0.4rem 0.4rem 4rem);
+	  flex-grow: 1;
+	  transition: flex 5s ease;
 	}
   }
   

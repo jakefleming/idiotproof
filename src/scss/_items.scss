@@ -15,13 +15,30 @@
   &__container {
     display: flex;
     align-items: stretch;
-    gap: var(--spacing-md, 1.5rem);
+    gap: 0px;
+    transition: all 0.7s ease-in-out;
+    .tools-visible & {
+      gap: var(--spacing-lg, 1.5rem);
+    }
   }
 
   &__sliders {
     flex: 0 0 auto;
-    width: 200px;
-    min-width: 160px;
+    min-width: 0px;
+    width: 0px;
+    transition: transform 0.4s ease, opacity 0.8s ease, width 0.8s ease;
+    transform: translateX(-100%);
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+
+    .tools-visible & {
+      transform: translateX(0);
+      width: 200px;
+      min-width: 160px;
+      opacity: 1;
+      height: auto;
+    }
 
     &-wrapper {
       position: sticky;
@@ -81,6 +98,7 @@
       display: block;
       margin-bottom: var(--spacing-sm, 0.5rem);
       font-size: var(--font-size-small, 0.8em);
+      color: var(--text-color-muted, #999);
     }
 
     .testarea {
