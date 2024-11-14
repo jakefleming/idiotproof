@@ -8,7 +8,13 @@ import { getFormattedDate,
 	removeElementsByClass,
 	saveData,
 	toggleMode,
-	toggleUi  } from './utils.js';
+	toggleUi,
+	saveEditableContent,
+	saveInputValue,
+	getStoredContent  } from './utils.js';
+
+// Re-export localStorageClear
+export { localStorageClear };
 
 let font = null;
 const fontFormats = {
@@ -454,63 +460,40 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
   
   
   const generateProofContent = (stage, title, proof, testAreaID, inlineStyle, fvarStyle, textClass) => {
-	const { fontSize, lineHeight, letterSpacing, columnCount, columnGap } = getStoredStyles(testAreaID, textClass);
+	// Get saved content or use defaults
+	const savedContent = getStoredContent(testAreaID, proof[stage][title]);
+	const savedTitle = getStoredContent(`${testAreaID}-title`, title);
   
-	let content;
 	let headingContent;
-  
 	if (stage === "Features") {
 	  const definition = proof[stage][title].definition;
-	  const sample = localStorage.getItem(testAreaID) || proof[stage][title].sample;
-	  headingContent = `<h6 class="h6" title="${definition}" contentEditable="true" onkeyup="saveData('${testAreaID}-title', 'thisContent')">${title}</h6>`;
-	  content = sample;
+	  headingContent = `
+	    <h6 class="h6" 
+	        title="${definition}" 
+	        contentEditable="true" 
+	        id="${testAreaID}-title"
+	        onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>`;
 	} else {
-	  const storedContent = localStorage.getItem(testAreaID) || proof[stage][title];
-	  headingContent = `<h6 contentEditable="true" onkeyup="saveData('${testAreaID}-title', 'thisContent')">${title}</h6>`;
-	  content = storedContent;
+	  headingContent = `
+	    <h6 contentEditable="true" 
+	        id="${testAreaID}-title"
+	        onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>`;
 	}
   
 	const html = `
 	  ${headingContent}
 	  <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
-	  <div id="${testAreaID}" style="${inlineStyle} ${fvarStyle}" class="t__importedfontfamily ${textClass} testarea" contenteditable="true" spellcheck="false" onkeyup="saveData('${testAreaID}', 'thisContent')">
-		${content}
+	  <div id="${testAreaID}" 
+	       style="${inlineStyle} ${fvarStyle}" 
+	       class="t__importedfontfamily ${textClass} testarea" 
+	       contenteditable="true" 
+	       spellcheck="false" 
+	       onkeyup="saveEditableContent('${testAreaID}')">
+	    ${savedContent}
 	  </div>
 	`;
   
-	// Wrap the function in setTimeout to ensure it runs after the DOM has been updated
-	setTimeout(() => {
-	  // Set initial values for sliders
-	  const fontSizeSlider = document.getElementById(`${testAreaID}-fontSize`);
-	  const lineHeightSlider = document.getElementById(`${testAreaID}-lineHeight`);
-	  const letterSpacingSlider = document.getElementById(`${testAreaID}-letterSpacing`);
-	  
-	  if (fontSizeSlider) fontSizeSlider.value = fontSize.replace('pt', '');
-	  if (lineHeightSlider) lineHeightSlider.value = lineHeight;
-	  if (letterSpacingSlider) letterSpacingSlider.value = letterSpacing.replace('em', '');
-  
-	  // Set initial values for column inputs
-	  const columnCountInput = document.getElementById(`${testAreaID}-column-count`);
-	  const columnGapInput = document.getElementById(`${testAreaID}-column-gap`);
-	  
-	  if (columnCountInput) columnCountInput.value = columnCount;
-	  if (columnGapInput) columnGapInput.value = columnGap;
-  
-	  // Update the displayed values
-	  updateDisplayedValues(testAreaID, {fontSize, lineHeight, letterSpacing, columnCount, columnGap});
-	}, 0);
-  
 	return html;
-  };
-  
-  // Helper function to update displayed values
-  const updateDisplayedValues = (testAreaID, values) => {
-	Object.entries(values).forEach(([key, value]) => {
-	  const element = document.getElementById(`${testAreaID}-${key}-val`);
-	  if (element) {
-		element.textContent = value;
-	  }
-	});
   };
   
   const generateTestAreaValues = (inlineStyle) => {
@@ -826,6 +809,8 @@ export const generateStageButtons = (proof, currentStage) => {
 	if (localStorageClearButton) {
 		localStorageClearButton.addEventListener('click', localStorageClear);
 	}
+  
+	setupPasteHandling();
   };
   
   const handleFileButtonClick = (event) => {
@@ -849,3 +834,32 @@ export const generateStageButtons = (proof, currentStage) => {
   const toggleToolsVisibility = () => {
 	document.body.classList.toggle('tools-visible');
   };
+
+const setupPasteHandling = () => {
+  document.addEventListener('paste', (e) => {
+    // Only handle paste events in testarea elements
+    if (!e.target.classList.contains('testarea')) {
+      return;
+    }
+
+    // Prevent the default paste
+    e.preventDefault();
+
+    // Get plain text from clipboard
+    const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+
+    // Insert the plain text at cursor position
+    const selection = window.getSelection();
+    if (selection.rangeCount) {
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+      range.insertNode(document.createTextNode(text));
+    } else {
+      e.target.textContent += text;
+    }
+
+    // Trigger the onkeyup event to save the content
+    const event = new Event('keyup');
+    e.target.dispatchEvent(event);
+  });
+};

@@ -113,3 +113,31 @@ import { CONFIG } from './config.js';
     }
   };
   
+  // Save content of a contenteditable element to localStorage
+  export const saveEditableContent = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      console.warn(`Element with ID ${elementId} not found`);
+      return;
+    }
+    
+    const content = element.innerText;
+    localStorage.setItem(elementId, content);
+  };
+
+  // Save value of an input element to localStorage
+  export const saveInputValue = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (!element) {
+      console.warn(`Element with ID ${elementId} not found`);
+      return;
+    }
+    
+    localStorage.setItem(elementId, element.value);
+  };
+
+  // Get content from localStorage or return default
+  export const getStoredContent = (elementId, defaultContent = '') => {
+    return localStorage.getItem(elementId) || defaultContent;
+  };
+  

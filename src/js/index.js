@@ -1,5 +1,6 @@
 import { CONFIG } from './config.js';
 import * as AppCore from './app-core.js';
+import { localStorageClear, saveEditableContent, saveInputValue } from './utils.js';
 
 // Global error handlers
 window.addEventListener('unhandledrejection', function(event) {
@@ -18,7 +19,9 @@ window.passStyleValue = AppCore.passStyleValue;
 window.passfvarValue = AppCore.passfvarValue;
 window.passfeatValue = AppCore.passfeatValue;
 window.insertField = AppCore.insertField;
-window.localStorageClear = AppCore.localStorageClear;
+window.localStorageClear = localStorageClear;
+window.saveEditableContent = saveEditableContent;
+window.saveInputValue = saveInputValue;
 
 const init = (forceServerLoad = false) => {
 	try {
