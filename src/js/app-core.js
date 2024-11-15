@@ -276,7 +276,7 @@ export const setStage = (stage) => {
                 ${generateVariableSliders(itemID, sliderID)}
                 ${generateStyleButtons(itemID)}
                 ${generateFeatureCheckboxes(itemID, proof, taglist)}
-                <button class="btn btn-secondary mr-1 mb-1 mt-6" title="Apply these styles to all visible proof sheets." onclick="passStyleValue('${itemID}','idiocracy','global')">Global Idiocracy</button>
+                <button class="btn btn-secondary d-flex align-items-center mt-5" title="Apply these styles to all visible proof sheets." onclick="passStyleValue('${itemID}','idiocracy','global')">Apply all <span class="material-symbols-outlined">globe</span></button>
               </div>
             </div>
             <div class="item__proof">
@@ -475,14 +475,16 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
 	        onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>`;
 	} else {
 	  headingContent = `
-	    <h6 contentEditable="true" 
+	    <h6 class="h6" contentEditable="true" 
 	        id="${testAreaID}-title"
 	        onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>`;
 	}
   
 	const html = `
-	  ${headingContent}
-	  <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
+	  <div class="d-flex justify-content-between">
+		${headingContent}
+		<span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
+	  </div>
 	  <div id="${testAreaID}" 
 	       style="${inlineStyle} ${fvarStyle}" 
 	       class="t__importedfontfamily ${textClass} testarea" 
@@ -496,26 +498,73 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
 	return html;
   };
   
+  const formatStyleValue = (property, value) => {
+    switch (property) {
+      case 'font-size':
+        return value;
+      case 'line-height':
+        return value;
+      case 'letter-spacing':
+        return value.replace('em', '');
+      default:
+        return value;
+    }
+  };
+  
   const generateTestAreaValues = (inlineStyle) => {
-    const styles = inlineStyle.split(';').filter(s => s.trim());
+    // Only show these core properties
+    const styleMap = {
+      'font-size': 'Size',
+      'line-height': 'Leading',
+      'letter-spacing': 'Tracking'
+    };
+
+    const styles = inlineStyle.split(';')
+      .filter(s => s.trim())
+      // Only process styles that are in our styleMap
+      .filter(style => {
+        const property = style.split(':')[0].trim();
+        return styleMap.hasOwnProperty(property);
+      });
+
     return styles.map(style => {
       const [property, value] = style.split(':').map(s => s.trim());
-      return `<span class="${property}">${property}: ${value}</span>`;
-    }).join(' ');
+      const label = styleMap[property];
+      const formattedValue = formatStyleValue(property, value);
+      return `<span class="${property}">${label}: ${formattedValue}</span>`;
+    }).join(' · ');
   };
   
   const updateInlineText = (itemID, property, value) => {
 	const container = document.querySelector(`#${itemID} .testarea-values`);
-	const existingSpan = container.querySelector(`.${property}`);
-	
-	if (existingSpan) {
-	  existingSpan.textContent = `${property}: ${value}`;
-	} else {
-	  const newSpan = document.createElement('span');
-	  newSpan.className = property;
-	  newSpan.textContent = `${property}: ${value}`;
-	  container.appendChild(newSpan);
+	if (!container) return;
+
+	// Get all current values
+	const currentStyles = {
+	  'font-size': container.querySelector('.font-size')?.textContent.split(': ')[1] || '42pt',
+	  'line-height': container.querySelector('.line-height')?.textContent.split(': ')[1] || '1.2',
+	  'letter-spacing': container.querySelector('.letter-spacing')?.textContent.split(': ')[1] || '0em'
+	};
+
+	// Update the changed value
+	switch(property) {
+	  case 'fontSize':
+		currentStyles['font-size'] = value;
+		break;
+	  case 'lineHeight':
+		currentStyles['line-height'] = value;
+		break;
+	  case 'letterSpacing':
+		currentStyles['letter-spacing'] = value;
+		break;
 	}
+
+	// Generate new display text
+	const inlineStyle = Object.entries(currentStyles)
+	  .map(([prop, val]) => `${prop}: ${val}`)
+	  .join('; ');
+
+	container.innerHTML = generateTestAreaValues(inlineStyle);
   };
 
 // Global functions

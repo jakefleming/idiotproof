@@ -5,8 +5,8 @@
 	display: flex;
 	box-sizing: border-box;
 	flex-flow: nowrap;
-	position: relative;
 	width: 100%;
+	min-height: 100vh;
   
 	.off-canvas-sidebar {
 	  min-width: 0px;
@@ -16,7 +16,8 @@
 	  top: 0;
 	  left: 0;
 	  bottom: 0;
-	  height: 100vh;
+	  height: 100%;
+	  max-height: 100vh;
 	  transition: transform 0.25s ease;
 	  z-index: 200;
 	  transform: translateX(-100%);
@@ -26,7 +27,7 @@
   
 	  body.tools-visible & {
 		transform: translateX(0);
-		min-width: 10rem;
+		min-width: 11rem;
 		max-width: 200px;
 	  }
   
@@ -41,6 +42,7 @@
 	  flex: 1 1 auto;
 	  flex-grow: 1;
 	  transition: flex 5s ease;
+	  min-height: 100%;
 	}
   }
   
