@@ -132,6 +132,13 @@ a {
     opacity: 1;
   }
 }
+// select styles
+select {
+  background-color: transparent;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 2px solid var(--button-bg);
+  border-radius: var(--input-border-radius, #{$idiot-radius});
+}
 
 // Slider styles
 input[type="range"] {

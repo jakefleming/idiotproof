@@ -78,7 +78,11 @@ export const onReadFile = (event) => {
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	fileButtonParent.innerHTML = '';
 
-  
+	// First add navigation
+	const navGroup = generateFontNavigation();
+	fileButtonParent.appendChild(navGroup);
+
+	// Then add font buttons
 	generateFontButtons(Array.from(files), 'server')
 	  .then(container => {
 		fileButtonParent.appendChild(container);
@@ -88,7 +92,7 @@ export const onReadFile = (event) => {
 		  firstButton.click();
 		}
 	  });
-  };
+};
 
   const readSingleFile = (file) => {
 	return new Promise((resolve, reject) => {
@@ -393,11 +397,13 @@ const getStoredStyles = (itemID, textClass) => {
 	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontType}</span>`;
 	button.onclick = () => {
 	  // Remove active class from all buttons
-	  document.querySelectorAll('.btn__setfont').forEach(btn => 
-	    btn.classList.remove('active')
-	  );
+	  document.querySelectorAll('.btn__setfont').forEach(btn => {
+	    btn.classList.remove('active');
+	    btn.classList.remove('visited'); // Remove visited from all buttons
+	  });
 	  // Add active class to clicked button
 	  button.classList.add('active');
+	  button.classList.add('visited'); // Add visited only when clicked
 	  setFont(fontPath, fontName);
 	};
   
@@ -736,6 +742,11 @@ export const generateStageButtons = (proof, currentStage) => {
 		  // Only show the message if no fonts are found
 		  fileButtonParent.innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
 		} else {
+		  // First add navigation
+		  const navGroup = generateFontNavigation();
+		  fileButtonParent.appendChild(navGroup);
+		  
+		  // Then add font buttons
 		  generateFontButtons(uniqueFonts, 'local')
 		    .then(container => {
 		      fileButtonParent.appendChild(container);
@@ -770,7 +781,7 @@ export const generateStageButtons = (proof, currentStage) => {
 		<input id="fontInput" type="file" class="file-input" multiple accept=".ttf,.otf" />
 	  </div>
 	`;
-	
+
 	fileButtonParent.innerHTML = dragDropHtml;
   
 	const dragDropArea = document.getElementById('drag-drop-area');
@@ -998,40 +1009,38 @@ export const generateFontButtons = async (fonts, mode = 'local') => {
   const container = document.createElement('div');
   container.className = 'font-buttons-container';
 
-  // Only add navigation buttons if they don't already exist
-  const existingNavGroup = document.querySelector('.font-nav-group');
-  if (!existingNavGroup) {
-    // Add navigation buttons group
-    const navGroup = document.createElement('div');
-    navGroup.className = 'btn-group d-flex g-1 mb-2 font-nav-group';
-    
-    const prevButton = document.createElement('button');
-    prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
-    prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
-    prevButton.onclick = () => navigateFonts('prev');
-    
-    const nextButton = document.createElement('button');
-    nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
-    nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
-    nextButton.onclick = () => navigateFonts('next');
-    
-    navGroup.appendChild(prevButton);
-    navGroup.appendChild(nextButton);
-    container.appendChild(navGroup);
-  }
-
   // Create font chips container
   const chipsContainer = document.createElement('div');
   chipsContainer.className = 'font-chips';
-  container.appendChild(chipsContainer);
-
+  
   // Generate individual font buttons
   for (const font of fonts) {
     const button = await generateFontButton(font, mode);
     chipsContainer.appendChild(button);
   }
 
-  return container;
+  return chipsContainer; // Return only the chips container
+};
+
+// Create a separate function for navigation
+export const generateFontNavigation = () => {
+  const navGroup = document.createElement('div');
+  navGroup.className = 'btn-group d-flex g-1 mb-2 font-nav-group';
+  
+  const prevButton = document.createElement('button');
+  prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
+  prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
+  prevButton.onclick = () => navigateFonts('prev');
+  
+  const nextButton = document.createElement('button');
+  nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
+  nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
+  nextButton.onclick = () => navigateFonts('next');
+  
+  navGroup.appendChild(prevButton);
+  navGroup.appendChild(nextButton);
+  
+  return navGroup;
 };
 
 const navigateFonts = (direction) => {

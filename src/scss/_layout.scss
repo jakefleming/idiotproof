@@ -33,7 +33,7 @@ html * {
 
 	  body.tools-visible & {
 		min-width: 11.5rem;
-		max-width: 290px;
+		max-width: auto;
 		overflow-y: auto;
 		opacity: 1;
 	  }
@@ -73,7 +73,7 @@ html * {
 		body.settings-visible & {
 			overflow-y: auto;
 			min-width: 11.5rem;
-			max-width: 260px;
+			max-width: auto;
 		}
 	}
   }
