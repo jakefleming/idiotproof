@@ -73,6 +73,19 @@
     box-shadow: var(--card-shadow);
     padding: var(--spacing-xxl);
     position: relative;
+    // Default styles
+    width: 100%;
+    height: auto;
+
+    // USA Letter (8.5:11)
+    &.ratio-letter {
+      aspect-ratio: 8.5/11;
+    }
+
+    // ISO A4 (7:10)
+    &.ratio-a4 {
+      aspect-ratio: 7/10;
+    }
 
     .btn.remove-item-this {
       position: absolute;
@@ -112,6 +125,7 @@
       background: transparent;
       color: var(--text-color);
     }
+
   }
 
   .btn.add-item-above {

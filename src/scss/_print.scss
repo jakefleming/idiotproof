@@ -18,8 +18,8 @@
 	}
   
 	// Layout adjustments
-	.off-canvas .off-canvas-content,
-	.off-canvas,
+	.canvas .off-canvas-content,
+	.canvas,
 	body,
 	html {
 	  height: auto !important;
@@ -88,7 +88,6 @@
   
 	// Hide unnecessary elements
 	#section__header-stage-buttons,
-	.off-canvas-sidebar,
 	.navbar,
 	.item__sliders,
 	#section__footer-app,

@@ -41,14 +41,27 @@ import { CONFIG } from './config.js';
   };
 
   export function toggleMode() {
-	const body = document.body;
-	if (body.getAttribute('data-theme') === 'dark') {
-	  body.removeAttribute('data-theme');
-	  document.querySelector('#btn__mode-toggle .material-symbols-outlined').textContent = 'light_mode';
-	} else {
-	  body.setAttribute('data-theme', 'dark');
-	  document.querySelector('#btn__mode-toggle .material-symbols-outlined').textContent = 'dark_mode';
-	}
+    const body = document.body;
+    const currentMode = localStorage.getItem('colorMode') || 'light';
+    const newMode = currentMode === 'light' ? 'dark' : 'light';
+    
+    // Save the new mode
+    localStorage.setItem('colorMode', newMode);
+    
+    // Update UI
+    if (newMode === 'light') {
+      body.removeAttribute('data-theme');
+      document.querySelector('#btn__mode-toggle .material-symbols-outlined').textContent = 'light_mode';
+    } else {
+      body.setAttribute('data-theme', 'dark');
+      document.querySelector('#btn__mode-toggle .material-symbols-outlined').textContent = 'dark_mode';
+    }
+  }
+  export function toggleSettingsVisibility() {
+    const settingsToggle = document.getElementById('btn__settings-toggle');
+    const body = document.body;
+    body.classList.toggle('settings-visible');
+    settingsToggle.classList.toggle('settings-visible');
   }
 
   export function toggleUi() {
@@ -68,25 +81,30 @@ import { CONFIG } from './config.js';
 	}
   }
   
-  export const whichFontSize = (string) => {
+  export const calculateTypeScale = (baseSize = 14, ratio = 1.618, steps = 6) => {
     const sizes = {
-      't__size-xxl': '140',
-      't__size-xl': '100',
-      't__size-l': '84',
-      't__size-m': '56',
-      't__size-s': '28',
-      't__size-xs': '14',
+      't__size-xxl': Math.round(baseSize * Math.pow(ratio, 5)),
+      't__size-xl':  Math.round(baseSize * Math.pow(ratio, 4)),
+      't__size-l':   Math.round(baseSize * Math.pow(ratio, 3)),
+      't__size-m':   Math.round(baseSize * Math.pow(ratio, 2)),
+      't__size-s':   Math.round(baseSize * Math.pow(ratio, 1)),
+      't__size-xs':  baseSize
     };
+    return sizes;
+  };
   
-    if (sizes[string]) return sizes[string];
+  export const whichFontSize = (text, baseSize = 14, ratio = 1.618) => {
+    if (!text) return baseSize.toString();
   
-    const charCount = string.length;
-    if (charCount < 25) return 't__size-xxl';
-    if (charCount < 50) return 't__size-xl';
-    if (charCount < 95) return 't__size-l';
-    if (charCount < 200) return 't__size-m';
-    if (charCount < 1000) return 't__size-s';
-    return 't__size-xs';
+    const sizes = calculateTypeScale(baseSize, ratio);
+    
+    const charCount = text.length;
+    if (charCount < 25) return sizes['t__size-xxl'];
+    if (charCount < 50) return sizes['t__size-xl'];
+    if (charCount < 95) return sizes['t__size-l'];
+    if (charCount < 200) return sizes['t__size-m'];
+    if (charCount < 1000) return sizes['t__size-s'];
+    return sizes['t__size-xs'];
   };
   
   export const removeElementsByClass = (className) => {
@@ -140,4 +158,17 @@ import { CONFIG } from './config.js';
   export const getStoredContent = (elementId, defaultContent = '') => {
     return localStorage.getItem(elementId) || defaultContent;
   };
+  
+  export function initColorMode() {
+	const savedMode = localStorage.getItem('colorMode') || 'light';
+	const body = document.body;
+  
+	if (savedMode === 'dark') {
+	  body.setAttribute('data-theme', 'dark');
+	  document.querySelector('#btn__mode-toggle .material-symbols-outlined').textContent = 'dark_mode';
+	} else {
+	  body.removeAttribute('data-theme');
+	  document.querySelector('#btn__mode-toggle .material-symbols-outlined').textContent = 'light_mode';
+	}
+  }
   

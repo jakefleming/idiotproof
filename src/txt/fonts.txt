@@ -1,3 +1,4 @@
+fonts/ignore/VCGosh-ExtraCondensedThin.otf 
 fonts/ignore/VCGosh-SemiCondensedBold.otf 
 fonts/ignore/VCGosh-ExtraWideExtraBold.otf 
 fonts/ignore/VCGosh-ExtraWideMedium.otf 
@@ -8,8 +9,11 @@ fonts/ignore/VCGosh-ExtraCondensedRegular.otf
 fonts/ignore/VCHoney-LightBanner.otf 
 fonts/ignore/VCGosh-ExtraWideLight.otf 
 fonts/ignore/VCGosh-WideLight.otf 
+fonts/ignore/VCGosh-WideThin.otf 
 fonts/ignore/VCGosh-WideBold.otf 
 fonts/ignore/VCGosh-WideExtraLight.otf 
+fonts/ignore/VCGosh-SemiCondensedBlack.otf 
+fonts/ignore/VCGosh-SemiCondensedThin.otf 
 fonts/ignore/VCGosh-CondensedBlack.otf 
 fonts/ignore/VCGosh-ExtraLight.otf 
 fonts/ignore/VCGosh-SemiCondensedExtraBold.otf 
@@ -34,6 +38,7 @@ fonts/ignore/VCGosh-Light.otf
 fonts/ignore/VCHoney-SemiBoldDeckG2.otf 
 fonts/ignore/VCHoney-BlackBanner.otf 
 fonts/ignore/VCHoney-Bold.otf 
+fonts/ignore/VCGosh-ExtraWideThin.otf 
 fonts/ignore/VCHoney-SemiBoldDeckG1.otf 
 fonts/ignore/VCGosh-CondensedExtraBold.otf 
 fonts/ignore/VCGosh-Black.otf 
@@ -63,6 +68,8 @@ fonts/ignore/VCGosh-CondensedBold.otf
 fonts/ignore/VCGosh-CondensedLight.otf 
 fonts/ignore/VCGosh-WideSemiBold.otf 
 fonts/ignore/VCGosh-ExtraCondensedMedium.otf 
+fonts/ignore/VCGosh-Thin.otf 
+fonts/ignore/VCGosh-CondensedThin.otf 
 fonts/ignore/VCGosh-WideExtraBold.otf 
 fonts/ignore/VCGosh-ExtraWideExtraLight.otf 
 fonts/ignore/VCGosh-WideBlack.otf 

@@ -1,32 +1,5 @@
 // _media-queries.scss
 
-// Small devices (landscape phones, 576px and up)
-@media (min-width: #{$breakpoint-sm}) {
-  .container {
-    max-width: var(--container-sm, #{$container-max-width-sm});
-  }
-}
-
-// Medium devices (tablets, 768px and up)
-@media (min-width: #{$breakpoint-md}) {
-  .container {
-    max-width: var(--container-md, #{$container-max-width-md});
-  }
-}
-
-// Large devices (desktops, 992px and up)
-@media (min-width: #{$breakpoint-lg}) {
-  .container {
-    max-width: var(--container-lg, #{$container-max-width-lg});
-  }
-}
-
-// Extra large devices (large desktops, 1200px and up)
-@media (min-width: #{$breakpoint-xl}) {
-  .container {
-    max-width: var(--container-xl, #{$container-max-width-xl});
-  }
-}
 
 // Custom media query for hiding sliders on smaller screens
 @media (max-width: #{$breakpoint-lg - 1px}) {
@@ -34,20 +7,6 @@
   .section__header-tools {
     display: none !important;
   }
-}
-
-// Responsive typography
-@media (max-width: #{$breakpoint-md - 1px}) {
-  html {
-    font-size: 16px;
-  }
-
-  .t__size-xxl { font-size: 100pt; }
-  .t__size-xl { font-size: 80pt; }
-  .t__size-l { font-size: 64pt; }
-  .t__size-m { font-size: 48pt; }
-  .t__size-s { font-size: 24pt; }
-  .t__size-xs { font-size: 12pt; }
 }
 
 // Add more media queries as needed

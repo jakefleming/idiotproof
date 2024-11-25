@@ -20,13 +20,55 @@
     <style id="style__fvar-animation"></style>
 </head>
 <body id="body__idiotproofed" class="body__idiotproofed tools-visible">
-  <div class="off-canvas off-canvas-sidebar-show">
-    <div class="off-canvas-sidebar p-2" id="sidebar-demo">
+  <div class="canvas">
+    <!-- settings -->
+   <div class="off-canvas-sidebar-settings no-print" id="settings-sidebar">
+    <div class="settings-content p-2">
+      <h4 title="Settings affect global changes to all proofs.">Settings</h4>
+      <ul class="m-0 p-0 d-flex flex-column g-2">
+        <li class="d-flex flex-column g-1">
+          <span class="t__left text-small">Page aspect ratio</span>
+          <select name="aspect-ratio" id="select__aspect-ratio">
+            <option value="8.5:11" selected>USA Letter (8.5" x 11")</option>
+            <option value="7:10">ISO A4 (148.5mm x 210mm)</option>
+          </select>
+        </li>
+        <li class="d-flex flex-column g-1">
+          <span class="t__left text-small">Base font size</span>
+          <input type="number" name="base-font-size" id="input__base-font-size" value="14">
+        </li>
+        <li class="d-flex flex-column g-1">
+          <span class="t__left text-small">Type scale</span>
+          <select name="type-scale" id="select__type-scale">
+            <option value="1.067">1 – Flat</option>
+            <option value="1.125">1.125 – Major Second</option>
+            <option value="1.200">1.200 – Minor Third</option>
+            <option value="1.250">1.250 – Major Third</option>
+            <option value="1.333">1.333 – Perfect Fourth</option>
+            <option value="1.414">1.414 – Augmented Fourth</option>
+            <option value="1.500">1.500 – Perfect Fifth</option>
+            <option value="1.618" selected>1.618 – Golden Ratio</option>
+        </select>
+        </li>
+        <li class="d-flex flex-column g-1">
+          <span class="t__left text-small" title="Change color mode (defaults to operating system)">Color mode</span>
+          <button title="Change mode" id="btn__mode-toggle" class="btn btn__print d-flex justify-content-between">Mode <span class="material-symbols-outlined">light_mode</span></button>
+        </li>
+        <li class="d-flex flex-column g-1">
+          <span class="t__left text-small">Clear localstorage and reset all edits <span class="text-warning">can’t undo</span></span> 
+          <button title="Reset All Edits" id="btn__reset-local-storage" type="button" class="btn btn__edit-reset d-flex justify-content-between">Reset <span class="material-symbols-outlined">history</span></button>
+        </li>
+      </ul>
+    </div>
+    <a class="popover-overlay" href="#close"></a>
+  </div>
+    <!-- Fonts -->
+    <div class="off-canvas-sidebar-fonts p-2 no-print" id="sidebar-demo">
       <div id="section__header-file-buttons" class="d-flex-grow t__left">
           <!-- upload or auto load goes here -->
       </div>
     </div>
-    <a class="off-canvas-overlay" href="#close"></a>
+    <!-- Proofing -->
     <div class="off-canvas-content p-2">
       <section class="mb-2">
         <div class="container grid-xl">
@@ -53,9 +95,8 @@
             <div class="navbar-section">
               <div class="d-flex g-1">
                 <button title="Toggle typesetting menu" id="btn__view-tools-toggle" type="button" class="btn d-flex">Tools <span class="material-symbols-outlined">design_services</span></button>
-                <button title="Reset All Edits" id="btn__reset-local-storage" type="button" class="btn btn__edit-reset d-flex ">Reset <span class="material-symbols-outlined">history</span></button>
                 <button title="Print/Save a PDF" class="btn btn__print d-flex " onclick="javascript:window.print()">Print PDF <span class="material-symbols-outlined">print</span></button>
-                <button title="Change mode" id="btn__mode-toggle" class="btn btn__print d-flex">Mode <span class="material-symbols-outlined">light_mode</span></button>
+                <button title="View settings" id="btn__settings-toggle" type="button" class="btn d-flex">Settings <span class="material-symbols-outlined">settings</span></button>
               </div>
             </div>
           </header>
@@ -87,6 +128,7 @@
         </div>
       </footer>
     </div>
+   
   </div>
 </body>
 <!-- Global site tag (gtag.js) - Google Analytics -->

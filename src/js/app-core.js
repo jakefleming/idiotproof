@@ -8,10 +8,13 @@ import { getFormattedDate,
 	removeElementsByClass,
 	saveData,
 	toggleMode,
+	toggleSettingsVisibility,
 	toggleUi,
 	saveEditableContent,
 	saveInputValue,
-	getStoredContent  } from './utils.js';
+	getStoredContent,
+	calculateTypeScale,
+	initColorMode  } from './utils.js';
 
 // Re-export localStorageClear
 export { localStorageClear };
@@ -59,10 +62,12 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 		  // Set a default stage if none is pending
 		  setStage('Hamburgers');  // or whatever your default stage should be
 		}
+		
 		console.log(`Stage set successfully`);
 		resolve();
 	  } catch (error) {
 		console.error('Error in onFontLoaded:', error);
+		
 		reject(error);
 	  }
 	});
@@ -72,19 +77,17 @@ export const onReadFile = (event) => {
 	const files = event.target.files;
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	fileButtonParent.innerHTML = '';
+
   
-	Array.from(files).forEach(async file => {
-	  const button = await generateFontButton(file, 'server');
-	  fileButtonParent.appendChild(button);
-	});
-  
-	// Activate the first button automatically after all chips have loaded
-	setTimeout(() => {
-	  const firstButton = fileButtonParent.querySelector('.btn__setfont');
-	  if (firstButton) {
-		firstButton.click(); // Simulate a click on the first button
-	  }
-	}, 0);
+	generateFontButtons(Array.from(files), 'server')
+	  .then(container => {
+		fileButtonParent.appendChild(container);
+		// Activate the first button automatically
+		const firstButton = container.querySelector('.btn__setfont');
+		if (firstButton) {
+		  firstButton.click();
+		}
+	  });
   };
 
   const readSingleFile = (file) => {
@@ -236,6 +239,9 @@ export const setStage = (stage) => {
 		document.getElementById('style__opentype-features').innerHTML = '';
 		
 		saveData('proofingPhase', stage);
+  
+		// Initialize type scale after rendering
+		initTypeScale();
 	  })
 	  .catch(error => console.error('Error loading JSON:', error));
   };
@@ -279,9 +285,9 @@ export const setStage = (stage) => {
                 <button class="btn btn-secondary d-flex align-items-center mt-5" title="Apply these styles to all visible proof sheets." onclick="passStyleValue('${itemID}','idiocracy','global')">Apply all <span class="material-symbols-outlined">globe</span></button>
               </div>
             </div>
-            <div class="item__proof">
+            <div class="item__proof ratio-letter">
               <button class="btn btn-link remove-item-this invisible" onclick="removeElementsByID('${itemID}')">×</button>
-              ${generateProofContent(stage, title, proof, testAreaID, inlineStyle, fvarStyle, textClass)}
+              ${generateProofContent(stage, title, proof, testAreaID, fvarStyle, textClass)}
             </div>
           </div>
         </div>
@@ -292,22 +298,30 @@ export const setStage = (stage) => {
   
 // Modify the getStoredStyles function to include column properties
 const getStoredStyles = (itemID, textClass) => {
-	const fontSize = localStorage.getItem(`${itemID}-fontSize`) || whichFontSize(textClass);
-	const lineHeight = localStorage.getItem(`${itemID}-lineHeight`) || '1.2';
-	const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0em';
-	const columnCount = localStorage.getItem(`${itemID}-column-count`) || '1';
-	const columnGap = localStorage.getItem(`${itemID}-column-gap`) || '1em';
+  // Get the current type scale ratio
+  const typeScale = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
   
-	const inlineStyle = `
-	  font-size: ${fontSize}pt;
-	  line-height: ${lineHeight};
-	  letter-spacing: ${letterSpacing};
-	  column-count: ${columnCount};
-	  column-gap: ${columnGap};
-	`;
+  // Use whichFontSize to calculate the font size based on the text
+  const content = document.querySelector(`#${itemID} .testarea`)?.textContent || textClass;
   
-	return { fontSize, lineHeight, letterSpacing, columnCount, columnGap, inlineStyle };
-  };
+  // Check if there's a stored fontSize, otherwise calculate it
+  const fontSize = localStorage.getItem(`${itemID}-fontSize`) || whichFontSize(content);
+  
+  const lineHeight = localStorage.getItem(`${itemID}-lineHeight`) || '1.2';
+  const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0em';
+  const columnCount = localStorage.getItem(`${itemID}-column-count`) || '1';
+  const columnGap = localStorage.getItem(`${itemID}-column-gap`) || '1em';
+
+  const inlineStyle = `
+    font-size: ${fontSize}pt;
+    line-height: ${lineHeight};
+    letter-spacing: ${letterSpacing};
+    column-count: ${columnCount};
+    column-gap: ${columnGap};
+  `;
+
+  return { fontSize, lineHeight, letterSpacing, columnCount, columnGap, inlineStyle };
+};
   
   const generateFvarStyle = (itemID) => {
     let fvarStyle = '';
@@ -377,7 +391,15 @@ const getStoredStyles = (itemID, textClass) => {
 	button.title = mode === 'local' ? font : font.name;
 	button.id = `btn__setfont-${fontName}`;
 	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontType}</span>`;
-	button.onclick = () => setFont(fontPath, fontName);
+	button.onclick = () => {
+	  // Remove active class from all buttons
+	  document.querySelectorAll('.btn__setfont').forEach(btn => 
+	    btn.classList.remove('active')
+	  );
+	  // Add active class to clicked button
+	  button.classList.add('active');
+	  setFont(fontPath, fontName);
+	};
   
 	return button;
   };
@@ -459,43 +481,51 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
   };
   
   
-  const generateProofContent = (stage, title, proof, testAreaID, inlineStyle, fvarStyle, textClass) => {
-	// Get saved content or use defaults
-	const savedContent = getStoredContent(testAreaID, proof[stage][title]);
-	const savedTitle = getStoredContent(`${testAreaID}-title`, title);
+  const generateProofContent = (stage, title, proof, testAreaID, fvarStyle, textClass) => {
+    // Add safety checks
+    if (!proof || !proof[stage] || !proof[stage][title]) {
+      console.warn('Missing proof data:', { stage, title });
+      return '';
+    }
+
+    const savedContent = getStoredContent(testAreaID, proof[stage][title]) || '';
+    const savedTitle = getStoredContent(`${testAreaID}-title`, title) || '';
+    const fontSize = whichFontSize(savedContent);
   
-	let headingContent;
-	if (stage === "Features") {
-	  const definition = proof[stage][title].definition;
-	  headingContent = `
-	    <h6 class="h6" 
-	        title="${definition}" 
-	        contentEditable="true" 
-	        id="${testAreaID}-title"
-	        onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>`;
-	} else {
-	  headingContent = `
-	    <h6 class="h6" contentEditable="true" 
-	        id="${testAreaID}-title"
-	        onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>`;
-	}
+    // Get other style values
+    const lineHeight = localStorage.getItem(`${testAreaID}-lineHeight`) || '1.2';
+    const letterSpacing = localStorage.getItem(`${testAreaID}-letterSpacing`) || '0em';
+    const columnCount = localStorage.getItem(`${testAreaID}-column-count`) || '1';
+    const columnGap = localStorage.getItem(`${testAreaID}-column-gap`) || '1em';
   
-	const html = `
-	  <div class="d-flex justify-content-between">
-		${headingContent}
-		<span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
-	  </div>
-	  <div id="${testAreaID}" 
-	       style="${inlineStyle} ${fvarStyle}" 
-	       class="t__importedfontfamily ${textClass} testarea" 
-	       contenteditable="true" 
-	       spellcheck="false" 
-	       onkeyup="saveEditableContent('${testAreaID}')">
-	    ${savedContent}
-	  </div>
-	`;
+    const inlineStyle = `
+      font-size: ${fontSize}pt;
+      line-height: ${lineHeight};
+      letter-spacing: ${letterSpacing};
+      column-count: ${columnCount};
+      column-gap: ${columnGap};
+    `;
   
-	return html;
+    const html = `
+      <div class="d-flex justify-content-between">
+        <h6 class="h6" contentEditable="true" 
+            id="${testAreaID}-title"
+            onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>
+        <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
+      </div>
+      <div class="testarea-container">
+        <div id="${testAreaID}" 
+             style="${inlineStyle} ${fvarStyle}" 
+             class="t__importedfontfamily testarea" 
+             contenteditable="true" 
+             spellcheck="false" 
+             onkeyup="saveEditableContent('${testAreaID}')">
+          ${savedContent}
+        </div>
+      </div>
+    `;
+  
+    return html;
   };
   
   const formatStyleValue = (property, value) => {
@@ -539,27 +569,17 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
 	const container = document.querySelector(`#${itemID} .testarea-values`);
 	if (!container) return;
 
-	// Get all current values
+	// Get current values from localStorage
+	const fontSize = localStorage.getItem(`${itemID}-fontSize`) || '14';
+	const lineHeight = localStorage.getItem(`${itemID}-lineHeight`) || '1.2';
+	const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0';
+
 	const currentStyles = {
-	  'font-size': container.querySelector('.font-size')?.textContent.split(': ')[1] || '42pt',
-	  'line-height': container.querySelector('.line-height')?.textContent.split(': ')[1] || '1.2',
-	  'letter-spacing': container.querySelector('.letter-spacing')?.textContent.split(': ')[1] || '0em'
+	  'font-size': `${fontSize}pt`,
+	  'line-height': lineHeight,
+	  'letter-spacing': `${letterSpacing}em`
 	};
 
-	// Update the changed value
-	switch(property) {
-	  case 'fontSize':
-		currentStyles['font-size'] = value;
-		break;
-	  case 'lineHeight':
-		currentStyles['line-height'] = value;
-		break;
-	  case 'letterSpacing':
-		currentStyles['letter-spacing'] = value;
-		break;
-	}
-
-	// Generate new display text
 	const inlineStyle = Object.entries(currentStyles)
 	  .map(([prop, val]) => `${prop}: ${val}`)
 	  .join('; ');
@@ -603,23 +623,21 @@ export const insertField = (aboveHere) => {
 	const elementIdSuffix = `-${property}-val`;
 	const element = document.querySelector(`[id$="${itemID}${elementIdSuffix}"]`);
 	
+	// Save to localStorage
 	if (['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
-	  saveData(`${itemID}-${property}`, value);
+	  localStorage.setItem(`${itemID}-${property}`, value);
 	  if (property === 'fontSize') value += 'pt';
 	  if (property === 'letterSpacing') value += 'em';
 	  if (element) element.textContent = value;
-	} else {
-	  saveData(itemID + property, value);
 	}
-  
+
+	// Update the testarea
 	const testarea = document.querySelector(`#${itemID} .testarea`);
-	if (property === 'idiocracy') {
-	  const css = testarea.getAttribute('style');
-	  document.querySelectorAll('.testarea').forEach(el => el.setAttribute('style', css));
-	} else {
+	if (testarea) {
 	  testarea.style[property] = value;
 	}
-  
+
+	// Update the testarea-values display
 	updateInlineText(itemID, property, value);
   
 	// Only update active button for non-slider properties
@@ -704,30 +722,37 @@ export const generateStageButtons = (proof, currentStage) => {
 
   export const localLoad = () => {
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
-	fileButtonParent.innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
-  
+	
 	fetch('../src/txt/fonts.txt')
 	  .then(response => response.text())
-	  .then(async data => {
+	  .then(data => {
 		const fonts = data.split('fonts/')
 		  .filter(font => font.trim() !== '')
 		  .map(font => font.trim());
   
 		const uniqueFonts = preserveUnique(fonts.sort());
 		
-		// Generate buttons asynchronously
-		const buttonPromises = uniqueFonts.map(font => generateFontButton(font, 'local'));
-		const buttons = await Promise.all(buttonPromises);
-		
-		// Append buttons to the parent element
-		buttons.forEach(button => fileButtonParent.appendChild(button));
-  
-		// Set the default font
-		const fontFamilySource = localStorage.getItem('fontFamilySource') || `fonts/${uniqueFonts[uniqueFonts.length - 1]}`;
-		const fontFamily = localStorage.getItem('fontFamily') || fontFamilySource.replace('.', '-');
-		setFont(fontFamilySource, fontFamily);
+		if (uniqueFonts.length === 0) {
+		  // Only show the message if no fonts are found
+		  fileButtonParent.innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
+		} else {
+		  generateFontButtons(uniqueFonts, 'local')
+		    .then(container => {
+		      fileButtonParent.appendChild(container);
+		      // Set the default font
+		      const fontFamilySource = localStorage.getItem('fontFamilySource') || 
+		        `fonts/${uniqueFonts[uniqueFonts.length - 1]}`;
+		      const fontFamily = localStorage.getItem('fontFamily') || 
+		        fontFamilySource.replace('.', '-');
+		      setFont(fontFamilySource, fontFamily);
+		    });
+		}
 	  })
-	  .catch(error => console.error('Error loading fonts:', error));
+	  .catch(error => {
+		console.error('Error loading fonts:', error);
+		// Show the message if there's an error loading fonts
+		fileButtonParent.innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
+	  });
   };
   
   export const serverLoad = () => {
@@ -842,6 +867,7 @@ export const generateStageButtons = (proof, currentStage) => {
 	const toolsToggle = document.getElementById('btn__view-tools-toggle');
 	const modeToggle = document.getElementById('btn__mode-toggle');
 	const localStorageClearButton = document.getElementById('btn__reset-local-storage');
+	const settingsToggle = document.getElementById('btn__settings-toggle');
   
 	if (fileButtons) {
 	  fileButtons.addEventListener('click', handleFileButtonClick);
@@ -858,9 +884,63 @@ export const generateStageButtons = (proof, currentStage) => {
 	if (localStorageClearButton) {
 		localStorageClearButton.addEventListener('click', localStorageClear);
 	}
+	if (settingsToggle) {
+		settingsToggle.addEventListener('click', toggleSettingsVisibility);
+	}
 	setupPasteHandling();
 
+	// Add aspect ratio select listener
+	const aspectRatioSelect = document.getElementById('select__aspect-ratio');
+	if (aspectRatioSelect) {
+		// Set initial value
+		const proofs = document.querySelectorAll('.item__proof');
+		proofs.forEach(proof => proof.classList.add('ratio-letter'));
 
+		// Watch for changes
+		aspectRatioSelect.addEventListener('change', (e) => {
+			const ratio = e.target.value;
+			const proofs = document.querySelectorAll('.item__proof');
+			
+			proofs.forEach(proof => {
+				proof.classList.remove('ratio-letter', 'ratio-a4');
+				proof.classList.add(ratio === '8.5:11' ? 'ratio-letter' : 'ratio-a4');
+			});
+
+			localStorage.setItem('preferred-ratio', ratio);
+		});
+
+		// Restore saved preference if it exists
+		const savedRatio = localStorage.getItem('preferred-ratio');
+		if (savedRatio) {
+			aspectRatioSelect.value = savedRatio;
+			aspectRatioSelect.dispatchEvent(new Event('change'));
+		}
+	}
+
+	// Add base font size input listener
+	const baseFontInput = document.getElementById('input__base-font-size');
+	if (baseFontInput) {
+		baseFontInput.addEventListener('change', (e) => {
+			const baseSize = parseFloat(e.target.value);
+			localStorage.setItem('base-font-size', baseSize);
+			updateAllTypeScales();
+		});
+
+		// Restore saved base font size
+		const savedBaseSize = localStorage.getItem('base-font-size') || '14';
+		baseFontInput.value = savedBaseSize;
+	}
+
+	// Modify type scale select listener
+	const typeScaleSelect = document.getElementById('select__type-scale');
+	if (typeScaleSelect) {
+		typeScaleSelect.addEventListener('change', () => {
+			updateAllTypeScales();
+		});
+	}
+
+	// Initialize color mode from localStorage
+	initColorMode();
   };
   
   const handleFileButtonClick = (event) => {
@@ -912,4 +992,210 @@ const setupPasteHandling = () => {
     const event = new Event('keyup');
     e.target.dispatchEvent(event);
   });
+};
+
+export const generateFontButtons = async (fonts, mode = 'local') => {
+  const container = document.createElement('div');
+  container.className = 'font-buttons-container';
+
+  // Add navigation buttons group
+  const navGroup = document.createElement('div');
+  navGroup.className = 'btn-group d-flex g-1 mb-2';
+  
+  const prevButton = document.createElement('button');
+  prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
+  prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
+  prevButton.onclick = () => navigateFonts('prev');
+  
+  const nextButton = document.createElement('button');
+  nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
+  nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
+  nextButton.onclick = () => navigateFonts('next');
+  
+  navGroup.appendChild(prevButton);
+  navGroup.appendChild(nextButton);
+  container.appendChild(navGroup);
+
+  // Create font chips container
+  const chipsContainer = document.createElement('div');
+  chipsContainer.className = 'font-chips';
+  container.appendChild(chipsContainer);
+
+  // Generate individual font buttons
+  for (const font of fonts) {
+    const button = await generateFontButton(font, mode);
+    chipsContainer.appendChild(button);
+  }
+
+  return container;
+};
+
+const navigateFonts = (direction) => {
+  const buttons = document.querySelectorAll('.btn__setfont');
+  const activeButton = document.querySelector('.btn__setfont.active');
+  
+  if (!activeButton || buttons.length <= 1) return;
+  
+  const currentIndex = Array.from(buttons).indexOf(activeButton);
+  let nextIndex;
+  
+  if (direction === 'next') {
+    nextIndex = currentIndex + 1 >= buttons.length ? 0 : currentIndex + 1;
+  } else {
+    nextIndex = currentIndex - 1 < 0 ? buttons.length - 1 : currentIndex - 1;
+  }
+  
+  buttons[nextIndex].click();
+};
+
+const initAspectRatio = () => {
+  const select = document.getElementById('select__aspect-ratio');
+  const proofs = document.querySelectorAll('.item__proof');
+
+  // Set default on load
+  proofs.forEach(proof => {
+    proof.classList.add('ratio-letter');
+  });
+
+  select.addEventListener('change', (e) => {
+    const ratio = e.target.value;
+    proofs.forEach(proof => {
+      // Remove existing ratio classes
+      proof.classList.remove('ratio-letter', 'ratio-a4');
+      
+      // Add new ratio class
+      switch(ratio) {
+        case '8.5:11':
+          proof.classList.add('ratio-letter');
+          break;
+        case '7:10':
+          proof.classList.add('ratio-a4');
+          break;
+      }
+    });
+
+    // Optionally save preference
+    localStorage.setItem('preferred-ratio', ratio);
+  });
+
+  // Restore saved preference if it exists
+  const savedRatio = localStorage.getItem('preferred-ratio');
+  if (savedRatio) {
+    select.value = savedRatio;
+    select.dispatchEvent(new Event('change'));
+  }
+};
+
+// Use the imported function where needed
+const getFontSize = (text, ratio = 1.618) => {
+  const sizes = calculateTypeScale(14, ratio);
+  const length = text.length;
+  
+  if (length <= 5) return sizes[0];        // Largest size
+  if (length <= 15) return sizes[1];       // Second largest
+  if (length <= 30) return sizes[2];       // Third largest
+  if (length <= 100) return sizes[3];      // Medium
+  if (length <= 250) return sizes[4];      // Second smallest
+  return sizes[5];                         // Smallest/base size
+};
+
+// Update your proof generation to use the selected scale
+const generateProof = (text, options = {}) => {
+  const typeScale = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+  const fontSize = getFontSize(text, typeScale);
+  
+  // ... rest of your proof generation code ...
+};
+
+// Add this function to initialize the type scale on page load
+const initTypeScale = () => {
+  const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+  const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
+  
+  document.querySelectorAll('.item').forEach(item => {
+    const itemID = item.id;
+    const testarea = item.querySelector('.testarea');
+    const text = testarea?.textContent || '';
+    
+    // Always calculate the initial size based on current settings
+    const newSize = whichFontSize(text, baseSize, ratio);
+    localStorage.setItem(`${itemID}-fontSize`, newSize);
+    
+    if (testarea) {
+      testarea.style.fontSize = `${newSize}pt`;
+    }
+    
+    // Update fontSize slider and its value display
+    const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
+    const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
+    if (fontSizeSlider) {
+      fontSizeSlider.value = newSize;
+    }
+    if (fontSizeVal) {
+      fontSizeVal.textContent = `${newSize}pt`;
+    }
+
+    // Update the testarea-values display
+    const valuesDisplay = item.querySelector('.testarea-values');
+    if (valuesDisplay) {
+      const currentStyles = {
+        'font-size': `${newSize}pt`,
+        'line-height': testarea?.style.lineHeight || '1.2',
+        'letter-spacing': testarea?.style.letterSpacing || '0em'
+      };
+
+      const inlineStyle = Object.entries(currentStyles)
+        .map(([prop, val]) => `${prop}: ${val}`)
+        .join('; ');
+
+      valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
+    }
+  });
+};
+
+// New function to update all proofs when either base size or ratio changes
+const updateAllTypeScales = () => {
+	const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+	const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
+	
+	localStorage.setItem('preferred-scale', ratio);
+	
+	document.querySelectorAll('.item').forEach(item => {
+		const itemID = item.id;
+		const testarea = item.querySelector('.testarea');
+		const text = testarea?.textContent || '';
+		const newSize = whichFontSize(text, baseSize, ratio);
+		
+		// Update the testarea font size
+		if (testarea) {
+			testarea.style.fontSize = `${newSize}pt`;
+		}
+		
+		// Update fontSize slider and its value display
+		const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
+		const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
+		if (fontSizeSlider) {
+			fontSizeSlider.value = newSize;
+			localStorage.setItem(`${itemID}-fontSize`, newSize);
+		}
+		if (fontSizeVal) {
+			fontSizeVal.textContent = `${newSize}pt`;
+		}
+
+		// Update the testarea-values display
+		const valuesDisplay = item.querySelector('.testarea-values');
+		if (valuesDisplay) {
+			const currentStyles = {
+				'font-size': `${newSize}pt`,
+				'line-height': testarea?.style.lineHeight || '1.2',
+				'letter-spacing': testarea?.style.letterSpacing || '0em'
+			};
+
+			const inlineStyle = Object.entries(currentStyles)
+				.map(([prop, val]) => `${prop}: ${val}`)
+				.join('; ');
+
+			valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
+		}
+	});
 };
