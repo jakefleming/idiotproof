@@ -998,23 +998,27 @@ export const generateFontButtons = async (fonts, mode = 'local') => {
   const container = document.createElement('div');
   container.className = 'font-buttons-container';
 
-  // Add navigation buttons group
-  const navGroup = document.createElement('div');
-  navGroup.className = 'btn-group d-flex g-1 mb-2';
-  
-  const prevButton = document.createElement('button');
-  prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
-  prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
-  prevButton.onclick = () => navigateFonts('prev');
-  
-  const nextButton = document.createElement('button');
-  nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
-  nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
-  nextButton.onclick = () => navigateFonts('next');
-  
-  navGroup.appendChild(prevButton);
-  navGroup.appendChild(nextButton);
-  container.appendChild(navGroup);
+  // Only add navigation buttons if they don't already exist
+  const existingNavGroup = document.querySelector('.font-nav-group');
+  if (!existingNavGroup) {
+    // Add navigation buttons group
+    const navGroup = document.createElement('div');
+    navGroup.className = 'btn-group d-flex g-1 mb-2 font-nav-group';
+    
+    const prevButton = document.createElement('button');
+    prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
+    prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
+    prevButton.onclick = () => navigateFonts('prev');
+    
+    const nextButton = document.createElement('button');
+    nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
+    nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
+    nextButton.onclick = () => navigateFonts('next');
+    
+    navGroup.appendChild(prevButton);
+    navGroup.appendChild(nextButton);
+    container.appendChild(navGroup);
+  }
 
   // Create font chips container
   const chipsContainer = document.createElement('div');
