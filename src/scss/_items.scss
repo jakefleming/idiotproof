@@ -126,6 +126,7 @@
       flex: 1; // Allow growing
       min-height: 0; // Allow shrinking
       overflow: hidden; // Hide overflow
+      height: 100%;
       display: flex;
       flex-direction: column;
     }
