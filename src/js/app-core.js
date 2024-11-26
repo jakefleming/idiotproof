@@ -145,7 +145,7 @@ export const onReadFile = (event) => {
 	});
   };
 
-export const setFont = (fontPath, fontName) => {
+export const setFont = async (fontPath, fontName) => {
 	console.log(`Attempting to load font: ${fontName} from ${fontPath}`);
 	opentype.load(fontPath, (err, loadedFont) => {
 	  if (err) {
@@ -164,7 +164,28 @@ export const setFont = (fontPath, fontName) => {
 		}
 	  }
 	});
-  };
+
+  // After font is loaded and applied, check if we need to show footers
+  const showNameAndVersion = localStorage.getItem('showNameAndVersion') === 'true';
+  if (showNameAndVersion) {
+    const headerNames = document.getElementById('section__header-names');
+    const proofItems = document.querySelectorAll('.item__proof');
+    
+    proofItems.forEach(item => {
+      // Remove any existing footer
+      const existingFooter = item.querySelector('.proof-footer');
+      if (existingFooter) {
+        existingFooter.remove();
+      }
+
+      // Create new footer
+      const footer = document.createElement('div');
+      footer.className = 'proof-footer';
+      footer.innerHTML = headerNames.innerHTML;
+      item.appendChild(footer);
+    });
+  }
+};
 
 export const displayFontData = (fontFamily) => {
     var tablename, table, property, value, tag;
@@ -200,11 +221,21 @@ export const displayFontData = (fontFamily) => {
                 } else {
                     var postScriptName = "Font Name";
                 }
-                nameHtml += '<div class="section__header-name d-flex-grow t__left" contenteditable="true" spellcheck="false">'+designerName+'</div>';
 
-                nameHtml += '<div class="section__header-name d-flex-grow t__center" spellcheck="false">'+postScriptName+'</div>';
+                // Get version from head table
+                const version = font.tables.head.fontRevision;
+                // Format version to 2 decimal places
+                const formattedVersion = `Ver ${version}`;
+                
+				nameHtml += `<div class="section__header-name-font" spellcheck="false">${postScriptName}</div>`;
+                nameHtml += `<div class="section__header-name-version" spellcheck="false">${formattedVersion}</div>`;
                 styles += `.t__importedfontfamily { font-family: "${fontFamily}" }`;
-                nameHtml += '<div class="section__header-name  d-flex-grow t__right">'+getFormattedDate()+'</div>';
+
+                // Get and format the font's modification date
+                const modifiedDate = font.tables.head.modified;
+                const formattedDate = `Last edited ${new Date(modifiedDate * 1000).toLocaleDateString()}`;
+                nameHtml += `<div class="section__header-name-date">${formattedDate}</div>`;
+                
                 document.getElementById('section__header-names').innerHTML = nameHtml;
                 continue;
         }
@@ -227,7 +258,6 @@ export const setStage = (stage) => {
 	
 	if (!font) {
 	  console.warn('Font not loaded yet. Deferring stage setting.');
-	  // Store the stage to set later
 	  window.pendingStage = stage;
 	  return;
 	}
@@ -246,6 +276,26 @@ export const setStage = (stage) => {
   
 		// Initialize type scale after rendering
 		initTypeScale();
+  
+		// Check if we need to add footers
+		const showNameAndVersion = localStorage.getItem('showNameAndVersion') === 'true';
+		if (showNameAndVersion) {
+		  const headerNames = document.getElementById('section__header-names');
+		  const proofItems = document.querySelectorAll('.item__proof');
+		  
+		  proofItems.forEach(item => {
+			const footer = document.createElement('div');
+			footer.className = 'proof-footer';
+			footer.innerHTML = headerNames.innerHTML;
+			item.appendChild(footer);
+		  });
+		}
+  
+		// Apply saved states after rendering new content
+		applyNameAndVersion(showNameAndVersion);
+  
+		const lockDimensions = localStorage.getItem('lockProofDimensions') === 'true';
+		applyLockProofDimensions(lockDimensions);
 	  })
 	  .catch(error => console.error('Error loading JSON:', error));
   };
@@ -286,7 +336,6 @@ export const setStage = (stage) => {
                 ${generateVariableSliders(itemID, sliderID)}
                 ${generateStyleButtons(itemID)}
                 ${generateFeatureCheckboxes(itemID, proof, taglist)}
-                <button class="btn btn-secondary d-flex align-items-center mt-5" title="Apply these styles to all visible proof sheets." onclick="passStyleValue('${itemID}','idiocracy','global')">Apply all <span class="material-symbols-outlined">globe</span></button>
               </div>
             </div>
             <div class="item__proof ratio-letter">
@@ -879,7 +928,8 @@ export const generateStageButtons = (proof, currentStage) => {
 	const modeToggle = document.getElementById('btn__mode-toggle');
 	const localStorageClearButton = document.getElementById('btn__reset-local-storage');
 	const settingsToggle = document.getElementById('btn__settings-toggle');
-  
+	const addNameAndVersionCheckbox = document.getElementById('checkbox__add-name-and-version');
+	const lockProofDimensionsCheckbox = document.getElementById('checkbox__lock-proof-dimensions');
 	if (fileButtons) {
 	  fileButtons.addEventListener('click', handleFileButtonClick);
 	}
@@ -897,6 +947,24 @@ export const generateStageButtons = (proof, currentStage) => {
 	}
 	if (settingsToggle) {
 		settingsToggle.addEventListener('click', toggleSettingsVisibility);
+	}
+	if (addNameAndVersionCheckbox) {
+		// Restore saved state
+		const savedState = localStorage.getItem('showNameAndVersion') === 'true';
+		addNameAndVersionCheckbox.checked = savedState;
+		
+		// No need to manually trigger the toggle here since setFont will handle it
+		addNameAndVersionCheckbox.addEventListener('change', toggleNameAndVersion);
+	}
+	if (lockProofDimensionsCheckbox) {
+		// Restore saved state
+		const savedState = localStorage.getItem('lockProofDimensions') === 'true';
+		lockProofDimensionsCheckbox.checked = savedState;
+		
+		// Apply the saved state immediately
+		applyLockProofDimensions(savedState);
+		
+		lockProofDimensionsCheckbox.addEventListener('change', toggleLockProofDimensions);
 	}
 	setupPasteHandling();
 
@@ -1211,4 +1279,47 @@ const updateAllTypeScales = () => {
 			valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
 		}
 	});
+};
+
+const applyNameAndVersion = (isChecked) => {
+  const headerNames = document.getElementById('section__header-names');
+  const proofItems = document.querySelectorAll('.item__proof');
+
+  proofItems.forEach(item => {
+    // Remove any existing footer
+    const existingFooter = item.querySelector('.proof-footer');
+    if (existingFooter) {
+      existingFooter.remove();
+    }
+
+    if (isChecked) {
+      // Create new footer
+      const footer = document.createElement('div');
+      footer.className = 'proof-footer';
+      footer.innerHTML = headerNames.innerHTML;
+      item.appendChild(footer);
+    }
+  });
+};
+
+const toggleNameAndVersion = (event) => {
+  const isChecked = event.target.checked;
+  localStorage.setItem('showNameAndVersion', isChecked);
+  applyNameAndVersion(isChecked);
+};
+
+const applyLockProofDimensions = (isChecked) => {
+  document.querySelectorAll('.item__proof').forEach(proof => {
+    if (isChecked) {
+      proof.classList.add('locked-dimensions');
+    } else {
+      proof.classList.remove('locked-dimensions');
+    }
+  });
+};
+
+const toggleLockProofDimensions = (event) => {
+  const isChecked = event.target.checked;
+  localStorage.setItem('lockProofDimensions', isChecked);
+  applyLockProofDimensions(isChecked);
 };

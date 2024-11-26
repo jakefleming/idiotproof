@@ -65,17 +65,25 @@
   }
 
   &__proof {
-    flex: 1;
+    display: flex;
+    width: 700px;
+    flex-direction: column;
+    justify-content: space-between;
     min-width: 0; // Crucial for text wrapping in flex child
     max-width: 100%;
     background: var(--card-bg, #fff);
     border-radius: var(--card-border-radius, 2px);
     box-shadow: var(--card-shadow);
-    padding: var(--spacing-xxl);
+    padding: var(--spacing-xl);
     position: relative;
-    // Default styles
-    width: 100%;
+    gap: var(--spacing-xxs, 0.25rem);
     height: auto;
+    &.locked-dimensions {
+      display: block;
+      min-width: 700px !important;
+      max-width: 700px !important;
+      width: 700px !important;
+    }
 
     // USA Letter (8.5:11)
     &.ratio-letter {
@@ -107,13 +115,20 @@
       margin-bottom: var(--spacing-xs, 0.25rem);
     }
 
-    .testarea-values {
+    .testarea-values, .h6 {
       display: block;
       margin-bottom: var(--spacing-sm, 0.5rem);
       font-size: var(--font-size-small, 0.8em);
       color: var(--text-color-muted, #999);
+      margin: 0;
     }
-
+    .testarea-container {
+      flex: 1; // Allow growing
+      min-height: 0; // Allow shrinking
+      overflow: hidden; // Hide overflow
+      display: flex;
+      flex-direction: column;
+    }
     .testarea {
       width: 100%;
       max-width: 100%;
@@ -124,6 +139,15 @@
       outline: none;
       background: transparent;
       color: var(--text-color);
+    }
+    .proof-footer {
+      flex-grow: 0;
+      display: flex;
+      color: var(--text-color-muted, #999);
+      font-size: var(--font-size-small, 0.8em);
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
     }
 
   }

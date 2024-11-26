@@ -51,22 +51,6 @@
 		flex: 0 0 100% !important;
 	}
   
-	// Header styles
-	#section__header-names {
-	  position: fixed;
-	  bottom: 0;
-	  left: 0;
-	  width: 100%;
-	  text-align: center;
-	  z-index: 100;
-	  padding: 0;
-	  margin: 0;
-	}
-  
-	.section__header-name {
-	  font-size: 10pt;
-	  margin-bottom: 5mm;
-	}
 
 	// Content styles
 	.item {
@@ -84,6 +68,7 @@
 	  padding: 0 !important;
 	  width: 100% !important;
 	  max-width: 100% !important;
+	transform: none !important;
 	}
   
 	// Hide unnecessary elements
@@ -113,8 +98,9 @@
 	  widows: 3;
 	}
 
-	h6, .item__proof .testarea-values, #section__header-names {
-		font-size: 10pt !important;
+	h6, .item__proof .testarea-values, .proof-footer {
+		font-size: 8pt !important;
+		color: #999 !important;
 	}
   
 	// Links
