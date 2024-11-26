@@ -70,13 +70,13 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 		  console.log(`Font information saved to localStorage`);
 		}
   
-		// Only set stage after font is fully loaded
-		if (window.pendingStage) {
-		  await setStage(window.pendingStage);
-		  window.pendingStage = null;
-		} else {
-		  await setStage('Hamburgers');
-		}
+		// Get current stage before setting new one
+		const currentStage = document.querySelector('.btn__stage.active')?.dataset?.stage 
+			|| localStorage.getItem('proofingPhase') 
+			|| window.proofingPhase 
+			|| 'Hamburgers';
+  
+		await setStage(currentStage);
 		
 		console.log(`Stage set successfully`);
 		resolve();
@@ -239,11 +239,12 @@ export const displayFontData = async (fontFamily) => {
     document.getElementById('style__fontfamily').innerHTML = styles;
     
     // Set stage after font is ready
-    if (localStorage.getItem('proofingPhase')) {
-        setStage(localStorage.getItem('proofingPhase'));
-    } else {
-        setStage(window.proofingPhase);
-    }
+    const currentStage = document.querySelector('.btn__stage.active')?.dataset?.stage 
+        || localStorage.getItem('proofingPhase') 
+        || window.proofingPhase 
+        || 'Hamburgers';
+    
+    setStage(currentStage);
 };
 
 export const setStage = (stage) => {
