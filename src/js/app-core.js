@@ -26,12 +26,26 @@ const fontFormats = {
 };
 
 export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
-	return new Promise((resolve, reject) => {
+	return new Promise(async (resolve, reject) => {
 	  try {
 		font = loadedFont;
 		console.log(`Font assigned globally: ${fontFamily}`);
 		
-		// Create and apply the font-face rule
+		// Create and load the font face first
+		if ('FontFace' in window) {
+		  const fontFace = new FontFace(
+			fontFamily,
+			`url('${fontFamilySource}')`,
+			{ format: loadedFont.outlinesFormat === 'truetype' ? 'truetype' : 'opentype' }
+		  );
+
+		  // Wait for the font to load
+		  await fontFace.load();
+		  document.fonts.add(fontFace);
+		  console.log(`Font loaded successfully: ${fontFamily}`);
+		}
+
+		// Create and apply the font-face rule for browsers without FontFace API
 		const fontFaceRule = `
 		  @font-face {
 			font-family: '${fontFamily}';
@@ -46,7 +60,9 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 		window.fontFamily = fontFamily;
 		console.log(`Window.fontFamily set to: ${fontFamily}`);
   
-		displayFontData(fontFamily);
+		// Wait for font to be ready before displaying data
+		await document.fonts.ready;
+		await displayFontData(fontFamily);
   
 		if (['localhost', '127.0.0.1', ''].includes(location.hostname)) {
 		  localStorage.setItem('fontFamily', fontFamily);
@@ -54,20 +70,18 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 		  console.log(`Font information saved to localStorage`);
 		}
   
-		// If there's a pending stage, set it now
+		// Only set stage after font is fully loaded
 		if (window.pendingStage) {
-		  setStage(window.pendingStage);
+		  await setStage(window.pendingStage);
 		  window.pendingStage = null;
 		} else {
-		  // Set a default stage if none is pending
-		  setStage('Hamburgers');  // or whatever your default stage should be
+		  await setStage('Hamburgers');
 		}
 		
 		console.log(`Stage set successfully`);
 		resolve();
 	  } catch (error) {
 		console.error('Error in onFontLoaded:', error);
-		
 		reject(error);
 	  }
 	});
@@ -187,68 +201,48 @@ export const setFont = async (fontPath, fontName) => {
   }
 };
 
-export const displayFontData = (fontFamily) => {
+export const displayFontData = async (fontFamily) => {
     var tablename, table, property, value, tag;
     var styles = '';
 
     for (tablename in font.tables) {
         table = font.tables[tablename];
-
-        if (tablename === 'cmap') {
-            var gim = font.tables.cmap.glyphIndexMap;
-            var gimLength = Object.keys(gim).length;
-            if (gimLength <= 100) {
-                window.proofingPhase = "Hamburgers";
-            } else if (gimLength >= 400) {
-                window.proofingPhase = "Diacritics";
-            } else {
-                window.proofingPhase = "Spacing";
-            }
-        }
-        // Determine if TTF or OTF
-        var fontFormat = font.outlinesFormat;
-        fontFormat = fontFormats[fontFormat];
-        // Inserting header data: font name, foundry name, etc.
+        
         if (tablename === 'name') {
-                let nameHtml = '';
-                if (font.names.designer) {
-                    var designerName = font.names.designer.en;
-                } else {
-                    var designerName = "No Designer Name :(";
-                }
-                if (font.names.postScriptName) {
-                    var postScriptName = font.names.postScriptName.en;
-                } else {
-                    var postScriptName = "Font Name";
-                }
+            let nameHtml = '';
+            if (font.names.postScriptName) {
+                var postScriptName = font.names.postScriptName.en;
+            } else {
+                var postScriptName = "Untitled Font";
+            }
 
-                // Get version from head table
-                const version = font.tables.head.fontRevision;
-                // Format version to 2 decimal places
-                const formattedVersion = `Ver ${version}`;
-                
-				nameHtml += `<div class="section__header-name-font" spellcheck="false">${postScriptName}</div>`;
-                nameHtml += `<div class="section__header-name-version" spellcheck="false">${formattedVersion}</div>`;
-                styles += `.t__importedfontfamily { font-family: "${fontFamily}" }`;
+            // Get version from head table
+            const version = font.tables.head.fontRevision;
+            // Format version to 2 decimal places
+            const formattedVersion = `Ver ${version}`;
+            
+			nameHtml += `<div class="section__header-name-font" spellcheck="false">${postScriptName}</div>`;
+            nameHtml += `<div class="section__header-name-version" spellcheck="false">${formattedVersion}</div>`;
+            styles += `.t__importedfontfamily { font-family: "${fontFamily}" }`;
 
-                // Get and format the font's modification date
-                const modifiedDate = font.tables.head.modified;
-                const formattedDate = `Last edited ${new Date(modifiedDate * 1000).toLocaleDateString()}`;
-                nameHtml += `<div class="section__header-name-date">${formattedDate}</div>`;
-                
-                document.getElementById('section__header-names').innerHTML = nameHtml;
-                continue;
+            // Get and format the font's modification date
+            const modifiedDate = font.tables.head.modified;
+            const formattedDate = `Last edited ${new Date(modifiedDate * 1000).toLocaleDateString()}`;
+            nameHtml += `<div class="section__header-name-date">${formattedDate}</div>`;
+            
+            document.getElementById('section__header-names').innerHTML = nameHtml;
+            continue;
         }
     }
-    //Inject css of necessary features
+
+    // Apply styles only after font is loaded
     document.getElementById('style__fontfamily').innerHTML = styles;
     
-    //setStage
+    // Set stage after font is ready
     if (localStorage.getItem('proofingPhase')) {
-            // Check for local storage settings
-            setStage(localStorage.getItem('proofingPhase'));
+        setStage(localStorage.getItem('proofingPhase'));
     } else {
-            setStage(window.proofingPhase);
+        setStage(window.proofingPhase);
     }
 };
 
