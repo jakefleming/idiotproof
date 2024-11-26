@@ -67,6 +67,7 @@
   &__proof {
     display: flex;
     width: 700px;
+    max-width: 100%;
     flex-direction: column;
     justify-content: space-between;
     min-width: 0; // Crucial for text wrapping in flex child
@@ -78,6 +79,7 @@
     position: relative;
     gap: var(--spacing-xxs, 0.25rem);
     height: auto;
+
     &.locked-dimensions {
       display: flex;
       min-width: 700px !important;

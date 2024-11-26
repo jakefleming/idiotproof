@@ -2,6 +2,13 @@
 html * {
 	box-sizing: border-box;
 }
+#section__article-app.container {
+    max-width: 700px;
+	margin: 0 auto;
+	body.tools-visible & {
+		max-width: calc(700px + 200px + var(--spacing-lg));
+	}
+}
 // Canvas and sidebars
 .canvas {
 	display: flex;

@@ -24,14 +24,6 @@ a {
   }
 }
 
-.container {
-  width: 100%;
-  padding-right: var(--container-padding);
-  padding-left: var(--container-padding);
-  margin-right: auto;
-  margin-left: auto;
-  max-width: var(--container-max-width, #{$container-max-width-xl});
-}
 
 .btn {
   background-color: var(--button-bg);
