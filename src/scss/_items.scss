@@ -79,7 +79,7 @@
     gap: var(--spacing-xxs, 0.25rem);
     height: auto;
     &.locked-dimensions {
-      display: block;
+      display: flex;
       min-width: 700px !important;
       max-width: 700px !important;
       width: 700px !important;
