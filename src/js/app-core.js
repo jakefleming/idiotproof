@@ -543,7 +543,14 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
       return '';
     }
 
-    const savedContent = getStoredContent(testAreaID, proof[stage][title]) || '';
+    // Special handling for Features stage
+    let content = proof[stage][title];
+    if (stage === "Features") {
+      // Features content is stored as an object with 'sample', 'definition', and 'abstract' properties
+      content = proof[stage][title].sample || '';
+    }
+
+    const savedContent = getStoredContent(testAreaID, content) || '';
     const savedTitle = getStoredContent(`${testAreaID}-title`, title) || '';
     const fontSize = whichFontSize(savedContent);
   
