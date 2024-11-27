@@ -143,14 +143,16 @@
       background: transparent;
       color: var(--text-color);
     }
-    .proof-footer {
+    .item__footer {
       flex-grow: 0;
       display: flex;
       color: var(--text-color-muted, #999);
       font-size: var(--font-size-small, 0.8em);
-      flex-direction: row;
-      justify-content: space-between;
       width: 100%;
+      display: none;
+      body.show-font-details & {
+        display: flex;
+      }
     }
 
   }

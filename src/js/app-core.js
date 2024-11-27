@@ -178,27 +178,6 @@ export const setFont = async (fontPath, fontName) => {
 		}
 	  }
 	});
-
-  // After font is loaded and applied, check if we need to show footers
-  const showNameAndVersion = localStorage.getItem('showNameAndVersion') === 'true';
-  if (showNameAndVersion) {
-    const headerNames = document.getElementById('section__header-names');
-    const proofItems = document.querySelectorAll('.item__proof');
-    
-    proofItems.forEach(item => {
-      // Remove any existing footer
-      const existingFooter = item.querySelector('.proof-footer');
-      if (existingFooter) {
-        existingFooter.remove();
-      }
-
-      // Create new footer
-      const footer = document.createElement('div');
-      footer.className = 'proof-footer';
-      footer.innerHTML = headerNames.innerHTML;
-      item.appendChild(footer);
-    });
-  }
 };
 
 export const displayFontData = async (fontFamily) => {
@@ -272,20 +251,6 @@ export const setStage = (stage) => {
 		// Initialize type scale after rendering
 		initTypeScale();
   
-		// Check if we need to add footers
-		const showNameAndVersion = localStorage.getItem('showNameAndVersion') === 'true';
-		if (showNameAndVersion) {
-		  const headerNames = document.getElementById('section__header-names');
-		  const proofItems = document.querySelectorAll('.item__proof');
-		  
-		  proofItems.forEach(item => {
-			const footer = document.createElement('div');
-			footer.className = 'proof-footer';
-			footer.innerHTML = headerNames.innerHTML;
-			item.appendChild(footer);
-		  });
-		}
-  
 		// Apply saved states after rendering new content
 		applyNameAndVersion(showNameAndVersion);
   
@@ -299,7 +264,12 @@ export const setStage = (stage) => {
     if (!proof[stage]) {
       return '<div class="item d-flex t__center"><div class="item__proof">No features found! :...(</div></div>';
     }
-  
+	const fontName = font.names.postScriptName.en;
+	// Get version from head table
+	const version = font.tables.head.fontRevision;
+	// Format version to 2 decimal places
+	const formattedVersion = `Ver ${version}`;
+
     const gsubFeatures = font.tables.gsub.features;
     const taglist = Object.values(gsubFeatures)
 		.filter(feature => typeof feature === 'object' && feature.tag)
@@ -336,6 +306,10 @@ export const setStage = (stage) => {
             <div class="item__proof ratio-letter">
               <button class="btn btn-link remove-item-this invisible" onclick="removeElementsByID('${itemID}')">×</button>
               ${generateProofContent(stage, title, proof, testAreaID, fvarStyle, textClass)}
+				<div class="item__footer d-flex justify-content-between">
+					<span class="item__footer-name-font">${fontName}</span>
+				<span class="item__footer-name-version">${formattedVersion}</span>
+				</div>
             </div>
           </div>
         </div>
@@ -579,13 +553,14 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
       column-count: ${columnCount};
       column-gap: ${columnGap};
     `;
-  
+   // previously included testarea-values
+   // <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
+   // couldn't get them to stay cons
     const html = `
       <div class="d-flex justify-content-between">
         <h6 class="h6" contentEditable="true" 
             id="${testAreaID}-title"
             onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>
-        <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
       </div>
       <div class="testarea-container">
         <div id="${testAreaID}" 
@@ -643,20 +618,20 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
 	const container = document.querySelector(`#${itemID} .testarea-values`);
 	if (!container) return;
 
-	// Get current values from localStorage
-	const fontSize = localStorage.getItem(`${itemID}-fontSize`) || '14';
-	const lineHeight = localStorage.getItem(`${itemID}-lineHeight`) || '1.2';
-	const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0';
+	// Get values from the sliders
+	const fontSizeSlider = document.querySelector(`#${itemID}-fontSize`);
+	const lineHeightSlider = document.querySelector(`#${itemID}-lineHeight`);
+	const letterSpacingSlider = document.querySelector(`#${itemID}-letterSpacing`);
 
 	const currentStyles = {
-	  'font-size': `${fontSize}pt`,
-	  'line-height': lineHeight,
-	  'letter-spacing': `${letterSpacing}em`
+		'font-size': `${fontSizeSlider?.value || '14'}pt`,
+		'line-height': lineHeightSlider?.value || '1.0',
+		'letter-spacing': `${letterSpacingSlider?.value || '0'}em`
 	};
 
 	const inlineStyle = Object.entries(currentStyles)
-	  .map(([prop, val]) => `${prop}: ${val}`)
-	  .join('; ');
+		.map(([prop, val]) => `${prop}: ${val}`)
+		.join('; ');
 
 	container.innerHTML = generateTestAreaValues(inlineStyle);
   };
@@ -1027,8 +1002,8 @@ export const generateStageButtons = (proof, currentStage) => {
 		// Restore saved state
 		const savedState = localStorage.getItem('showNameAndVersion') === 'true';
 		addNameAndVersionCheckbox.checked = savedState;
+		document.body.classList.toggle('show-font-details', savedState);
 		
-		// No need to manually trigger the toggle here since setFont will handle it
 		addNameAndVersionCheckbox.addEventListener('change', toggleNameAndVersion);
 	}
 	if (lockProofDimensionsCheckbox) {
@@ -1407,7 +1382,7 @@ const applyNameAndVersion = (isChecked) => {
 const toggleNameAndVersion = (event) => {
   const isChecked = event.target.checked;
   localStorage.setItem('showNameAndVersion', isChecked);
-  applyNameAndVersion(isChecked);
+  document.body.classList.toggle('show-font-details', isChecked);
 };
 
 const applyLockProofDimensions = (isChecked) => {
@@ -1446,8 +1421,7 @@ const getItemLineHeight = (itemID) => {
 const getGlobalLineHeight = () => {
     return parseFloat(
         document.getElementById('input__line-height')?.value ||
-        localStorage.getItem('line-height') ||
-        1.40
+        localStorage.getItem('line-height') || 1.0
     );
 };
 
