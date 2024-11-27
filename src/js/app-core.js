@@ -346,24 +346,25 @@ export const setStage = (stage) => {
   
 // Modify the getStoredStyles function to include column properties
 const getStoredStyles = (itemID, textClass) => {
-  // Get the current type scale ratio
+  // Get the current type scale ratio and base size
   const typeScale = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+  const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
   
   // Use whichFontSize to calculate the font size based on the text
   const content = document.querySelector(`#${itemID} .testarea`)?.textContent || textClass;
   
   // Check if there's a stored fontSize, otherwise calculate it
-  const fontSize = localStorage.getItem(`${itemID}-fontSize`) || whichFontSize(content);
+  const fontSize = getItemFontSize(itemID, content, baseSize, typeScale);
   
-  const lineHeight = localStorage.getItem(`${itemID}-lineHeight`) || '1.2';
-  const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0em';
+  const lineHeight = getItemLineHeight(itemID);
+  const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0';
   const columnCount = localStorage.getItem(`${itemID}-column-count`) || '1';
   const columnGap = localStorage.getItem(`${itemID}-column-gap`) || '1em';
 
   const inlineStyle = `
     font-size: ${fontSize}pt;
     line-height: ${lineHeight};
-    letter-spacing: ${letterSpacing};
+    letter-spacing: ${letterSpacing}em;
     column-count: ${columnCount};
     column-gap: ${columnGap};
   `;
@@ -385,19 +386,35 @@ const getStoredStyles = (itemID, textClass) => {
     return fvarStyle;
   };
   
-  const generateSliders = (itemID, sliderID, fontSize, lineHeight, letterSpacing) => `
-    <label for="${sliderID}-fontSize">Font Size </label>
-    <span class="t__right text-small" id="${sliderID}-fontSize-val">${fontSize}pt</span>
-    <input id="${sliderID}-fontSize" type="range" class="slider" min="4" max="160" step="2" value="${fontSize}" oninput="passStyleValue('${itemID}', 'fontSize', this.value)">
+  const generateSliders = (itemID, sliderID, fontSize, lineHeight, letterSpacing) => {
+    const hasCustomLineHeight = localStorage.getItem(`${itemID}-lineHeight`) !== null;
+    const hasCustomFontSize = localStorage.getItem(`${itemID}-fontSize`) !== null;
     
-    <label for="${sliderID}-lineHeight">Line Height </label>
-    <span class="t__right text-small" id="${sliderID}-lineHeight-val">${lineHeight}</span>
-    <input id="${sliderID}-lineHeight" type="range" class="slider" min="0.6" max="3.0" step="0.01" value="${lineHeight}" oninput="passStyleValue('${itemID}', 'lineHeight', this.value)">
-    
-    <label for="${sliderID}-letterSpacing">Letter Spacing </label>
-    <span class="t__right text-small" id="${sliderID}-letterSpacing-val">${letterSpacing}</span>
-    <input id="${sliderID}-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="${letterSpacing}" oninput="passStyleValue('${itemID}', 'letterSpacing', this.value)">
-  `;
+    return `
+		<div>
+			<label for="${sliderID}-fontSize">Font Size</label>
+			<span class="t__right text-small" id="${sliderID}-fontSize-val">${fontSize}pt</span>
+			<span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'fontSize')">clear</span>
+			<input id="${sliderID}-fontSize" type="range" class="slider ${hasCustomFontSize ? 'modified' : ''}" 
+				min="4" max="160" step="2" value="${fontSize}" 
+				oninput="passStyleValue('${itemID}', 'fontSize', this.value)">
+		</div>
+        <div>
+			<label for="${sliderID}-lineHeight">Line Height</label>
+			<span class="t__right text-small" id="${sliderID}-lineHeight-val">${lineHeight}</span>
+			<span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'lineHeight')">clear</span>
+			<input id="${sliderID}-lineHeight" type="range" class="slider ${hasCustomLineHeight ? 'modified' : ''}" 
+				min="0.6" max="3.0" step="0.01" value="${lineHeight}" 
+				oninput="passStyleValue('${itemID}', 'lineHeight', this.value)">
+		</div>
+        <div>
+			<label for="${sliderID}-letterSpacing">Letter Spacing </label>
+			<span class="t__right text-small" id="${sliderID}-letterSpacing-val">${letterSpacing}</span>
+			<span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'letterSpacing')">clear</span>
+			<input id="${sliderID}-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="${letterSpacing}" oninput="passStyleValue('${itemID}', 'letterSpacing', this.value)">
+		</div>
+    `;
+  };
   
   const generateVariableSliders = (itemID, sliderID) => {
     if (!font.tables.fvar) return '';
@@ -550,7 +567,7 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
     const fontSize = whichFontSize(savedContent);
   
     // Get other style values
-    const lineHeight = localStorage.getItem(`${testAreaID}-lineHeight`) || '1.2';
+    const lineHeight = getItemLineHeight(testAreaID);
     const letterSpacing = localStorage.getItem(`${testAreaID}-letterSpacing`) || '0em';
     const columnCount = localStorage.getItem(`${testAreaID}-column-count`) || '1';
     const columnGap = localStorage.getItem(`${testAreaID}-column-gap`) || '1em';
@@ -680,27 +697,34 @@ export const insertField = (aboveHere) => {
 	const elementIdSuffix = `-${property}-val`;
 	const element = document.querySelector(`[id$="${itemID}${elementIdSuffix}"]`);
 	
-	// Save to localStorage
-	if (['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
-	  localStorage.setItem(`${itemID}-${property}`, value);
-	  if (property === 'fontSize') value += 'pt';
-	  if (property === 'letterSpacing') value += 'em';
-	  if (element) element.textContent = value;
-	}
+    // Save to localStorage for persistent properties
+    if (['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
+        localStorage.setItem(`${itemID}-${property}`, value);
+        
+        // Add unit suffixes
+        let displayValue = value;
+        if (property === 'fontSize') displayValue += 'pt';
+        if (property === 'letterSpacing') displayValue += 'em';
+        if (element) element.textContent = displayValue;
 
-	// Update the testarea
-	const testarea = document.querySelector(`#${itemID} .testarea`);
-	if (testarea) {
-	  testarea.style[property] = value;
-	}
+        // Add .modified class to slider
+        const slider = document.querySelector(`#${itemID}-${property}`);
+        if (slider) {
+            slider.classList.add('modified');
+        }
+    }
 
-	// Update the testarea-values display
-	updateInlineText(itemID, property, value);
-  
-	// Only update active button for non-slider properties
-	if (!['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
-	  updateActiveButton(property, value);
-	}
+    // Update the testarea with proper units
+    const testarea = document.querySelector(`#${itemID} .testarea`);
+    if (testarea) {
+        let styleValue = value;
+        if (property === 'fontSize') styleValue += 'pt';
+        if (property === 'letterSpacing') styleValue += 'em';
+        testarea.style[property] = styleValue;
+    }
+
+    // Update the testarea-values display
+    updateInlineText(itemID, property, value);
   };
   
   export const passfvarValue = (itemID, property, value, fvarSupport) => {
@@ -762,6 +786,55 @@ export const insertField = (aboveHere) => {
 	  }
 	});
   };
+
+  // Export the function
+export const removeStyleValue = (itemID, property) => {
+    localStorage.removeItem(`${itemID}-${property}`);
+    
+    // Get default value based on property
+    let defaultValue;
+    if (property === 'fontSize') {
+        const testarea = document.querySelector(`#${itemID} .testarea`);
+        const text = testarea?.textContent || '';
+        const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+        const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
+        defaultValue = whichFontSize(text, baseSize, ratio);
+    } else if (property === 'lineHeight') {
+        defaultValue = getGlobalLineHeight();
+    } else {
+        defaultValue = '0'; // Default for letter-spacing
+    }
+
+    // Update the display and slider
+    const slider = document.querySelector(`#${itemID}-${property}`);
+    if (slider) {
+        slider.value = defaultValue;
+        slider.classList.remove('modified');
+		console.log(slider);
+    }
+
+    // Update the value display
+    const valueDisplay = document.querySelector(`#${itemID}-${property}-val`);
+    if (valueDisplay) {
+        valueDisplay.textContent = property === 'fontSize' ? `${defaultValue}pt` : defaultValue;
+    }
+
+    // Update the testarea style
+    const testarea = document.querySelector(`#${itemID} .testarea`);
+    if (testarea) {
+        let styleValue = defaultValue;
+        if (property === 'fontSize') styleValue += 'pt';
+        if (property === 'letterSpacing') styleValue += 'em';
+        testarea.style[property] = styleValue;
+    }
+
+    // Update the inline text display
+    updateInlineText(itemID, property, defaultValue);
+
+};
+
+// Add to window object for HTML onclick access
+window.removeStyleValue = removeStyleValue;
 
 // generate buttons
 export const generateStageButtons = (proof, currentStage) => {
@@ -1012,6 +1085,20 @@ export const generateStageButtons = (proof, currentStage) => {
 		baseFontInput.value = savedBaseSize;
 	}
 
+	// Add line height input listener
+	const lineHeightInput = document.getElementById('input__line-height');
+	if (lineHeightInput) {
+		lineHeightInput.addEventListener('change', (e) => {
+			const lineHeight = parseFloat(e.target.value);
+			localStorage.setItem('line-height', lineHeight);
+			updateAllLineHeights();
+		});
+
+		// Restore saved line height
+		const savedLineHeight = getGlobalLineHeight();
+		lineHeightInput.value = savedLineHeight;
+	}
+
 	// Modify type scale select listener
 	const typeScaleSelect = document.getElementById('select__type-scale');
 	if (typeScaleSelect) {
@@ -1192,95 +1279,108 @@ const generateProof = (text, options = {}) => {
 
 // Add this function to initialize the type scale on page load
 const initTypeScale = () => {
-  const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
-  const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
-  
-  document.querySelectorAll('.item').forEach(item => {
-    const itemID = item.id;
-    const testarea = item.querySelector('.testarea');
-    const text = testarea?.textContent || '';
+    const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+    const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
     
-    // Always calculate the initial size based on current settings
-    const newSize = whichFontSize(text, baseSize, ratio);
-    localStorage.setItem(`${itemID}-fontSize`, newSize);
-    
-    if (testarea) {
-      testarea.style.fontSize = `${newSize}pt`;
-    }
-    
-    // Update fontSize slider and its value display
-    const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
-    const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
-    if (fontSizeSlider) {
-      fontSizeSlider.value = newSize;
-    }
-    if (fontSizeVal) {
-      fontSizeVal.textContent = `${newSize}pt`;
-    }
+    document.querySelectorAll('.item').forEach(item => {
+        const itemID = item.id;
+        const testarea = item.querySelector('.testarea');
+        const text = testarea?.textContent || '';
+        
+        // Get the item-specific line height and font size
+        const itemLineHeight = getItemLineHeight(itemID);
+        const itemFontSize = getItemFontSize(itemID, text, baseSize, ratio);
+        
+        if (testarea) {
+            testarea.style.fontSize = `${itemFontSize}pt`;
+            testarea.style.lineHeight = itemLineHeight;
+        }
+        
+        // Update fontSize slider and its value display
+        const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
+        const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
+        if (fontSizeSlider) {
+            fontSizeSlider.value = itemFontSize;
+            // Add .modified class if using custom font size
+            if (localStorage.getItem(`${itemID}-fontSize`)) {
+                fontSizeSlider.classList.add('modified');
+            }
+        }
+        if (fontSizeVal) {
+            fontSizeVal.textContent = `${itemFontSize}pt`;
+        }
 
-    // Update the testarea-values display
-    const valuesDisplay = item.querySelector('.testarea-values');
-    if (valuesDisplay) {
-      const currentStyles = {
-        'font-size': `${newSize}pt`,
-        'line-height': testarea?.style.lineHeight || '1.2',
-        'letter-spacing': testarea?.style.letterSpacing || '0em'
-      };
+        // Update the testarea-values display
+        const valuesDisplay = item.querySelector('.testarea-values');
+        if (valuesDisplay) {
+            const currentStyles = {
+                'font-size': `${newSize}pt`,
+                'line-height': `${itemLineHeight}`, // Use item-specific line height
+                'letter-spacing': testarea?.style.letterSpacing || '0em'
+            };
 
-      const inlineStyle = Object.entries(currentStyles)
-        .map(([prop, val]) => `${prop}: ${val}`)
-        .join('; ');
+            const inlineStyle = Object.entries(currentStyles)
+                .map(([prop, val]) => `${prop}: ${val}`)
+                .join('; ');
 
-      valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
-    }
-  });
+            valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
+        }
+    });
 };
 
 // New function to update all proofs when either base size or ratio changes
 const updateAllTypeScales = () => {
-	const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
-	const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
-	
-	localStorage.setItem('preferred-scale', ratio);
-	
-	document.querySelectorAll('.item').forEach(item => {
-		const itemID = item.id;
-		const testarea = item.querySelector('.testarea');
-		const text = testarea?.textContent || '';
-		const newSize = whichFontSize(text, baseSize, ratio);
-		
-		// Update the testarea font size
-		if (testarea) {
-			testarea.style.fontSize = `${newSize}pt`;
-		}
-		
-		// Update fontSize slider and its value display
-		const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
-		const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
-		if (fontSizeSlider) {
-			fontSizeSlider.value = newSize;
-			localStorage.setItem(`${itemID}-fontSize`, newSize);
-		}
-		if (fontSizeVal) {
-			fontSizeVal.textContent = `${newSize}pt`;
-		}
+    const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+    const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
+    
+    localStorage.setItem('preferred-scale', ratio);
+    
+    document.querySelectorAll('.item').forEach(item => {
+        const itemID = item.id;
+        const testarea = item.querySelector('.testarea');
+        const text = testarea?.textContent || '';
+        
+        // Get the appropriate font size (either stored or calculated)
+        const fontSize = getItemFontSize(itemID, text, baseSize, ratio);
+        const itemLineHeight = getItemLineHeight(itemID);
+        
+        if (testarea) {
+            testarea.style.fontSize = `${fontSize}pt`;
+            testarea.style.lineHeight = itemLineHeight;
+        }
+        
+        // Update font size display
+        const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
+        const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
+        if (fontSizeSlider) {
+            fontSizeSlider.value = fontSize;
+            // Add .modified class if using custom font size
+            if (localStorage.getItem(`${itemID}-fontSize`)) {
+                fontSizeSlider.classList.add('modified');
+            }
+        }
+        if (fontSizeVal) {
+            fontSizeVal.textContent = `${fontSize}pt`;
+        }
 
-		// Update the testarea-values display
-		const valuesDisplay = item.querySelector('.testarea-values');
-		if (valuesDisplay) {
-			const currentStyles = {
-				'font-size': `${newSize}pt`,
-				'line-height': testarea?.style.lineHeight || '1.2',
-				'letter-spacing': testarea?.style.letterSpacing || '0em'
-			};
+        // Update line height display
+        updateItemLineHeightDisplay(itemID, itemLineHeight);
+    });
+};
 
-			const inlineStyle = Object.entries(currentStyles)
-				.map(([prop, val]) => `${prop}: ${val}`)
-				.join('; ');
 
-			valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
-		}
-	});
+
+const updateAllLineHeights = () => {
+    const globalLineHeight = getGlobalLineHeight();
+    localStorage.setItem('line-height', globalLineHeight);
+    
+    document.querySelectorAll('.item').forEach(item => {
+        const itemID = item.id;
+        // Only update items that don't have specific line heights
+        if (!localStorage.getItem(`${itemID}-lineHeight`)) {
+            updateItemLineHeightDisplay(itemID, globalLineHeight);
+        }
+    });
 };
 
 const applyNameAndVersion = (isChecked) => {
@@ -1319,9 +1419,91 @@ const applyLockProofDimensions = (isChecked) => {
     }
   });
 };
-
 const toggleLockProofDimensions = (event) => {
   const isChecked = event.target.checked;
   localStorage.setItem('lockProofDimensions', isChecked);
   applyLockProofDimensions(isChecked);
 };
+
+// Add new function to get item-specific font size
+const getItemFontSize = (itemID, text, baseSize, ratio) => {
+    // Check for stored custom value first
+    const storedSize = localStorage.getItem(`${itemID}-fontSize`);
+    if (storedSize !== null) {
+        return parseFloat(storedSize);
+    }
+    // Otherwise calculate based on text length
+    return whichFontSize(text, baseSize, ratio);
+};
+
+const getItemLineHeight = (itemID) => {
+    return parseFloat(
+        localStorage.getItem(`${itemID}-lineHeight`) ||
+        getGlobalLineHeight()
+    );
+};
+// Line Height Utilities
+const getGlobalLineHeight = () => {
+    return parseFloat(
+        document.getElementById('input__line-height')?.value ||
+        localStorage.getItem('line-height') ||
+        1.40
+    );
+};
+
+const setItemLineHeight = (itemID, value) => {
+    localStorage.setItem(`${itemID}-lineHeight`, value);
+    updateItemLineHeightDisplay(itemID, value);
+};
+
+const updateItemLineHeightDisplay = (itemID, value) => {
+    const item = document.getElementById(itemID);
+    if (!item) return;
+
+    const testarea = item.querySelector('.testarea');
+    const lineHeightSlider = item.querySelector(`#${itemID}-lineHeight`);
+    const lineHeightVal = item.querySelector(`#${itemID}-lineHeight-val`);
+    const valuesDisplay = item.querySelector('.testarea-values');
+    
+    if (testarea) testarea.style.lineHeight = value;
+    if (lineHeightSlider) lineHeightSlider.value = value;
+    if (lineHeightVal) lineHeightVal.textContent = value;
+    
+    if (valuesDisplay) {
+        const currentStyles = {
+            'font-size': testarea?.style.fontSize || '14pt',
+            'line-height': `${value}`,
+            'letter-spacing': testarea?.style.letterSpacing || '0em'
+        };
+        valuesDisplay.innerHTML = generateTestAreaValues(
+            Object.entries(currentStyles)
+                .map(([prop, val]) => `${prop}: ${val}`)
+                .join('; ')
+        );
+    }
+};
+
+// Update resetCustomValue to handle font size reset
+export const resetCustomValue = (itemID, property) => {
+    localStorage.removeItem(`${itemID}-${property}`);
+    
+    let globalValue;
+    if (property === 'lineHeight') {
+        globalValue = getGlobalLineHeight();
+    } else if (property === 'fontSize') {
+        const testarea = document.querySelector(`#${itemID} .testarea`);
+        const text = testarea?.textContent || '';
+        const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
+        const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
+        globalValue = whichFontSize(text, baseSize, ratio);
+    }
+        
+    updateItemDisplay(itemID, property, globalValue);
+    
+    // Remove modified class
+    const slider = document.querySelector(`#${itemID}-${property}`);
+    if (slider) {
+        slider.classList.remove('modified');
+    }
+};
+

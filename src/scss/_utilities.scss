@@ -4,8 +4,8 @@
 .d-block { display: block; }
 .d-inline { display: inline; }
 .d-inline-block { display: inline-block; }
-.d-flex { display: flex; }
-.d-flex-grow { flex-grow: 1; }
+.d-flex, .flex { display: flex; }
+.d-flex-grow, .flex-grow-1 { flex-grow: 1; }
 .d-none { display: none; }
 
 

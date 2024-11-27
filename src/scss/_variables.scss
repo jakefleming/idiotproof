@@ -70,7 +70,7 @@
 	--table-stripe: #f7f8f9;
 
 	--success-color: #32b643;
-	--warning-color: #ffb700;
+	--warning-color: var(--idiot-orange);
 	--error-color: #e85600;
   }
   
@@ -125,7 +125,7 @@
 	--table-row-hover: #3a3a3c;
 
 	--success-color: #30d158;
-	--warning-color: #ffd60a;
+	--warning-color: var(--idiot-blue);
 	--error-color: #ff453a;
   }
   

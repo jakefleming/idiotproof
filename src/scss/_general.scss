@@ -132,6 +132,25 @@ select {
   border-radius: var(--input-border-radius, #{$idiot-radius});
 }
 
+.remove {
+  display: none;
+  font-size: 14px;
+  color: var(--text-color);
+  padding: 0px;
+  border-radius: 50%;
+  margin-right: var(--spacing-xs);
+  background-color: var(--background-color);
+  cursor: pointer;
+  opacity: 0.5;
+}
+.remove:hover {
+  background-color: var(--button-bg);
+  opacity: 1;
+}
+.remove:has(~ .modified) {
+  display: inline-block;
+}
+
 // Slider styles
 input[type="range"] {
   -webkit-appearance: none;
@@ -177,7 +196,7 @@ input[type="range"] {
     }
   }
 
-  &:active {
+  &:active, &.modified {
     &::-webkit-slider-thumb {
       background: var(--slider-active-color);
     }
