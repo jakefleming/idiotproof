@@ -251,9 +251,6 @@ export const setStage = (stage) => {
 		// Initialize type scale after rendering
 		initTypeScale();
   
-		// Apply saved states after rendering new content
-		applyNameAndVersion(showNameAndVersion);
-  
 		const lockDimensions = localStorage.getItem('lockProofDimensions') === 'true';
 		applyLockProofDimensions(lockDimensions);
 	  })
@@ -267,14 +264,16 @@ export const setStage = (stage) => {
 	const fontName = font.names.postScriptName.en;
 	// Get version from head table
 	const version = font.tables.head.fontRevision;
-	// Format version to 2 decimal places
 	const formattedVersion = `Ver ${version}`;
 
     const gsubFeatures = font.tables.gsub.features;
     const taglist = Object.values(gsubFeatures)
 		.filter(feature => typeof feature === 'object' && feature.tag)
 		.map(feature => feature.tag)
-		.filter(tag => proof["Features"][tag] !== undefined);
+		.filter(tag => {
+			// Include the tag if it's either in proof.json OR if it's a stylistic set
+			return proof["Features"][tag] !== undefined || tag.startsWith('ss');
+		});
   
     let html = '';
   
@@ -500,26 +499,45 @@ window.updateColumns = (itemID) => {
   </div>
 `;
 
+const getFeatureDescription = (font, tag, proof) => {
+    // Check if it's a stylistic set feature (ss01-ss20)
+    if (tag.startsWith('ss')) {
+        const ssNum = parseInt(tag.slice(2), 10);
+        if (ssNum >= 1 && ssNum <= 20) {
+            const nameID = 256 + (ssNum - 1);
+            const ssName = font?.names?.[nameID]?.en;
+            if (ssName) {
+                return ssName;
+            }
+            // If no name in font, return generic stylistic set name
+            return `Stylistic Set ${ssNum}`;
+        }
+    }
+    
+    // For non-stylistic set features, use proof.json
+    return proof["Features"]?.[tag]?.["abstract"] || tag;
+};
 
-  
 const generateFeatureCheckboxes = (itemID, proof, taglist) => {
-	const uniqueTags = [...new Set(taglist)];
-	return `
-	  <label>Features</label>  
-	  <div class="btn__wrapper d-flex flex-wrap g-0">
-		${uniqueTags.map(tag => {
-		  const name = proof["Features"][tag]["abstract"];
-		  return `
-			<div class="chip d-flex align-items-center justify-content-between d-flex-grow" onclick="document.getElementById('${itemID}-checkbox-${tag}').click()">
-			  <input id="${itemID}-checkbox-${tag}" type="checkbox" onclick="passfeatValue('${itemID}', '${tag}', '${uniqueTags.join(',')}')">
-			  <span class="d-flex-grow">${name}</span>
-			  <span class="tag-label text-small">${tag}</span>
-			</div>
-		  `;
-		}).join('')}
-	  </div>
-	`;
-  };
+    const uniqueTags = [...new Set(taglist)];
+    return `
+      <label>Features</label>  
+      <div class="btn__wrapper d-flex flex-wrap g-0">
+        ${uniqueTags.map(tag => {
+          const featureDescription = getFeatureDescription(font, tag, proof);
+          const definition = proof["Features"]?.[tag]?.["definition"] || '';
+          
+          return `
+            <div title="${definition}" class="chip d-flex align-items-center justify-content-between d-flex-grow" onclick="document.getElementById('${itemID}-checkbox-${tag}').click()">
+              <input id="${itemID}-checkbox-${tag}" type="checkbox" onclick="passfeatValue('${itemID}', '${tag}', '${uniqueTags.join(',')}')">
+              <span class="d-flex-grow">${featureDescription}</span>
+              <span class="tag-label text-small">${tag}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+};
   
   
   const generateProofContent = (stage, title, proof, testAreaID, fvarStyle, textClass) => {
