@@ -7,15 +7,17 @@ Created by [Very Cool Studio](https://verycoolstudio.com) and [Jake Fleming](htt
 
 Idiot Proofed was made so we'd never have to open InDesign again. It works best locally, where gulp can watch for changes to fonts. On font selection Idiot Proofed takes a wild guess at where you're at in your proofing process, what opentype features are available in your font, and delivers proofing material accordingly. 
 
-## The stages
+## The tabs
+Idiot Proofed starts with an out-of-the-box proof. The font size, styling, and content are editable and saved in `localStorage`. If you want a custom version, clone the repository and run it locally by editing the `src/js/proof.json` file.
 1. Hamburgers — minumum rhythm sense character set
-2. Spacing — basic character set, `NOno` spacing control sets, and trio spacing controls
+2. Spacing — basic character set, `NOno` spacing control sets, trio spacing, and some figure spacing.
 3. Pangram — basic character set in panagrams
 4. Kerning — wider character set, common kerning problems, kerning trios, furniture
-5. Diacritics — examples of diacritics accross a selection of latin languages
-6. Features — auto generated demonstration of features
-7. Greek — basic character set, selection of text focusing on each letter
-8. Cyrillic — basic character set, uppercase and lowercase spacing control sets
+5. Italics — inline italics can be accessed by uploading two fonts, then holding `shift` to select both chips. The second selection will be the italic font. Select text in proofs and hit `⌘+i` to italicize inline text.
+6. Diacritics — examples of diacritics accross a selection of latin languages
+7. Features — auto generated demonstration of features
+8. Greek — basic character set, selection of text focusing on each letter
+9. Cyrillic — basic character set, uppercase and lowercase spacing control sets
 
 ## How to install locally
 Clone this repository. If you have node installed and gulp installed go ahead and get the party started:

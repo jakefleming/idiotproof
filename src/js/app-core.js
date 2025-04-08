@@ -429,15 +429,41 @@ const getStoredStyles = (itemID, textClass) => {
 	button.title = mode === 'local' ? font : font.name;
 	button.id = `btn__setfont-${fontName}`;
 	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontType}</span>`;
-	button.onclick = () => {
-	  // Remove active class from all buttons
+	
+	// Modified onclick handler to support shift-click for secondary font
+	button.onclick = (e) => {
+	  // Check if shift key is pressed
+	  if (e.shiftKey) {
+		// If shift is pressed, handle as secondary font
+		document.querySelectorAll('.btn__setfont').forEach(btn => {
+		  btn.classList.remove('secondary'); // Remove secondary from all buttons
+		});
+		button.classList.add('secondary'); // Add secondary to this button
+		
+		// Store and apply the secondary font
+		localStorage.setItem('secondaryFontPath', fontPath);
+		localStorage.setItem('secondaryFontName', fontName);
+		applySecondaryFont(fontPath, fontName);
+		
+		// Don't remove the active class from the primary font
+		return;
+	  }
+	  
+	  // Regular click (primary font) - original behavior
 	  document.querySelectorAll('.btn__setfont').forEach(btn => {
-	    btn.classList.remove('active');
-	    btn.classList.remove('visited'); // Remove visited from all buttons
+		btn.classList.remove('active');
+		btn.classList.remove('visited');
+		// Keep secondary font selection if exists
+		if (!btn.classList.contains('secondary')) {
+		  btn.classList.remove('secondary');
+		}
 	  });
+	  
 	  // Add active class to clicked button
 	  button.classList.add('active');
-	  button.classList.add('visited'); // Add visited only when clicked
+	  button.classList.add('visited');
+	  
+	  // Apply as primary font
 	  setFont(fontPath, fontName);
 	};
   
@@ -1262,14 +1288,6 @@ const getFontSize = (text, ratio = 1.618) => {
   return sizes[5];                         // Smallest/base size
 };
 
-// Update your proof generation to use the selected scale
-const generateProof = (text, options = {}) => {
-  const typeScale = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
-  const fontSize = getFontSize(text, typeScale);
-  
-  // ... rest of your proof generation code ...
-};
-
 // Add this function to initialize the type scale on page load
 const initTypeScale = () => {
     const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
@@ -1497,5 +1515,66 @@ export const resetCustomValue = (itemID, property) => {
     if (slider) {
         slider.classList.remove('modified');
     }
+};
+
+export const applySecondaryFont = (fontPath, fontName) => {
+  console.log(`Applying secondary font: ${fontName} from ${fontPath}`);
+  
+  // Load the secondary font
+  opentype.load(fontPath, (err, loadedFont) => {
+    if (err) {
+      console.error('Error loading secondary font:', err);
+      showErrorMessage(`Error loading secondary font: ${err}`);
+      return;
+    }
+    
+    // Store secondary font in a global variable
+    window.secondaryFont = loadedFont;
+    
+    // Create FontFace for the secondary font with a special family name
+    if ('FontFace' in window) {
+      const secondaryFontFamily = `${fontName}-secondary`;
+      const fontFace = new FontFace(
+        secondaryFontFamily,
+        `url('${fontPath}')`,
+        { format: loadedFont.outlinesFormat === 'truetype' ? 'truetype' : 'opentype' }
+      );
+      
+      // Load and add the font
+      fontFace.load().then(() => {
+        document.fonts.add(fontFace);
+        console.log(`Secondary font loaded successfully: ${secondaryFontFamily}`);
+        
+        // Create and apply the font-face rule
+        const fontFaceRule = `
+          @font-face {
+            font-family: '${secondaryFontFamily}';
+            src: url('${fontPath}') format('${loadedFont.outlinesFormat === 'truetype' ? 'truetype' : 'opentype'}');
+          }
+        `;
+        
+        // Add or update secondary font styles
+        let secondaryStyleElement = document.getElementById('style__secondary-font');
+        if (!secondaryStyleElement) {
+          secondaryStyleElement = document.createElement('style');
+          secondaryStyleElement.id = 'style__secondary-font';
+          document.head.appendChild(secondaryStyleElement);
+        }
+        
+        secondaryStyleElement.textContent = fontFaceRule;
+        
+        // Add CSS to apply secondary font to emphasis elements
+        secondaryStyleElement.textContent += `
+          .testarea em, .testarea i, .testarea .emphasis {
+            font-family: '${secondaryFontFamily}', var(--font-secondary, sans-serif) !important;
+          }
+        `;
+        
+        // Refresh the current stage to apply the new font
+        const currentStage = localStorage.getItem('proofingPhase') || 'Hamburgers';
+        setStage(currentStage);
+      });
+    }
+  });
 };
 
