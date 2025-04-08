@@ -597,9 +597,6 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
       column-count: ${columnCount};
       column-gap: ${columnGap};
     `;
-   // previously included testarea-values
-   // <span class="testarea-values small">${generateTestAreaValues(inlineStyle)}</span>
-   // couldn't get them to stay cons
     const html = `
       <div class="d-flex justify-content-between">
         <h6 class="h6" contentEditable="true" 
@@ -632,30 +629,6 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
       default:
         return value;
     }
-  };
-  
-  const generateTestAreaValues = (inlineStyle) => {
-    // Only show these core properties
-    const styleMap = {
-      'font-size': 'Size',
-      'line-height': 'Leading',
-      'letter-spacing': 'Tracking'
-    };
-
-    const styles = inlineStyle.split(';')
-      .filter(s => s.trim())
-      // Only process styles that are in our styleMap
-      .filter(style => {
-        const property = style.split(':')[0].trim();
-        return styleMap.hasOwnProperty(property);
-      });
-
-    return styles.map(style => {
-      const [property, value] = style.split(':').map(s => s.trim());
-      const label = styleMap[property];
-      const formattedValue = formatStyleValue(property, value);
-      return `<span class="${property}">${label}: ${formattedValue}</span>`;
-    }).join(' · ');
   };
   
   const updateInlineText = (itemID, property, value) => {
@@ -1203,17 +1176,29 @@ export const generateFontNavigation = () => {
   const navGroup = document.createElement('div');
   navGroup.className = 'btn-group d-flex g-1 mb-2 font-nav-group';
   
+  // Create prev button
   const prevButton = document.createElement('button');
   prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
   prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
   prevButton.onclick = () => navigateFonts('prev');
   
+  // Create play button (new)
+  const playButton = document.createElement('button');
+  playButton.className = 'btn font-play-btn d-flex align-items-center justify-content-center';
+  playButton.title = 'Auto-cycle through fonts';
+  playButton.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
+  playButton.setAttribute('data-playing', 'false');
+  playButton.onclick = toggleFontAnimation;
+  
+  // Create next button
   const nextButton = document.createElement('button');
   nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
   nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
   nextButton.onclick = () => navigateFonts('next');
   
+  // Add all buttons to the group
   navGroup.appendChild(prevButton);
+  navGroup.appendChild(playButton);
   navGroup.appendChild(nextButton);
   
   return navGroup;
@@ -1223,15 +1208,18 @@ const navigateFonts = (direction) => {
   const buttons = document.querySelectorAll('.btn__setfont');
   const activeButton = document.querySelector('.btn__setfont.active');
   
-  if (!activeButton || buttons.length <= 1) return;
+  if (!buttons.length) return; // No fonts loaded
   
-  const currentIndex = Array.from(buttons).indexOf(activeButton);
-  let nextIndex;
+  let nextIndex = 0;
   
-  if (direction === 'next') {
-    nextIndex = currentIndex + 1 >= buttons.length ? 0 : currentIndex + 1;
-  } else {
-    nextIndex = currentIndex - 1 < 0 ? buttons.length - 1 : currentIndex - 1;
+  if (activeButton) {
+    const currentIndex = Array.from(buttons).indexOf(activeButton);
+    
+    if (direction === 'next') {
+      nextIndex = (currentIndex + 1) % buttons.length; // Wrap around to beginning
+    } else {
+      nextIndex = (currentIndex - 1 + buttons.length) % buttons.length; // Wrap around to end
+    }
   }
   
   buttons[nextIndex].click();
@@ -1275,19 +1263,6 @@ const initAspectRatio = () => {
   }
 };
 
-// Use the imported function where needed
-const getFontSize = (text, ratio = 1.618) => {
-  const sizes = calculateTypeScale(14, ratio);
-  const length = text.length;
-  
-  if (length <= 5) return sizes[0];        // Largest size
-  if (length <= 15) return sizes[1];       // Second largest
-  if (length <= 30) return sizes[2];       // Third largest
-  if (length <= 100) return sizes[3];      // Medium
-  if (length <= 250) return sizes[4];      // Second smallest
-  return sizes[5];                         // Smallest/base size
-};
-
 // Add this function to initialize the type scale on page load
 const initTypeScale = () => {
     const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
@@ -1319,22 +1294,6 @@ const initTypeScale = () => {
         }
         if (fontSizeVal) {
             fontSizeVal.textContent = `${itemFontSize}pt`;
-        }
-
-        // Update the testarea-values display
-        const valuesDisplay = item.querySelector('.testarea-values');
-        if (valuesDisplay) {
-            const currentStyles = {
-                'font-size': `${newSize}pt`,
-                'line-height': `${itemLineHeight}`, // Use item-specific line height
-                'letter-spacing': testarea?.style.letterSpacing || '0em'
-            };
-
-            const inlineStyle = Object.entries(currentStyles)
-                .map(([prop, val]) => `${prop}: ${val}`)
-                .join('; ');
-
-            valuesDisplay.innerHTML = generateTestAreaValues(inlineStyle);
         }
     });
 };
@@ -1576,5 +1535,45 @@ export const applySecondaryFont = (fontPath, fontName) => {
       });
     }
   });
+};
+
+// Add this near the top of your file
+let fontAnimationInterval = null;
+
+// Function to toggle font animation on/off
+const toggleFontAnimation = (event) => {
+  const playButton = event.currentTarget;
+  const isPlaying = playButton.getAttribute('data-playing') === 'true';
+  
+  if (isPlaying) {
+    // Stop the animation
+    stopFontAnimation();
+    playButton.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
+    playButton.setAttribute('data-playing', 'false');
+  } else {
+    // Start the animation
+    startFontAnimation();
+    playButton.innerHTML = '<span class="material-symbols-outlined">pause</span>';
+    playButton.setAttribute('data-playing', 'true');
+  }
+};
+
+// Function to start cycling through fonts
+const startFontAnimation = () => {
+  // Clear any existing animation
+  stopFontAnimation();
+  
+  // Set interval to advance to next font every 300ms
+  fontAnimationInterval = setInterval(() => {
+    navigateFonts('next');
+  }, 300);
+};
+
+// Function to stop font animation
+const stopFontAnimation = () => {
+  if (fontAnimationInterval) {
+    clearInterval(fontAnimationInterval);
+    fontAnimationInterval = null;
+  }
 };
 
