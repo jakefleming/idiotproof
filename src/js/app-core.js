@@ -1229,30 +1229,30 @@ const initAspectRatio = () => {
   const select = document.getElementById('select__aspect-ratio');
   const proofs = document.querySelectorAll('.item__proof');
 
+  // Helper function to normalize aspect ratio
+  const normalizeRatio = (ratioStr) => {
+    const [width, height] = ratioStr.split(':').map(Number);
+    // Convert to decimal for consistent calculations
+    return width / height;
+  };
+
   // Set default on load
   proofs.forEach(proof => {
-    proof.classList.add('ratio-letter');
+    // Use normalized ratio for consistent sizing
+    const ratioStr = select.value;
+    const ratio = normalizeRatio(ratioStr);
+    proof.style.aspectRatio = ratio;
   });
 
   select.addEventListener('change', (e) => {
-    const ratio = e.target.value;
+    const ratioStr = e.target.value;
+    const ratio = normalizeRatio(ratioStr);
+    
     proofs.forEach(proof => {
-      // Remove existing ratio classes
-      proof.classList.remove('ratio-letter', 'ratio-a4');
-      
-      // Add new ratio class
-      switch(ratio) {
-        case '8.5:11':
-          proof.classList.add('ratio-letter');
-          break;
-        case '7:10':
-          proof.classList.add('ratio-a4');
-          break;
-      }
+      proof.style.aspectRatio = ratio;
     });
-
-    // Optionally save preference
-    localStorage.setItem('preferred-ratio', ratio);
+    
+    localStorage.setItem('preferred-ratio', ratioStr);
   });
 
   // Restore saved preference if it exists
