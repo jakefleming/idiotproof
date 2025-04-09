@@ -257,78 +257,146 @@ export const setStage = (stage) => {
 	  .catch(error => console.error('Error loading JSON:', error));
   };
   
-  const generateStageHtml = (proof, stage) => {
-    if (!proof[stage]) {
-      return '<div class="item d-flex t__center"><div class="item__proof">No features found! :...(</div></div>';
-    }
-	const fontName = font.names.postScriptName.en;
-	// Get version from head table
-	const version = font.tables.head.fontRevision;
-	const formattedVersion = `Ver ${version}`;
+const generateStageHtml = (proof, stage) => {
+  if (!proof[stage]) {
+    return '<div class="item d-flex t__center"><div class="item__proof">No features found! :...(</div></div>';
+  }
 
-    const gsubFeatures = font.tables.gsub.features;
-    const taglist = Object.values(gsubFeatures)
-		.filter(feature => typeof feature === 'object' && feature.tag)
-		.map(feature => feature.tag)
-		.filter(tag => {
-			// Include the tag if it's either in proof.json OR if it's a stylistic set
-			return proof["Features"][tag] !== undefined || tag.startsWith('ss');
-		});
+  const fontName = font.names.postScriptName.en;
+  const version = font.tables.head.fontRevision;
+  const formattedVersion = `Ver ${version}`;
+
+  const gsubFeatures = font.tables.gsub?.features || {};
+  const taglist = Object.values(gsubFeatures)
+    .filter(feature => typeof feature === 'object' && feature.tag)
+    .map(feature => feature.tag)
+    .filter(tag => {
+      return proof["Features"][tag] !== undefined || tag.startsWith('ss');
+    });
+
+  let html = '';
+
+  // Generate standard proof windows from JSON
+  for (const title in proof[stage]) {
+    if (stage === "Features" && !taglist.includes(title)) {
+      continue;
+    }
+
+    const textClass = whichFontSize(proof[stage][title]);
+    const testAreaID = `section__proofing-${title}`;
+    const itemID = `item--${title}`;
+    const sliderID = `${itemID}`;
+    
+    const { fontSize, lineHeight, letterSpacing, inlineStyle } = getStoredStyles(sliderID, textClass);
+    const fvarStyle = generateFvarStyle(itemID);
+
+    html += `
+      <div id="${itemID}" class="item">
+        <button class="btn btn-link add-item-above chip" onclick="insertField('${itemID}')">+ Add Proof Window</button>
+        <div class="item__container d-flex">
+          <div class="item__sliders pt-2">
+            <div class="item__sliders-wrapper">
+              ${generateSliders(itemID, sliderID, fontSize, lineHeight, letterSpacing)}
+              ${generateVariableSliders(itemID, sliderID)}
+              ${generateStyleButtons(itemID)}
+              ${generateFeatureCheckboxes(itemID, proof, taglist)}
+            </div>
+          </div>
+          <div class="item__proof ratio-letter">
+            <button class="btn btn-link remove-item-this invisible" onclick="removeElementsByID('${itemID}')">×</button>
+            ${generateProofContent(stage, title, proof, testAreaID, fvarStyle, textClass)}
+            <div class="item__footer d-flex justify-content-between">
+              <span class="item__footer-name-font">${fontName}</span>
+              <span class="item__footer-name-version">${formattedVersion}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
   
-    let html = '';
-  
-    for (const title in proof[stage]) {
-      if (stage === "Features" && !taglist.includes(title)) {
-        continue;
-      }
-  
-      const textClass = whichFontSize(proof[stage][title]);
-      const testAreaID = `section__proofing-${title}`;
-      const itemID = `item--${title}`;
-      const sliderID = `${itemID}`;
+  // Add custom proof windows for this stage
+  const customWindows = JSON.parse(localStorage.getItem('customProofWindows') || '{}');
+  if (customWindows[stage] && customWindows[stage].length > 0) {
+    for (const customItemId of customWindows[stage]) {
+      // Fixed: Create correct IDs for custom windows
+      const testAreaID = `section__proofing-custom-${customItemId}`;
       
-      const { fontSize, lineHeight, letterSpacing, inlineStyle } = getStoredStyles(sliderID, textClass);
-      const fvarStyle = generateFvarStyle(itemID);
-  
+      // Fixed: Use stored values with proper fallbacks
+      const { fontSize, lineHeight, letterSpacing, inlineStyle } = getStoredStyles(customItemId, 'text-xl');
+      const fvarStyle = generateFvarStyle(customItemId);
+      
+      // Fixed: Get stored content with proper fallback values
+      const savedTitle = localStorage.getItem(`${testAreaID}-title`) || 'Custom Proof Window';
+      const savedContent = localStorage.getItem(testAreaID) || 'This is a custom proof window. Type your text here.';
+
       html += `
-        <div id="${itemID}" class="item">
-          <button class="btn btn-link add-item-above chip" onclick="insertField('${itemID}')">+ Add Proof Window</button>
+        <div id="${customItemId}" class="item custom-item">
+          <button class="btn btn-link add-item-above chip" onclick="insertField('${customItemId}')">+ Add Proof Window</button>
           <div class="item__container d-flex">
             <div class="item__sliders pt-2">
               <div class="item__sliders-wrapper">
-                ${generateSliders(itemID, sliderID, fontSize, lineHeight, letterSpacing)}
-                ${generateVariableSliders(itemID, sliderID)}
-                ${generateStyleButtons(itemID)}
-                ${generateFeatureCheckboxes(itemID, proof, taglist)}
+                ${generateSliders(customItemId, customItemId, fontSize, lineHeight, letterSpacing)}
+                ${generateVariableSliders(customItemId, customItemId)}
+                ${generateStyleButtons(customItemId)}
+                ${generateFeatureCheckboxes(customItemId, proof, taglist)}
+                <div class="mt-2">
+                  <button class="btn btn-sm btn-danger d-flex align-items-center g-1" onclick="removeCustomProofWindow('${customItemId}')">
+                    <span class="material-symbols-outlined">delete</span>
+                    Remove this window
+                  </button>
+                </div>
               </div>
             </div>
             <div class="item__proof ratio-letter">
-              <button class="btn btn-link remove-item-this invisible" onclick="removeElementsByID('${itemID}')">×</button>
-              ${generateProofContent(stage, title, proof, testAreaID, fvarStyle, textClass)}
-				<div class="item__footer d-flex justify-content-between">
-					<span class="item__footer-name-font">${fontName}</span>
-				<span class="item__footer-name-version">${formattedVersion}</span>
-				</div>
+              <div class="d-flex justify-content-between">
+                <h6 class="h6" contentEditable="true" 
+                    id="${testAreaID}-title"
+                    onkeyup="saveEditableContent('${testAreaID}-title')">${savedTitle}</h6>
+              </div>
+              <div class="testarea-container">
+                <div id="${testAreaID}" 
+                     style="${inlineStyle} ${fvarStyle}" 
+                     class="t__importedfontfamily testarea" 
+                     contenteditable="true" 
+                     spellcheck="false" 
+                     onkeyup="saveEditableContent('${testAreaID}')">
+                  ${savedContent}
+                </div>
+              </div>
+              <div class="item__footer d-flex justify-content-between">
+                <span class="item__footer-name-font">${fontName}</span>
+                <span class="item__footer-name-version">${formattedVersion}</span>
+              </div>
             </div>
           </div>
         </div>
       `;
     }
-	return html;
-  };
+  }
   
-// Modify the getStoredStyles function to include column properties
+  return html;
+};
+
+// Also add debug logging to troubleshoot any remaining issues
+const saveCustomProofWindow = (itemId, stage) => {
+  const customWindows = JSON.parse(localStorage.getItem('customProofWindows') || '{}');
+  if (!customWindows[stage]) {
+    customWindows[stage] = [];
+  }
+  if (!customWindows[stage].includes(itemId)) {
+    customWindows[stage].push(itemId);
+    localStorage.setItem('customProofWindows', JSON.stringify(customWindows));
+    console.log(`Added custom window "${itemId}" to stage "${stage}"`);
+    console.log('Custom windows:', JSON.stringify(customWindows));
+  }
+};
+
 const getStoredStyles = (itemID, textClass) => {
-  // Get the current type scale ratio and base size
   const typeScale = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
   const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
-  
-  // Use whichFontSize to calculate the font size based on the text
   const content = document.querySelector(`#${itemID} .testarea`)?.textContent || textClass;
-  
-  // Check if there's a stored fontSize, otherwise calculate it
   const fontSize = getItemFontSize(itemID, content, baseSize, typeScale);
-  
   const lineHeight = getItemLineHeight(itemID);
   const letterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) || '0';
   const columnCount = localStorage.getItem(`${itemID}-column-count`) || '1';
@@ -344,66 +412,69 @@ const getStoredStyles = (itemID, textClass) => {
 
   return { fontSize, lineHeight, letterSpacing, columnCount, columnGap, inlineStyle };
 };
+
+const generateFvarStyle = (itemID) => {
+  let fvarStyle = '';
+  if (font.tables.fvar) {
+    const fvarSupport = font.tables.fvar.axes.map(axis => axis.tag);
+    fvarStyle = 'font-variation-settings: ' + 
+      font.tables.fvar.axes.map(axis => {
+        const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
+        const value = storedValue !== null ? storedValue : axis.defaultValue;
+        return `'${axis.tag}' ${value}`;
+      }).join(', ') + ';';
+  }
+  return fvarStyle;
+};
+
+const generateSliders = (itemID, sliderID, fontSize, lineHeight, letterSpacing) => {
+  const hasCustomLineHeight = localStorage.getItem(`${itemID}-lineHeight`) !== null;
+  const hasCustomFontSize = localStorage.getItem(`${itemID}-fontSize`) !== null;
+  const hasCustomLetterSpacing = localStorage.getItem(`${itemID}-letterSpacing`) !== null;
   
-  const generateFvarStyle = (itemID) => {
-    let fvarStyle = '';
-    if (font.tables.fvar) {
-      const fvarSupport = font.tables.fvar.axes.map(axis => axis.tag);
-      fvarStyle = 'font-variation-settings: ' + 
-        font.tables.fvar.axes.map(axis => {
-          const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
-          const value = storedValue !== null ? storedValue : axis.defaultValue;
-          return `'${axis.tag}' ${value}`;
-        }).join(', ') + ';';
-    }
-    return fvarStyle;
-  };
-  
-  const generateSliders = (itemID, sliderID, fontSize, lineHeight, letterSpacing) => {
-    const hasCustomLineHeight = localStorage.getItem(`${itemID}-lineHeight`) !== null;
-    const hasCustomFontSize = localStorage.getItem(`${itemID}-fontSize`) !== null;
-    
+  return `
+    <div>
+      <label for="${sliderID}-fontSize">Font Size</label>
+      <span class="t__right text-small" id="${sliderID}-fontSize-val">${fontSize}pt</span>
+      <span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'fontSize')">clear</span>
+      <input id="${sliderID}-fontSize" type="range" class="slider ${hasCustomFontSize ? 'modified' : ''}" 
+        min="4" max="160" step="2" value="${fontSize}" 
+        oninput="passStyleValue('${itemID}', 'fontSize', this.value)">
+    </div>
+    <div>
+      <label for="${sliderID}-lineHeight">Line Height</label>
+      <span class="t__right text-small" id="${sliderID}-lineHeight-val">${lineHeight}</span>
+      <span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'lineHeight')">clear</span>
+      <input id="${sliderID}-lineHeight" type="range" class="slider ${hasCustomLineHeight ? 'modified' : ''}" 
+        min="0.6" max="3.0" step="0.01" value="${lineHeight}" 
+        oninput="passStyleValue('${itemID}', 'lineHeight', this.value)">
+    </div>
+    <div>
+      <label for="${sliderID}-letterSpacing">Letter Spacing </label>
+      <span class="t__right text-small" id="${sliderID}-letterSpacing-val">${letterSpacing}em</span>
+      <span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'letterSpacing')">clear</span>
+      <input id="${sliderID}-letterSpacing" type="range" class="slider ${hasCustomLetterSpacing ? 'modified' : ''}" 
+        min="-0.4" max="0.4" step="0.01" value="${letterSpacing}" 
+        oninput="passStyleValue('${itemID}', 'letterSpacing', this.value)">
+    </div>
+  `;
+};
+
+const generateVariableSliders = (itemID, sliderID) => {
+  if (!font.tables.fvar) return '';
+
+  return font.tables.fvar.axes.map(axis => {
+    const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
+    const value = storedValue !== null ? storedValue : axis.defaultValue;
     return `
-		<div>
-			<label for="${sliderID}-fontSize">Font Size</label>
-			<span class="t__right text-small" id="${sliderID}-fontSize-val">${fontSize}pt</span>
-			<span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'fontSize')">clear</span>
-			<input id="${sliderID}-fontSize" type="range" class="slider ${hasCustomFontSize ? 'modified' : ''}" 
-				min="4" max="160" step="2" value="${fontSize}" 
-				oninput="passStyleValue('${itemID}', 'fontSize', this.value)">
-		</div>
-        <div>
-			<label for="${sliderID}-lineHeight">Line Height</label>
-			<span class="t__right text-small" id="${sliderID}-lineHeight-val">${lineHeight}</span>
-			<span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'lineHeight')">clear</span>
-			<input id="${sliderID}-lineHeight" type="range" class="slider ${hasCustomLineHeight ? 'modified' : ''}" 
-				min="0.6" max="3.0" step="0.01" value="${lineHeight}" 
-				oninput="passStyleValue('${itemID}', 'lineHeight', this.value)">
-		</div>
-        <div>
-			<label for="${sliderID}-letterSpacing">Letter Spacing </label>
-			<span class="t__right text-small" id="${sliderID}-letterSpacing-val">${letterSpacing}</span>
-			<span class="t__right material-symbols-outlined remove" onclick="removeStyleValue('${itemID}', 'letterSpacing')">clear</span>
-			<input id="${sliderID}-letterSpacing" type="range" class="slider" min="-0.4" max="0.4" step="0.01" value="${letterSpacing}" oninput="passStyleValue('${itemID}', 'letterSpacing', this.value)">
-		</div>
+      <label for="${sliderID}-${axis.tag}">${axis.name.en} </label>
+      <span class="t__right text-small" id="${sliderID}-${axis.tag}-val">${value}</span>
+      <input id="${sliderID}-${axis.tag}" type="range" class="slider" min="${axis.minValue}" max="${axis.maxValue}" value="${value}" oninput="passfvarValue('${itemID}', '${axis.tag}', this.value, '${font.tables.fvar.axes.map(a => a.tag).join(',')}')">
     `;
-  };
-  
-  const generateVariableSliders = (itemID, sliderID) => {
-    if (!font.tables.fvar) return '';
-  
-    return font.tables.fvar.axes.map(axis => {
-      const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
-      const value = storedValue !== null ? storedValue : axis.defaultValue;
-      return `
-        <label for="${sliderID}-${axis.tag}">${axis.name.en} </label>
-        <span class="t__right text-small" id="${sliderID}-${axis.tag}-val">${value}</span>
-        <input id="${sliderID}-${axis.tag}" type="range" class="slider" min="${axis.minValue}" max="${axis.maxValue}" value="${value}" oninput="passfvarValue('${itemID}', '${axis.tag}', this.value, '${font.tables.fvar.axes.map(a => a.tag).join(',')}')">
-      `;
-    }).join('');
-  };
-  
-  export const generateFontButton = async (font, mode = 'local') => {
+  }).join('');
+};
+
+export const generateFontButton = async (font, mode = 'local') => {
 	let fontName, fontPath, fontType, displayName, isVariable;
   
 	if (mode === 'local') {
@@ -470,7 +541,7 @@ const getStoredStyles = (itemID, textClass) => {
 	return button;
   };
   
-  const isVariableFont = async (font) => {
+const isVariableFont = async (font) => {
 	try {
 	  let arrayBuffer;
 	  if (typeof font === 'string') {
@@ -489,14 +560,13 @@ const getStoredStyles = (itemID, textClass) => {
 	}
   };
   
-  const generateFontFaces = (fonts) => {
+const generateFontFaces = (fonts) => {
 	return fonts.map(font => {
 	  const fontName = font.replace('.', '-');
 	  return `@font-face { font-family: "${fontName}"; src: url("fonts/${font}");}`;
 	}).join('\n');
   };
 
-  // Add new function to handle column updates
 window.updateColumns = (itemID) => {
 	const columnCount = document.getElementById(`${itemID}-column-count`).value;
 	const columnGap = document.getElementById(`${itemID}-column-gap`).value;
@@ -505,7 +575,7 @@ window.updateColumns = (itemID) => {
 	passStyleValue(itemID, 'column-gap', columnGap);
   };
 
-  const generateStyleButtons = (itemID) => `
+const generateStyleButtons = (itemID) => `
   <div id="btn__wrapper-case">
     <label>Case</label>
     <div class="d-flex g-1 btn__wrapper">
@@ -526,7 +596,6 @@ window.updateColumns = (itemID) => {
 `;
 
 const getFeatureDescription = (font, tag, proof) => {
-    // Check if it's a stylistic set feature (ss01-ss20)
     if (tag.startsWith('ss')) {
         const ssNum = parseInt(tag.slice(2), 10);
         if (ssNum >= 1 && ssNum <= 20) {
@@ -535,12 +604,9 @@ const getFeatureDescription = (font, tag, proof) => {
             if (ssName) {
                 return ssName;
             }
-            // If no name in font, return generic stylistic set name
             return `Stylistic Set ${ssNum}`;
         }
     }
-    
-    // For non-stylistic set features, use proof.json
     return proof["Features"]?.[tag]?.["abstract"] || tag;
 };
 
@@ -565,18 +631,14 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
     `;
 };
   
-  
-  const generateProofContent = (stage, title, proof, testAreaID, fvarStyle, textClass) => {
-    // Add safety checks
+const generateProofContent = (stage, title, proof, testAreaID, fvarStyle, textClass) => {
     if (!proof || !proof[stage] || !proof[stage][title]) {
       console.warn('Missing proof data:', { stage, title });
       return '';
     }
 
-    // Special handling for Features stage
     let content = proof[stage][title];
     if (stage === "Features") {
-      // Features content is stored as an object with 'sample', 'definition', and 'abstract' properties
       content = proof[stage][title].sample || '';
     }
 
@@ -584,7 +646,6 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
     const savedTitle = getStoredContent(`${testAreaID}-title`, title) || '';
     const fontSize = whichFontSize(savedContent);
   
-    // Get other style values
     const lineHeight = getItemLineHeight(testAreaID);
     const letterSpacing = localStorage.getItem(`${testAreaID}-letterSpacing`) || '0em';
     const columnCount = localStorage.getItem(`${testAreaID}-column-count`) || '1';
@@ -618,7 +679,7 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
     return html;
   };
   
-  const formatStyleValue = (property, value) => {
+const formatStyleValue = (property, value) => {
     switch (property) {
       case 'font-size':
         return value;
@@ -631,11 +692,10 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
     }
   };
   
-  const updateInlineText = (itemID, property, value) => {
+const updateInlineText = (itemID, property, value) => {
 	const container = document.querySelector(`#${itemID} .testarea-values`);
 	if (!container) return;
 
-	// Get values from the sliders
 	const fontSizeSlider = document.querySelector(`#${itemID}-fontSize`);
 	const lineHeightSlider = document.querySelector(`#${itemID}-lineHeight`);
 	const letterSpacingSlider = document.querySelector(`#${itemID}-letterSpacing`);
@@ -653,60 +713,109 @@ const generateFeatureCheckboxes = (itemID, proof, taglist) => {
 	container.innerHTML = generateTestAreaValues(inlineStyle);
   };
 
-// Global functions
-
 export const insertField = (aboveHere) => {
-	const original = document.getElementById(aboveHere);
-	const clone = original.cloneNode(true);
-	
-	// Reset any unique IDs or input values in the clone
-	clone.id = `${aboveHere}-clone-${Date.now()}`;
-	clone.querySelectorAll('[id]').forEach(el => {
-	  el.id = `${el.id}-clone-${Date.now()}`;
-	});
-	clone.querySelectorAll('input').forEach(input => {
-	  input.value = '';
-	});
+  const original = document.getElementById(aboveHere);
+  const clone = original.cloneNode(true);
   
-	original.parentNode.insertBefore(clone, original);
-	
-	// Animate the insertion
-	clone.style.height = '0px';
-	clone.style.overflow = 'hidden';
-	clone.style.transition = 'height 0.6s ease';
-	
-	setTimeout(() => {
-	  clone.style.height = `${clone.scrollHeight}px`;
-	}, 0);
-	
-	setTimeout(() => {
-	  clone.style.height = 'auto';
-	  clone.style.overflow = 'visible';
-	}, 600);
-  };
+  // Create a unique ID for the new proof window
+  const timestamp = Date.now();
+  const newId = `custom-item-${timestamp}`;
+  const originalId = original.id;
+  clone.id = newId;
   
-  export const passStyleValue = (itemID, property, value) => {
+  // Update all element IDs
+  clone.querySelectorAll('[id]').forEach(el => {
+    el.id = `${el.id}-clone-${timestamp}`;
+  });
+  
+  // Update all event handlers that reference the original ID
+  clone.querySelectorAll('[oninput]').forEach(el => {
+    // Replace the original itemID with the new one in all event handlers
+    const updatedHandler = el.getAttribute('oninput').replace(
+      new RegExp(`'${originalId}'`, 'g'), 
+      `'${newId}'`
+    );
+    el.setAttribute('oninput', updatedHandler);
+  });
+  
+  // Also update onclick attributes that may reference the original ID
+  clone.querySelectorAll('[onclick]').forEach(el => {
+    const updatedHandler = el.getAttribute('onclick').replace(
+      new RegExp(`'${originalId}'`, 'g'), 
+      `'${newId}'`
+    );
+    el.setAttribute('onclick', updatedHandler);
+  });
+  
+  // Reset input values
+  clone.querySelectorAll('input').forEach(input => {
+    if (input.type === 'range') {
+      // Don't reset slider values - they'll be handled by the style system
+    } else {
+      input.value = '';
+    }
+  });
+  
+  // Change the content to something new
+  const testarea = clone.querySelector('.testarea');
+  if (testarea) {
+    testarea.innerHTML = "This is a new custom proof window. Type your text here.";
+    
+    // Save the content to localStorage
+    saveEditableContent(testarea.id);
+  }
+  
+  // Change the title
+  const title = clone.querySelector('[id$="-title"]');
+  if (title) {
+    title.innerHTML = "Custom Proof Window";
+    
+    // Save the title to localStorage
+    saveEditableContent(title.id);
+  }
+  
+  original.parentNode.insertBefore(clone, original);
+  
+  // Animate the insertion
+  clone.style.height = '0px';
+  clone.style.overflow = 'hidden';
+  clone.style.transition = 'height 0.6s ease';
+  
+  setTimeout(() => {
+    clone.style.height = `${clone.scrollHeight}px`;
+  }, 0);
+  
+  setTimeout(() => {
+    clone.style.height = 'auto';
+    clone.style.overflow = 'visible';
+    
+    // Save custom proof window to localStorage
+    saveCustomProofWindow(newId, getCurrentStage());
+  }, 600);
+};
+
+const getCurrentStage = () => {
+  return localStorage.getItem('proofingPhase') || 'Hamburgers';
+};
+
+export const passStyleValue = (itemID, property, value) => {
 	const elementIdSuffix = `-${property}-val`;
 	const element = document.querySelector(`[id$="${itemID}${elementIdSuffix}"]`);
 	
-    // Save to localStorage for persistent properties
     if (['fontSize', 'lineHeight', 'letterSpacing', 'column-count', 'column-gap'].includes(property)) {
         localStorage.setItem(`${itemID}-${property}`, value);
         
-        // Add unit suffixes
         let displayValue = value;
         if (property === 'fontSize') displayValue += 'pt';
         if (property === 'letterSpacing') displayValue += 'em';
         if (element) element.textContent = displayValue;
 
-        // Add .modified class to slider
         const slider = document.querySelector(`#${itemID}-${property}`);
         if (slider) {
             slider.classList.add('modified');
         }
     }
 
-    // Update the testarea with proper units
     const testarea = document.querySelector(`#${itemID} .testarea`);
     if (testarea) {
         let styleValue = value;
@@ -715,11 +824,10 @@ export const insertField = (aboveHere) => {
         testarea.style[property] = styleValue;
     }
 
-    // Update the testarea-values display
     updateInlineText(itemID, property, value);
   };
   
-  export const passfvarValue = (itemID, property, value, fvarSupport) => {
+export const passfvarValue = (itemID, property, value, fvarSupport) => {
     const element = document.getElementById(`${itemID}-${property}-val`);
     if (element) {
         element.textContent = value;
@@ -731,7 +839,7 @@ export const insertField = (aboveHere) => {
 
     const fvarSupportArray = fvarSupport.split(',');
     let fvarcss = fvarSupportArray.map(tag => {
-        const tagValue = tag === property ? value : document.getElementById(`${itemID}-${tag}`)?.value; // Use optional chaining
+        const tagValue = tag === property ? value : document.getElementById(`${itemID}-${tag}`)?.value;
         return `'${tag}' ${tagValue}`;
     }).join(', ');
 
@@ -745,7 +853,7 @@ export const insertField = (aboveHere) => {
     updateInlineText(itemID, 'fvar', fvarcss);
 };
   
-  export const passfeatValue = (itemID, feature, featureSupport) => {
+export const passfeatValue = (itemID, feature, featureSupport) => {
 	const featSupport = featureSupport.split(',');
 	let featcss = "";
   
@@ -758,20 +866,17 @@ export const insertField = (aboveHere) => {
 	document.querySelector(`#${itemID} .testarea`).style.fontFeatureSettings = featcss;
   };
   
-  const updateActiveButton = (property, value) => {
+const updateActiveButton = (property, value) => {
 	document.querySelectorAll(`.btn.${property}-${value}`).forEach(btn => {
 	  btn.classList.add('active');
 	  
-	  // Find the parent wrapper
 	  const wrapper = btn.closest('.btn__wrapper');
 	  
 	  if (wrapper) {
-		// If we found a wrapper, remove 'active' class from all sibling buttons
 		wrapper.querySelectorAll('.btn').forEach(sibling => {
 		  if (sibling !== btn) sibling.classList.remove('active');
 		});
 	  } else {
-		// Fallback: remove 'active' class from all buttons with the same property
 		document.querySelectorAll(`.btn[class*="${property}-"]`).forEach(sibling => {
 		  if (sibling !== btn) sibling.classList.remove('active');
 		});
@@ -779,11 +884,9 @@ export const insertField = (aboveHere) => {
 	});
   };
 
-  // Export the function
 export const removeStyleValue = (itemID, property) => {
     localStorage.removeItem(`${itemID}-${property}`);
     
-    // Get default value based on property
     let defaultValue;
     if (property === 'fontSize') {
         const testarea = document.querySelector(`#${itemID} .testarea`);
@@ -793,25 +896,26 @@ export const removeStyleValue = (itemID, property) => {
         defaultValue = whichFontSize(text, baseSize, ratio);
     } else if (property === 'lineHeight') {
         defaultValue = getGlobalLineHeight();
+    } else if (property === 'letterSpacing') {
+        defaultValue = '0';
     } else {
-        defaultValue = '0'; // Default for letter-spacing
+        defaultValue = '0';
     }
 
-    // Update the display and slider
     const slider = document.querySelector(`#${itemID}-${property}`);
     if (slider) {
         slider.value = defaultValue;
         slider.classList.remove('modified');
-		console.log(slider);
     }
 
-    // Update the value display
     const valueDisplay = document.querySelector(`#${itemID}-${property}-val`);
     if (valueDisplay) {
-        valueDisplay.textContent = property === 'fontSize' ? `${defaultValue}pt` : defaultValue;
+        let displayValue = defaultValue;
+        if (property === 'fontSize') displayValue += 'pt';
+        if (property === 'letterSpacing') displayValue += 'em';
+        valueDisplay.textContent = displayValue;
     }
 
-    // Update the testarea style
     const testarea = document.querySelector(`#${itemID} .testarea`);
     if (testarea) {
         let styleValue = defaultValue;
@@ -820,29 +924,92 @@ export const removeStyleValue = (itemID, property) => {
         testarea.style[property] = styleValue;
     }
 
-    // Update the inline text display
     updateInlineText(itemID, property, defaultValue);
 
 };
 
-// Add to window object for HTML onclick access
 window.removeStyleValue = removeStyleValue;
 
-// generate buttons
 export const generateStageButtons = (proof, currentStage) => {
-    return Object.keys(proof).map(stage => {
-      const isActive = stage === currentStage ? 'active' : '';
-      return `
-        <div class="tab-item ${isActive} tab__setstage" onclick="setStage('${stage}')">
-          <a href="#" class="stage-button">${stage}</a>
-        </div>
-      `;
-    }).join('');
-  };
+  const hiddenTabs = JSON.parse(localStorage.getItem('hiddenTabs') || '[]');
+  const visibleStages = Object.keys(proof).filter(stage => !hiddenTabs.includes(stage));
+  
+  if (visibleStages.length === 0 && Object.keys(proof).length > 0) {
+    const defaultTab = 'Hamburgers' in proof ? 'Hamburgers' : Object.keys(proof)[0];
+    visibleStages.push(defaultTab);
+    const updatedHiddenTabs = hiddenTabs.filter(tab => tab !== defaultTab);
+    localStorage.setItem('hiddenTabs', JSON.stringify(updatedHiddenTabs));
+  }
+  
+  return visibleStages.map(stage => {
+    const isActive = stage === currentStage ? 'active' : '';
+    return `
+      <div class="tab-item ${isActive} tab__setstage" onclick="setStage('${stage}')">
+      <a href="#" class="stage-button d-flex justify-content-between g-2">
+        <span class="stage-name">
+        ${stage}
+        </span>
+        <span class="t__right tab-remove material-symbols-outlined remove" 
+          onclick="event.stopPropagation(); removeTab('${stage}')">
+        clear
+        </span>
+      </a>
+      </div>
+    `;
+  }).join('');
+};
 
-  // localload vs server
+export const removeTab = (stageName) => {
+  const hiddenTabs = JSON.parse(localStorage.getItem('hiddenTabs') || '[]');
+  
+  if (!hiddenTabs.includes(stageName)) {
+    hiddenTabs.push(stageName);
+    localStorage.setItem('hiddenTabs', JSON.stringify(hiddenTabs));
+  }
+  
+  const currentStage = localStorage.getItem('proofingPhase');
+  if (currentStage === stageName) {
+    fetch(CONFIG.jsonPath)
+      .then(response => response.json())
+      .then(proof => {
+        const allTabs = Object.keys(proof);
+        const visibleTabs = allTabs.filter(tab => !hiddenTabs.includes(tab));
+        
+        if (visibleTabs.length > 0) {
+          setStage(visibleTabs[0]);
+        } else {
+          const defaultTab = 'Hamburgers' in proof ? 'Hamburgers' : allTabs[0];
+          hiddenTabs.splice(hiddenTabs.indexOf(defaultTab), 1);
+          localStorage.setItem('hiddenTabs', JSON.stringify(hiddenTabs));
+          setStage(defaultTab);
+        }
+      });
+  } else {
+    fetch(CONFIG.jsonPath)
+      .then(response => response.json())
+      .then(proof => {
+        const stageButtons = document.getElementById('section__header-stage-buttons');
+        stageButtons.innerHTML = generateStageButtons(proof, currentStage);
+      });
+  }
+};
 
-  export const localLoad = () => {
+window.removeTab = removeTab;
+
+export const restoreAllTabs = () => {
+  localStorage.removeItem('hiddenTabs');
+  
+  const currentStage = localStorage.getItem('proofingPhase') || 'Hamburgers';
+  setStage(currentStage);
+};
+
+const originalLocalStorageClear = window.localStorageClear;
+window.localStorageClear = () => {
+  originalLocalStorageClear();
+  localStorage.removeItem('hiddenTabs');
+};
+
+export const localLoad = () => {
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	
 	fetch('../src/txt/fonts.txt')
@@ -855,18 +1022,14 @@ export const generateStageButtons = (proof, currentStage) => {
 		const uniqueFonts = preserveUnique(fonts.sort());
 		
 		if (uniqueFonts.length === 0) {
-		  // Only show the message if no fonts are found
 		  fileButtonParent.innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
 		} else {
-		  // First add navigation
 		  const navGroup = generateFontNavigation();
 		  fileButtonParent.appendChild(navGroup);
 		  
-		  // Then add font buttons
 		  generateFontButtons(uniqueFonts, 'local')
 		    .then(container => {
 		      fileButtonParent.appendChild(container);
-		      // Set the default font
 		      const fontFamilySource = localStorage.getItem('fontFamilySource') || 
 		        `fonts/${uniqueFonts[uniqueFonts.length - 1]}`;
 		      const fontFamily = localStorage.getItem('fontFamily') || 
@@ -877,15 +1040,13 @@ export const generateStageButtons = (proof, currentStage) => {
 	  })
 	  .catch(error => {
 		console.error('Error loading fonts:', error);
-		// Show the message if there's an error loading fonts
 		fileButtonParent.innerHTML = 'Place fonts you want to proof into <code>/fonts</code> to begin';
 	  });
   };
   
-  export const serverLoad = () => {
+export const serverLoad = () => {
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	
-	// Load the default Gooper font
 	setFont('fonts/gooper-VF.ttf', 'gooper-VF-ttf');
 	document.getElementById('style__fontface').innerHTML = '@font-face { font-family: "gooper-VF-ttf"; src: url("fonts/gooper-VF.ttf");}';
   
@@ -894,7 +1055,7 @@ export const generateStageButtons = (proof, currentStage) => {
 		<p>Drag & drop font files here</p>
 		<p>or</p>
 		<label for="fontInput" class="file-input-label">Choose Files</label>
-		<input id="fontInput" type="file" class="file-input" multiple accept=".ttf,.otf" />
+		<input id="fontInput" type="file" class="file-input" multiple accept=".ttf,.otf,.woff,.woff2" />
 	  </div>
 	`;
 
@@ -903,13 +1064,11 @@ export const generateStageButtons = (proof, currentStage) => {
 	const dragDropArea = document.getElementById('drag-drop-area');
 	const fileInput = document.getElementById('fontInput');
   
-	// Prevent default drag behaviors
 	['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
 	  dragDropArea.addEventListener(eventName, preventDefaults, false);
 	  document.body.addEventListener(eventName, preventDefaults, false);
 	});
   
-	// Highlight drop area when item is dragged over it
 	['dragenter', 'dragover'].forEach(eventName => {
 	  dragDropArea.addEventListener(eventName, highlight, false);
 	});
@@ -918,33 +1077,31 @@ export const generateStageButtons = (proof, currentStage) => {
 	  dragDropArea.addEventListener(eventName, unhighlight, false);
 	});
   
-	// Handle dropped files
 	dragDropArea.addEventListener('drop', handleDrop, false);
   
-	// Handle selected files
 	fileInput.addEventListener('change', handleFiles, false);
   };
   
-  function preventDefaults(e) {
+function preventDefaults(e) {
 	e.preventDefault();
 	e.stopPropagation();
   }
   
-  function highlight(e) {
+function highlight(e) {
 	document.getElementById('drag-drop-area').classList.add('highlight');
   }
   
-  function unhighlight(e) {
+function unhighlight(e) {
 	document.getElementById('drag-drop-area').classList.remove('highlight');
   }
   
-  function handleDrop(e) {
+function handleDrop(e) {
 	const dt = e.dataTransfer;
 	const files = dt.files;
 	handleFiles(files);
   }
   
-  function handleFiles(filesOrEvent) {
+function handleFiles(filesOrEvent) {
 	let files;
 	if (filesOrEvent instanceof Event) {
 	  files = filesOrEvent.target.files;
@@ -954,31 +1111,26 @@ export const generateStageButtons = (proof, currentStage) => {
   
 	files = Array.from(files);
 	
-	// Process all files
 	const uploadPromises = files.map(file => uploadFile(file));
   
-	// After all files are processed, select the first font chip
 	Promise.all(uploadPromises).then(() => {
 	  setTimeout(() => {
 		const firstButton = document.querySelector('.btn__setfont');
 		if (firstButton) {
 		  firstButton.click();
 		}
-	  }, 100); // Short delay to ensure DOM is updated
+	  }, 100);
 	});
   }
   
-  function uploadFile(file) {
+function uploadFile(file) {
 	return new Promise((resolve) => {
 	  onReadFile({ target: { files: [file] } });
-	  // Assume onReadFile is asynchronous and use a setTimeout to simulate its completion
 	  setTimeout(resolve, 50);
 	});
   }
   
-  // Make sure onReadFile returns a Promise or is modified to work with this approach
-  
-  function previewFile(file) {
+function previewFile(file) {
 	const reader = new FileReader();
 	reader.readAsDataURL(file);
 	reader.onloadend = function() {
@@ -988,7 +1140,7 @@ export const generateStageButtons = (proof, currentStage) => {
 	}
   }
   
-  export const setupEventListeners = () => {
+export const setupEventListeners = () => {
 	const fileButtons = document.getElementById('section__header-file-buttons');
 	const stageButtons = document.getElementById('section__header-stage-buttons');
 	const toolsToggle = document.getElementById('btn__view-tools-toggle');
@@ -1016,7 +1168,6 @@ export const generateStageButtons = (proof, currentStage) => {
 		settingsToggle.addEventListener('click', toggleSettingsVisibility);
 	}
 	if (addNameAndVersionCheckbox) {
-		// Restore saved state
 		const savedState = localStorage.getItem('showNameAndVersion') === 'true';
 		addNameAndVersionCheckbox.checked = savedState;
 		document.body.classList.toggle('show-font-details', savedState);
@@ -1024,25 +1175,20 @@ export const generateStageButtons = (proof, currentStage) => {
 		addNameAndVersionCheckbox.addEventListener('change', toggleNameAndVersion);
 	}
 	if (lockProofDimensionsCheckbox) {
-		// Restore saved state
 		const savedState = localStorage.getItem('lockProofDimensions') === 'true';
 		lockProofDimensionsCheckbox.checked = savedState;
 		
-		// Apply the saved state immediately
 		applyLockProofDimensions(savedState);
 		
 		lockProofDimensionsCheckbox.addEventListener('change', toggleLockProofDimensions);
 	}
 	setupPasteHandling();
 
-	// Add aspect ratio select listener
 	const aspectRatioSelect = document.getElementById('select__aspect-ratio');
 	if (aspectRatioSelect) {
-		// Set initial value
 		const proofs = document.querySelectorAll('.item__proof');
 		proofs.forEach(proof => proof.classList.add('ratio-letter'));
 
-		// Watch for changes
 		aspectRatioSelect.addEventListener('change', (e) => {
 			const ratio = e.target.value;
 			const proofs = document.querySelectorAll('.item__proof');
@@ -1055,7 +1201,6 @@ export const generateStageButtons = (proof, currentStage) => {
 			localStorage.setItem('preferred-ratio', ratio);
 		});
 
-		// Restore saved preference if it exists
 		const savedRatio = localStorage.getItem('preferred-ratio');
 		if (savedRatio) {
 			aspectRatioSelect.value = savedRatio;
@@ -1063,7 +1208,6 @@ export const generateStageButtons = (proof, currentStage) => {
 		}
 	}
 
-	// Add base font size input listener
 	const baseFontInput = document.getElementById('input__base-font-size');
 	if (baseFontInput) {
 		baseFontInput.addEventListener('change', (e) => {
@@ -1072,12 +1216,10 @@ export const generateStageButtons = (proof, currentStage) => {
 			updateAllTypeScales();
 		});
 
-		// Restore saved base font size
 		const savedBaseSize = localStorage.getItem('base-font-size') || '14';
 		baseFontInput.value = savedBaseSize;
 	}
 
-	// Add line height input listener
 	const lineHeightInput = document.getElementById('input__line-height');
 	if (lineHeightInput) {
 		lineHeightInput.addEventListener('change', (e) => {
@@ -1086,12 +1228,10 @@ export const generateStageButtons = (proof, currentStage) => {
 			updateAllLineHeights();
 		});
 
-		// Restore saved line height
 		const savedLineHeight = getGlobalLineHeight();
 		lineHeightInput.value = savedLineHeight;
 	}
 
-	// Modify type scale select listener
 	const typeScaleSelect = document.getElementById('select__type-scale');
 	if (typeScaleSelect) {
 		typeScaleSelect.addEventListener('change', () => {
@@ -1099,46 +1239,41 @@ export const generateStageButtons = (proof, currentStage) => {
 		});
 	}
 
-	// Initialize color mode from localStorage
 	initColorMode();
+
+	setupCycleSpeedListener();
   };
   
-  const handleFileButtonClick = (event) => {
+const handleFileButtonClick = (event) => {
 	if (event.target.classList.contains('btn__setfont')) {
 	  event.target.classList.add('active', 'visited');
-	  // Remove 'active' class from sibling elements
 	  const siblings = Array.from(event.target.parentNode.children).filter(child => child !== event.target);
 	  siblings.forEach(sibling => sibling.classList.remove('active'));
 	}
   };
   
-  const handleStageButtonClick = (event) => {
+const handleStageButtonClick = (event) => {
 	if (event.target.classList.contains('btn__setstage')) {
 	  event.target.classList.add('active');
-	  // Remove 'active' class from sibling elements
 	  const siblings = Array.from(event.target.parentNode.children).filter(child => child !== event.target);
 	  siblings.forEach(sibling => sibling.classList.remove('active'));
 	}
   };
   
-  const toggleToolsVisibility = () => {
+const toggleToolsVisibility = () => {
 	document.body.classList.toggle('tools-visible');
   };
 
 const setupPasteHandling = () => {
   document.addEventListener('paste', (e) => {
-    // Only handle paste events in testarea elements
     if (!e.target.classList.contains('testarea')) {
       return;
     }
 
-    // Prevent the default paste
     e.preventDefault();
 
-    // Get plain text from clipboard
     const text = (e.clipboardData || window.clipboardData).getData('text/plain');
 
-    // Insert the plain text at cursor position
     const selection = window.getSelection();
     if (selection.rangeCount) {
       const range = selection.getRangeAt(0);
@@ -1148,7 +1283,6 @@ const setupPasteHandling = () => {
       e.target.textContent += text;
     }
 
-    // Trigger the onkeyup event to save the content
     const event = new Event('keyup');
     e.target.dispatchEvent(event);
   });
@@ -1158,31 +1292,26 @@ export const generateFontButtons = async (fonts, mode = 'local') => {
   const container = document.createElement('div');
   container.className = 'font-buttons-container';
 
-  // Create font chips container
   const chipsContainer = document.createElement('div');
   chipsContainer.className = 'font-chips';
   
-  // Generate individual font buttons
   for (const font of fonts) {
     const button = await generateFontButton(font, mode);
     chipsContainer.appendChild(button);
   }
 
-  return chipsContainer; // Return only the chips container
+  return chipsContainer;
 };
 
-// Create a separate function for navigation
 export const generateFontNavigation = () => {
   const navGroup = document.createElement('div');
   navGroup.className = 'btn-group d-flex g-1 mb-2 font-nav-group';
   
-  // Create prev button
   const prevButton = document.createElement('button');
   prevButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
   prevButton.innerHTML = '<span class="material-symbols-outlined">chevron_left</span> Prev';
   prevButton.onclick = () => navigateFonts('prev');
   
-  // Create play button (new)
   const playButton = document.createElement('button');
   playButton.className = 'btn font-play-btn d-flex align-items-center justify-content-center';
   playButton.title = 'Auto-cycle through fonts';
@@ -1190,13 +1319,11 @@ export const generateFontNavigation = () => {
   playButton.setAttribute('data-playing', 'false');
   playButton.onclick = toggleFontAnimation;
   
-  // Create next button
   const nextButton = document.createElement('button');
   nextButton.className = 'btn d-flex align-items-center justify-content-between d-flex-grow';
   nextButton.innerHTML = 'Next <span class="material-symbols-outlined">chevron_right</span>';
   nextButton.onclick = () => navigateFonts('next');
   
-  // Add all buttons to the group
   navGroup.appendChild(prevButton);
   navGroup.appendChild(playButton);
   navGroup.appendChild(nextButton);
@@ -1208,7 +1335,7 @@ const navigateFonts = (direction) => {
   const buttons = document.querySelectorAll('.btn__setfont');
   const activeButton = document.querySelector('.btn__setfont.active');
   
-  if (!buttons.length) return; // No fonts loaded
+  if (!buttons.length) return;
   
   let nextIndex = 0;
   
@@ -1216,9 +1343,9 @@ const navigateFonts = (direction) => {
     const currentIndex = Array.from(buttons).indexOf(activeButton);
     
     if (direction === 'next') {
-      nextIndex = (currentIndex + 1) % buttons.length; // Wrap around to beginning
+      nextIndex = (currentIndex + 1) % buttons.length;
     } else {
-      nextIndex = (currentIndex - 1 + buttons.length) % buttons.length; // Wrap around to end
+      nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
     }
   }
   
@@ -1229,16 +1356,12 @@ const initAspectRatio = () => {
   const select = document.getElementById('select__aspect-ratio');
   const proofs = document.querySelectorAll('.item__proof');
 
-  // Helper function to normalize aspect ratio
   const normalizeRatio = (ratioStr) => {
     const [width, height] = ratioStr.split(':').map(Number);
-    // Convert to decimal for consistent calculations
     return width / height;
   };
 
-  // Set default on load
   proofs.forEach(proof => {
-    // Use normalized ratio for consistent sizing
     const ratioStr = select.value;
     const ratio = normalizeRatio(ratioStr);
     proof.style.aspectRatio = ratio;
@@ -1255,7 +1378,6 @@ const initAspectRatio = () => {
     localStorage.setItem('preferred-ratio', ratioStr);
   });
 
-  // Restore saved preference if it exists
   const savedRatio = localStorage.getItem('preferred-ratio');
   if (savedRatio) {
     select.value = savedRatio;
@@ -1263,7 +1385,6 @@ const initAspectRatio = () => {
   }
 };
 
-// Add this function to initialize the type scale on page load
 const initTypeScale = () => {
     const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
     const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
@@ -1273,7 +1394,6 @@ const initTypeScale = () => {
         const testarea = item.querySelector('.testarea');
         const text = testarea?.textContent || '';
         
-        // Get the item-specific line height and font size
         const itemLineHeight = getItemLineHeight(itemID);
         const itemFontSize = getItemFontSize(itemID, text, baseSize, ratio);
         
@@ -1282,12 +1402,10 @@ const initTypeScale = () => {
             testarea.style.lineHeight = itemLineHeight;
         }
         
-        // Update fontSize slider and its value display
         const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
         const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
         if (fontSizeSlider) {
             fontSizeSlider.value = itemFontSize;
-            // Add .modified class if using custom font size
             if (localStorage.getItem(`${itemID}-fontSize`)) {
                 fontSizeSlider.classList.add('modified');
             }
@@ -1298,7 +1416,6 @@ const initTypeScale = () => {
     });
 };
 
-// New function to update all proofs when either base size or ratio changes
 const updateAllTypeScales = () => {
     const ratio = parseFloat(document.getElementById('select__type-scale')?.value || 1.618);
     const baseSize = parseFloat(document.getElementById('input__base-font-size')?.value || 14);
@@ -1310,7 +1427,6 @@ const updateAllTypeScales = () => {
         const testarea = item.querySelector('.testarea');
         const text = testarea?.textContent || '';
         
-        // Get the appropriate font size (either stored or calculated)
         const fontSize = getItemFontSize(itemID, text, baseSize, ratio);
         const itemLineHeight = getItemLineHeight(itemID);
         
@@ -1319,12 +1435,10 @@ const updateAllTypeScales = () => {
             testarea.style.lineHeight = itemLineHeight;
         }
         
-        // Update font size display
         const fontSizeSlider = item.querySelector(`#${itemID}-fontSize`);
         const fontSizeVal = item.querySelector(`#${itemID}-fontSize-val`);
         if (fontSizeSlider) {
             fontSizeSlider.value = fontSize;
-            // Add .modified class if using custom font size
             if (localStorage.getItem(`${itemID}-fontSize`)) {
                 fontSizeSlider.classList.add('modified');
             }
@@ -1333,12 +1447,9 @@ const updateAllTypeScales = () => {
             fontSizeVal.textContent = `${fontSize}pt`;
         }
 
-        // Update line height display
         updateItemLineHeightDisplay(itemID, itemLineHeight);
     });
 };
-
-
 
 const updateAllLineHeights = () => {
     const globalLineHeight = getGlobalLineHeight();
@@ -1346,7 +1457,6 @@ const updateAllLineHeights = () => {
     
     document.querySelectorAll('.item').forEach(item => {
         const itemID = item.id;
-        // Only update items that don't have specific line heights
         if (!localStorage.getItem(`${itemID}-lineHeight`)) {
             updateItemLineHeightDisplay(itemID, globalLineHeight);
         }
@@ -1358,14 +1468,12 @@ const applyNameAndVersion = (isChecked) => {
   const proofItems = document.querySelectorAll('.item__proof');
 
   proofItems.forEach(item => {
-    // Remove any existing footer
     const existingFooter = item.querySelector('.proof-footer');
     if (existingFooter) {
       existingFooter.remove();
     }
 
     if (isChecked) {
-      // Create new footer
       const footer = document.createElement('div');
       footer.className = 'proof-footer';
       footer.innerHTML = headerNames.innerHTML;
@@ -1395,14 +1503,11 @@ const toggleLockProofDimensions = (event) => {
   applyLockProofDimensions(isChecked);
 };
 
-// Add new function to get item-specific font size
 const getItemFontSize = (itemID, text, baseSize, ratio) => {
-    // Check for stored custom value first
     const storedSize = localStorage.getItem(`${itemID}-fontSize`);
     if (storedSize !== null) {
         return parseFloat(storedSize);
     }
-    // Otherwise calculate based on text length
     return whichFontSize(text, baseSize, ratio);
 };
 
@@ -1412,7 +1517,7 @@ const getItemLineHeight = (itemID) => {
         getGlobalLineHeight()
     );
 };
-// Line Height Utilities
+
 const getGlobalLineHeight = () => {
     return parseFloat(
         document.getElementById('input__line-height')?.value ||
@@ -1452,7 +1557,6 @@ const updateItemLineHeightDisplay = (itemID, value) => {
     }
 };
 
-// Update resetCustomValue to handle font size reset
 export const resetCustomValue = (itemID, property) => {
     localStorage.removeItem(`${itemID}-${property}`);
     
@@ -1469,7 +1573,6 @@ export const resetCustomValue = (itemID, property) => {
         
     updateItemDisplay(itemID, property, globalValue);
     
-    // Remove modified class
     const slider = document.querySelector(`#${itemID}-${property}`);
     if (slider) {
         slider.classList.remove('modified');
@@ -1479,7 +1582,6 @@ export const resetCustomValue = (itemID, property) => {
 export const applySecondaryFont = (fontPath, fontName) => {
   console.log(`Applying secondary font: ${fontName} from ${fontPath}`);
   
-  // Load the secondary font
   opentype.load(fontPath, (err, loadedFont) => {
     if (err) {
       console.error('Error loading secondary font:', err);
@@ -1487,10 +1589,8 @@ export const applySecondaryFont = (fontPath, fontName) => {
       return;
     }
     
-    // Store secondary font in a global variable
     window.secondaryFont = loadedFont;
     
-    // Create FontFace for the secondary font with a special family name
     if ('FontFace' in window) {
       const secondaryFontFamily = `${fontName}-secondary`;
       const fontFace = new FontFace(
@@ -1499,12 +1599,10 @@ export const applySecondaryFont = (fontPath, fontName) => {
         { format: loadedFont.outlinesFormat === 'truetype' ? 'truetype' : 'opentype' }
       );
       
-      // Load and add the font
       fontFace.load().then(() => {
         document.fonts.add(fontFace);
         console.log(`Secondary font loaded successfully: ${secondaryFontFamily}`);
         
-        // Create and apply the font-face rule
         const fontFaceRule = `
           @font-face {
             font-family: '${secondaryFontFamily}';
@@ -1512,7 +1610,6 @@ export const applySecondaryFont = (fontPath, fontName) => {
           }
         `;
         
-        // Add or update secondary font styles
         let secondaryStyleElement = document.getElementById('style__secondary-font');
         if (!secondaryStyleElement) {
           secondaryStyleElement = document.createElement('style');
@@ -1522,14 +1619,12 @@ export const applySecondaryFont = (fontPath, fontName) => {
         
         secondaryStyleElement.textContent = fontFaceRule;
         
-        // Add CSS to apply secondary font to emphasis elements
         secondaryStyleElement.textContent += `
           .testarea em, .testarea i, .testarea .emphasis {
             font-family: '${secondaryFontFamily}', var(--font-secondary, sans-serif) !important;
           }
         `;
         
-        // Refresh the current stage to apply the new font
         const currentStage = localStorage.getItem('proofingPhase') || 'Hamburgers';
         setStage(currentStage);
       });
@@ -1537,43 +1632,79 @@ export const applySecondaryFont = (fontPath, fontName) => {
   });
 };
 
-// Add this near the top of your file
 let fontAnimationInterval = null;
 
-// Function to toggle font animation on/off
 const toggleFontAnimation = (event) => {
   const playButton = event.currentTarget;
   const isPlaying = playButton.getAttribute('data-playing') === 'true';
   
   if (isPlaying) {
-    // Stop the animation
     stopFontAnimation();
     playButton.innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
     playButton.setAttribute('data-playing', 'false');
   } else {
-    // Start the animation
     startFontAnimation();
     playButton.innerHTML = '<span class="material-symbols-outlined">pause</span>';
     playButton.setAttribute('data-playing', 'true');
   }
 };
 
-// Function to start cycling through fonts
 const startFontAnimation = () => {
-  // Clear any existing animation
   stopFontAnimation();
   
-  // Set interval to advance to next font every 300ms
+  const speedInput = document.getElementById('input__cycle-speed');
+  const speed = speedInput ? parseInt(speedInput.value, 10) : 300;
+  
+  const safeSpeed = Math.max(100, speed);
+  
   fontAnimationInterval = setInterval(() => {
     navigateFonts('next');
-  }, 300);
+  }, safeSpeed);
 };
 
-// Function to stop font animation
 const stopFontAnimation = () => {
   if (fontAnimationInterval) {
     clearInterval(fontAnimationInterval);
     fontAnimationInterval = null;
   }
 };
+
+const setupCycleSpeedListener = () => {
+  const speedInput = document.getElementById('input__cycle-speed');
+  if (!speedInput) return;
+  
+  const savedSpeed = localStorage.getItem('font-cycle-speed');
+  if (savedSpeed) {
+    speedInput.value = savedSpeed;
+  }
+  
+  speedInput.addEventListener('change', () => {
+    localStorage.setItem('font-cycle-speed', speedInput.value);
+    
+    const playButton = document.querySelector('.font-play-btn');
+    if (playButton && playButton.getAttribute('data-playing') === 'true') {
+      startFontAnimation();
+    }
+  });
+};
+
+export const removeCustomProofWindow = (itemId) => {
+  const customWindows = JSON.parse(localStorage.getItem('customProofWindows') || '{}');
+  const currentStage = getCurrentStage();
+  
+  if (customWindows[currentStage]) {
+    const index = customWindows[currentStage].indexOf(itemId);
+    if (index !== -1) {
+      customWindows[currentStage].splice(index, 1);
+      localStorage.setItem('customProofWindows', JSON.stringify(customWindows));
+    }
+  }
+  
+  const element = document.getElementById(itemId);
+  if (element) {
+    element.remove();
+  }
+};
+
+window.removeCustomProofWindow = removeCustomProofWindow;
 

@@ -121,11 +121,17 @@ html * {
   
 	.tab-item {
 	  margin-top: 0;
+	  .remove {
+		opacity: 0;
+		display: inline-block;
+		margin-right: 0;
+		vertical-align: middle;
+      	transition: opacity 0.2s ease;
+	  }
   
 	  a {
 		border-bottom: 2px solid transparent;
 		color: var(--text-color);
-		display: block;
 		margin: 0;
 		margin-bottom:-2px;
 		padding: var(--idiot-unit) calc(var(--idiot-unit) * 2);
@@ -135,6 +141,9 @@ html * {
 		&:focus,
 		&:hover {
 		  color: var(--link-color);
+		  .tab-remove {
+			opacity: 1;
+		  }
 		}
 	  }
   

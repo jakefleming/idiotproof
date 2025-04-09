@@ -77,6 +77,10 @@
           <button title="Change mode" id="btn__mode-toggle" class="btn btn__print d-flex justify-content-between">Mode <span class="material-symbols-outlined">light_mode</span></button>
         </li>
         <li class="d-flex flex-column g-1">
+          <span class="t__left text-small">Auto cycle speed (milliseconds)</span>
+          <input type="number" step="50" min="100" max="2000" name="cycle-speed" id="input__cycle-speed" value="300">
+        </li>
+        <li class="d-flex flex-column g-1">
           <span class="t__left text-small">Clear localstorage and reset all edits <span class="text-warning">can’t undo</span></span> 
           <button title="Reset All Edits" id="btn__reset-local-storage" type="button" class="btn btn__edit-reset d-flex justify-content-between">Reset <span class="material-symbols-outlined">history</span></button>
         </li>
