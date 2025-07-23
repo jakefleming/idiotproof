@@ -17,7 +17,7 @@ import { getFormattedDate,
 	initColorMode  } from './utils.js';
 
 // Re-export localStorageClear
-export { localStorageClear };
+export { localStorageClear, clearSecondaryFont };
 
 let font = null;
 const fontFormats = {
@@ -506,6 +506,14 @@ export const generateFontButton = async (font, mode = 'local') => {
 	  // Check if shift key is pressed
 	  if (e.shiftKey) {
 		// If shift is pressed, handle as secondary font
+		const isAlreadySecondary = button.classList.contains('secondary');
+		
+		if (isAlreadySecondary) {
+		  // If clicking the same secondary font button, clear secondary font
+		  clearSecondaryFont();
+		  return;
+		}
+		
 		document.querySelectorAll('.btn__setfont').forEach(btn => {
 		  btn.classList.remove('secondary'); // Remove secondary from all buttons
 		});
@@ -1286,6 +1294,28 @@ const setupPasteHandling = () => {
     const event = new Event('keyup');
     e.target.dispatchEvent(event);
   });
+
+  // Handle keyboard shortcuts for italic formatting
+  document.addEventListener('keydown', (e) => {
+    // Check for Cmd+I (Mac) or Ctrl+I (Windows/Linux)
+    if ((e.metaKey || e.ctrlKey) && e.key === 'i') {
+      const activeElement = document.activeElement;
+      
+      // Only handle if we're in a testarea and have a secondary font selected
+      if (activeElement && activeElement.classList.contains('testarea')) {
+        const secondaryFontName = localStorage.getItem('secondaryFontName');
+        
+        if (secondaryFontName) {
+          e.preventDefault(); // Prevent default italic behavior
+          
+          // Toggle italic using our secondary font system
+          document.execCommand('italic', false, null);
+          
+          // The CSS we added will handle the font substitution and prevent faux italic
+        }
+      }
+    }
+  });
 };
 
 export const generateFontButtons = async (fonts, mode = 'local') => {
@@ -1620,8 +1650,13 @@ export const applySecondaryFont = (fontPath, fontName) => {
         secondaryStyleElement.textContent = fontFaceRule;
         
         secondaryStyleElement.textContent += `
-          .testarea em, .testarea i, .testarea .emphasis {
+          .testarea em, 
+          .testarea i, 
+          .testarea [style*="italic"],
+          .testarea .emphasis,
+          .font-italic {
             font-family: '${secondaryFontFamily}', var(--font-secondary, sans-serif) !important;
+            font-style: normal !important;
           }
         `;
         
@@ -1630,6 +1665,28 @@ export const applySecondaryFont = (fontPath, fontName) => {
       });
     }
   });
+};
+
+export const clearSecondaryFont = () => {
+  // Remove secondary font styling
+  const secondaryStyleElement = document.getElementById('style__secondary-font');
+  if (secondaryStyleElement) {
+    secondaryStyleElement.remove();
+  }
+  
+  // Clear localStorage
+  localStorage.removeItem('secondaryFontPath');
+  localStorage.removeItem('secondaryFontName');
+  
+  // Remove secondary class from all buttons
+  document.querySelectorAll('.btn__setfont.secondary').forEach(btn => {
+    btn.classList.remove('secondary');
+  });
+  
+  // Clear global reference
+  window.secondaryFont = null;
+  
+  console.log('Secondary font cleared');
 };
 
 let fontAnimationInterval = null;

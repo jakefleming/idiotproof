@@ -19,6 +19,7 @@ window.passStyleValue = AppCore.passStyleValue;
 window.passfvarValue = AppCore.passfvarValue;
 window.passfeatValue = AppCore.passfeatValue;
 window.insertField = AppCore.insertField;
+window.clearSecondaryFont = AppCore.clearSecondaryFont;
 window.localStorageClear = localStorageClear;
 window.saveEditableContent = saveEditableContent;
 window.saveInputValue = saveInputValue;
