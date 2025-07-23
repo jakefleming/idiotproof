@@ -16,9 +16,6 @@ import { getFormattedDate,
 	calculateTypeScale,
 	initColorMode  } from './utils.js';
 
-// Re-export localStorageClear
-export { localStorageClear, clearSecondaryFont };
-
 let font = null;
 const fontFormats = {
     truetype: 'ttf',
