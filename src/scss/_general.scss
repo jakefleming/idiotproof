@@ -129,6 +129,7 @@ select {
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 2px solid var(--button-bg);
   border-radius: var(--input-border-radius, #{$idiot-radius});
+  max-width: 100%;
 }
 
 .remove {

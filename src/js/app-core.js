@@ -158,12 +158,28 @@ export const onReadFile = (event) => {
 
 export const setFont = async (fontPath, fontName) => {
 	console.log(`Attempting to load font: ${fontName} from ${fontPath}`);
+	console.log(`Font file extension: ${fontPath.split('.').pop()}`);
+	
 	opentype.load(fontPath, (err, loadedFont) => {
 	  if (err) {
 		console.error('Error loading font:', err);
+		console.error('Font path:', fontPath);
+		console.error('Font name:', fontName);
 		showErrorMessage(`Error loading font: ${err}`);
 	  } else {
-		console.log(`Font loaded successfully: ${fontName}`);
+		console.log(`✅ Font loaded successfully: ${fontName}`);
+		console.log('📋 Font tables:', Object.keys(loadedFont.tables || {}));
+		console.log('🔄 Has fvar table:', !!loadedFont.tables?.fvar);
+		console.log('🎛️ Font format:', loadedFont.outlinesFormat);
+		
+		if (loadedFont.tables?.fvar) {
+		  console.log('📊 Variable font axes:', loadedFont.tables.fvar.axes?.length || 0);
+		  console.log('🏷️ Named instances:', loadedFont.tables.fvar.instances?.length || 0);
+		  console.log('🎯 Axes details:', loadedFont.tables.fvar.axes?.map(a => a.tag) || []);
+		} else {
+		  console.warn('❌ No fvar table found - this is not a variable font');
+		}
+		
 		font = loadedFont; // Ensure this is set globally
 		try {
 		  onFontLoaded(loadedFont, fontPath, fontName);
@@ -460,32 +476,204 @@ const generateSliders = (itemID, sliderID, fontSize, lineHeight, letterSpacing) 
 const generateVariableSliders = (itemID, sliderID) => {
   if (!font.tables.fvar) return '';
 
-  return font.tables.fvar.axes.map(axis => {
+  const allInstances = getAllNamedInstances(); // Get all unique named instances
+  const instanceDropdown = generateMasterInstanceDropdown(itemID, allInstances);
+
+  const axisSliders = font.tables.fvar.axes.map(axis => {
     const storedValue = localStorage.getItem(`${itemID}-${axis.tag}-val`);
     const value = storedValue !== null ? storedValue : axis.defaultValue;
+    
+    // Get named instances for this axis (for visual nodes only)
+    const axisInstances = getAxisInstances(axis.tag);
+    const instanceNodes = generateInstanceNodes(axis, axisInstances);
+    
     return `
-      <label for="${sliderID}-${axis.tag}">${axis.name.en} </label>
-      <span class="t__right text-small" id="${sliderID}-${axis.tag}-val">${value}</span>
-      <input id="${sliderID}-${axis.tag}" type="range" class="slider" min="${axis.minValue}" max="${axis.maxValue}" value="${value}" oninput="passfvarValue('${itemID}', '${axis.tag}', this.value, '${font.tables.fvar.axes.map(a => a.tag).join(',')}')">
+      <div class="variable-axis-container" data-axis="${axis.tag}">
+        <label for="${sliderID}-${axis.tag}">${axis.name.en} </label>
+        <span class="t__right text-small" id="${sliderID}-${axis.tag}-val">${value}</span>
+        <div class="slider-container">
+          <input id="${sliderID}-${axis.tag}" type="range" class="slider variable-slider" 
+                 min="${axis.minValue}" max="${axis.maxValue}" value="${value}" 
+                 data-axis="${axis.tag}"
+                 oninput="handleSliderInput('${itemID}', '${axis.tag}', this.value, '${font.tables.fvar.axes.map(a => a.tag).join(',')}')"
+                 onchange="updateSliderNodes(this)">
+          ${instanceNodes}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    ${axisSliders}
+    ${instanceDropdown}
+  `;
+};
+
+// Get all unique named instances
+const getAllNamedInstances = () => {
+  if (!font.tables.fvar || !font.tables.fvar.instances) return [];
+  
+  return font.tables.fvar.instances.map(instance => ({
+    name: instance.name?.en || 'Unnamed Instance',
+    coordinates: instance.coordinates
+  }));
+};
+
+// Generate master instance dropdown that affects all axes
+const generateMasterInstanceDropdown = (itemID, instances) => {
+  if (!instances.length) return '';
+  
+  const dropdownId = `${itemID}-master-instances`;
+  
+  const options = instances.map(instance => 
+    `<option value='${JSON.stringify(instance.coordinates)}'>${instance.name}</option>`
+  ).join('');
+  
+  return `
+    <div class="master-instance-dropdown-container">
+      <label for="${dropdownId}" class="text-small">Named Instances:</label>
+      <select id="${dropdownId}" class="instance-dropdown" 
+              onchange="applyMasterInstance('${itemID}', this)">
+        <option value="">Select Instance...</option>
+        ${options}
+      </select>
+    </div>
+  `;
+};
+
+// Helper function to get instances for a specific axis
+const getAxisInstances = (axisTag) => {
+  if (!font.tables.fvar || !font.tables.fvar.instances) return [];
+  
+  const instances = font.tables.fvar.instances
+    .filter(instance => instance.coordinates && instance.coordinates[axisTag] !== undefined)
+    .map(instance => ({
+      name: instance.name?.en || 'Unnamed Instance',
+      value: instance.coordinates[axisTag],
+      coordinates: instance.coordinates
+    }));
+  
+  // Remove duplicates by value and keep only unique positions
+  const uniqueInstances = [];
+  const seenValues = new Set();
+  
+  instances.forEach(instance => {
+    if (!seenValues.has(instance.value)) {
+      seenValues.add(instance.value);
+      uniqueInstances.push(instance);
+    }
+  });
+  
+  // Sort by axis value and limit to reasonable number of nodes (max 10 per axis)
+  return uniqueInstances
+    .sort((a, b) => a.value - b.value)
+    .slice(0, 10); // Limit to max 10 nodes per axis
+};
+
+// Generate visual nodes on the slider track
+const generateInstanceNodes = (axis, instances) => {
+  if (!instances.length) return '';
+  
+  // Safety checks for axis values
+  if (!axis || typeof axis.maxValue !== 'number' || typeof axis.minValue !== 'number') {
+    console.warn('Invalid axis values for node generation:', axis);
+    return '';
+  }
+  
+  const range = axis.maxValue - axis.minValue;
+  
+  // Avoid division by zero
+  if (range === 0) {
+    console.warn('Axis range is zero, cannot generate nodes');
+    return '';
+  }
+  
+  console.log(`Generating ${instances.length} nodes for axis ${axis.tag}`);
+  
+  return instances.map(instance => {
+    // Safety check for instance value
+    if (typeof instance.value !== 'number') {
+      console.warn('Invalid instance value:', instance);
+      return '';
+    }
+    
+    const position = ((instance.value - axis.minValue) / range) * 100;
+    
+    // Additional safety check for calculated position
+    if (isNaN(position)) {
+      console.warn('Calculated NaN position for instance:', instance, 'axis:', axis);
+      return '';
+    }
+    
+    // Adjust position to account for thumb width (thumb is typically 16px, so we inset by ~8px on each side)
+    // This assumes a slider width of ~200px, so we adjust by about 4% on each side
+    const thumbOffset = 4; // percentage
+    const adjustedPosition = thumbOffset + (position * (100 - (2 * thumbOffset)) / 100);
+    
+    return `
+      <div class="slider-node" 
+           style="left: calc(${adjustedPosition}% - 3px)" 
+           title="${instance.name}: ${instance.value}"
+           data-value="${instance.value}"
+           onclick="snapToInstanceValue('${axis.tag}', ${instance.value})">
+      </div>
     `;
   }).join('');
 };
 
+// Generate dropdown for manual instance selection
+const generateInstanceDropdown = (itemID, axisTag, instances) => {
+  if (!instances.length) return '';
+  
+  const dropdownId = `${itemID}-${axisTag}-instances`;
+  
+  const options = instances.map(instance => 
+    `<option value="${instance.value}" data-coordinates='${JSON.stringify(instance.coordinates)}'>${instance.name} (${instance.value})</option>`
+  ).join('');
+  
+  return `
+    <div class="instance-dropdown-container">
+      <label for="${dropdownId}" class="text-small">Named Instances:</label>
+      <select id="${dropdownId}" class="instance-dropdown" 
+              onchange="applyNamedInstance('${itemID}', '${axisTag}', this)">
+        <option value="">Select Instance...</option>
+        ${options}
+      </select>
+    </div>
+  `;
+};
+
 export const generateFontButton = async (font, mode = 'local') => {
-	let fontName, fontPath, fontType, displayName, isVariable;
+	let fontName, fontPath, fontType, displayName, isVariable, isSupported = true;
   
 	if (mode === 'local') {
 	  fontName = font.replace('.', '-');
 	  fontPath = `fonts/${font}`;
 	  displayName = font.replace('-', ' ').replace(/\.[^/.]+$/, "");
 	  fontType = font.split('.').pop().toUpperCase();
-	  isVariable = await isVariableFont(fontPath);
+	  
+	  // Check if font type is supported
+	  isSupported = !['WOFF2'].includes(fontType);
+	  
+	  if (isSupported) {
+		isVariable = await isVariableFont(fontPath);
+	  } else {
+		isVariable = false;
+	  }
 	} else { // server mode
 	  fontName = font.name.replace('.', '-');
 	  fontPath = URL.createObjectURL(font);
 	  displayName = font.name.replace('-', ' ').replace(/\.[^/.]+$/, "");
 	  fontType = font.name.split('.').pop().toUpperCase();
-	  isVariable = await isVariableFont(font);
+	  
+	  // Check if font type is supported
+	  isSupported = !['WOFF2'].includes(fontType);
+	  
+	  if (isSupported) {
+		isVariable = await isVariableFont(font);
+	  } else {
+		isVariable = false;
+	  }
 	}
   
 	if (isVariable) {
@@ -496,7 +684,10 @@ export const generateFontButton = async (font, mode = 'local') => {
 	button.className = 'btn__setfont chip btn d-flex justify-content-between';
 	button.title = mode === 'local' ? font : font.name;
 	button.id = `btn__setfont-${fontName}`;
-	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontType}</span>`;
+	
+	// Add strike-through styling for unsupported font types
+	const fontTypeDisplay = isSupported ? fontType : `<span style="text-decoration: line-through;">${fontType}</span>`;
+	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontTypeDisplay}</span>`;
 	
 	// Modified onclick handler to support shift-click for secondary font
 	button.onclick = (e) => {
@@ -557,6 +748,7 @@ const isVariableFont = async (font) => {
 		// Server mode: font is a File object
 		arrayBuffer = await font.arrayBuffer();
 	  }
+	  
 	  const parsedFont = opentype.parse(arrayBuffer);
 	  return parsedFont.tables.fvar !== undefined;
 	} catch (error) {
@@ -870,6 +1062,170 @@ export const passfeatValue = (itemID, feature, featureSupport) => {
 	featcss = featcss.replace(/,\s*$/, "");
 	document.querySelector(`#${itemID} .testarea`).style.fontFeatureSettings = featcss;
   };
+
+// Apply a master named instance to all axes
+export const applyMasterInstance = (itemID, selectElement) => {
+  const selectedOption = selectElement.options[selectElement.selectedIndex];
+  if (!selectedOption || !selectedOption.value) return;
+  
+  try {
+    const coordinates = JSON.parse(selectedOption.value);
+    
+    // Update all axis sliders with the instance coordinates
+    Object.entries(coordinates).forEach(([tag, value]) => {
+      const slider = document.getElementById(`${itemID}-${tag}`);
+      const valueDisplay = document.getElementById(`${itemID}-${tag}-val`);
+      
+      if (slider) {
+        slider.value = value;
+        // Trigger the input event to update the font variation settings
+        passfvarValue(itemID, tag, value, font.tables.fvar.axes.map(a => a.tag).join(','));
+        
+        // Update visual nodes to show active state
+        updateSliderNodes(slider);
+      }
+      
+      if (valueDisplay) {
+        valueDisplay.textContent = value;
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error applying master named instance:', error);
+  }
+};
+
+// Apply a named instance to all axes (keeping for backward compatibility)
+export const applyNamedInstance = (itemID, axisTag, selectElement) => {
+  const selectedOption = selectElement.options[selectElement.selectedIndex];
+  if (!selectedOption || !selectedOption.value) return;
+  
+  try {
+    const coordinates = JSON.parse(selectedOption.dataset.coordinates);
+    
+    // Update all axis sliders with the instance coordinates
+    Object.entries(coordinates).forEach(([tag, value]) => {
+      const slider = document.getElementById(`${itemID}-${tag}`);
+      const valueDisplay = document.getElementById(`${itemID}-${tag}-val`);
+      
+      if (slider) {
+        // Update slider position
+        slider.value = value;
+        
+        // Update the visual value display
+        if (valueDisplay) {
+          valueDisplay.textContent = value;
+        }
+        
+        // Update any visual nodes on the slider
+        updateSliderNodes(slider);
+        
+        // Trigger the font variation settings update
+        passfvarValue(itemID, tag, value, font.tables.fvar.axes.map(a => a.tag).join(','));
+      }
+    });
+    
+    // Reset other instance dropdowns to show they're not selected
+    font.tables.fvar.axes.forEach(axis => {
+      if (axis.tag !== axisTag) {
+        const otherDropdown = document.getElementById(`${itemID}-${axis.tag}-instances`);
+        if (otherDropdown) {
+          otherDropdown.value = '';
+        }
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error applying named instance:', error);
+  }
+};
+
+// Handle slider input with magnetic snapping to nodes
+export const handleSliderInput = (itemID, axisTag, value, fvarSupport) => {
+  const slider = document.getElementById(`${itemID}-${axisTag}`);
+  if (!slider) return;
+  
+  // Update nodes and handle snapping
+  updateSliderNodes(slider);
+  
+  // Use the potentially snapped value from the slider
+  const finalValue = slider.value;
+  
+  // Update font variation settings
+  passfvarValue(itemID, axisTag, finalValue, fvarSupport);
+};
+
+// Update slider visual nodes when hovering or programmatically changing value
+export const updateSliderNodes = (slider) => {
+  const container = slider.closest('.slider-container');
+  if (!container) return;
+  
+  const nodes = container.querySelectorAll('.slider-node');
+  const currentValue = parseFloat(slider.value);
+  const snapTolerance = (slider.max - slider.min) * 0.03; // 3% snap tolerance
+  const axisTag = slider.dataset.axis; // Get axis tag from data attribute
+  const itemID = slider.id.replace(`-${axisTag}`, ''); // Remove the axis tag to get the item ID
+  let snappedToNode = false;
+  
+  nodes.forEach(node => {
+    const nodeValue = parseFloat(node.dataset.value);
+    const distance = Math.abs(currentValue - nodeValue);
+    
+    if (distance <= snapTolerance) {
+      node.classList.add('active');
+      
+      // Snap to the node value if we're close enough
+      if (!snappedToNode && distance > 0) {
+        slider.value = nodeValue;
+        snappedToNode = true;
+        
+        // Update the font variation settings with the snapped value
+        passfvarValue(itemID, axisTag, nodeValue, font.tables.fvar.axes.map(a => a.tag).join(','));
+      }
+    } else {
+      node.classList.remove('active');
+    }
+  });
+  
+  // Update the value display with final value (snapped or original)
+  const valueDisplay = document.getElementById(`${itemID}-${axisTag}-val`);
+  if (valueDisplay) {
+    valueDisplay.textContent = slider.value;
+  }
+};
+
+// Snap to a specific instance value when clicking on a node
+export const snapToInstanceValue = (axisTag, value) => {
+  // Find all sliders for this axis (there might be multiple items on the page)
+  const sliders = document.querySelectorAll(`input[data-axis="${axisTag}"]`);
+  
+  sliders.forEach(slider => {
+    const itemID = slider.id.replace(`-${axisTag}`, ''); // Remove the axis tag to get the item ID
+    
+    // Update slider value
+    slider.value = value;
+    
+    // Update visual feedback
+    updateSliderNodes(slider);
+    
+    // Update font variation settings
+    passfvarValue(itemID, axisTag, value, font.tables.fvar.axes.map(a => a.tag).join(','));
+    
+    // Check if this value matches any named instance and update dropdown accordingly
+    const dropdown = document.getElementById(`${itemID}-${axisTag}-instances`);
+    if (dropdown) {
+      // Find the option that matches this value
+      const matchingOption = Array.from(dropdown.options).find(option => 
+        parseFloat(option.value) === value
+      );
+      if (matchingOption) {
+        dropdown.value = value;
+      } else {
+        dropdown.value = ''; // Reset if no exact match
+      }
+    }
+  });
+};
   
 const updateActiveButton = (property, value) => {
 	document.querySelectorAll(`.btn.${property}-${value}`).forEach(btn => {
@@ -1057,10 +1413,10 @@ export const serverLoad = () => {
   
 	const dragDropHtml = `
 	  <div id="drag-drop-area" class="drag-drop-area">
-		<p>Drag & drop font files here</p>
-		<p>or</p>
+		<p>Drag & drop font files here or </p>
 		<label for="fontInput" class="file-input-label">Choose Files</label>
 		<input id="fontInput" type="file" class="file-input" multiple accept=".ttf,.otf,.woff,.woff2" />
+    <p class="">.woff2 variable fonts are not currently supported</p>
 	  </div>
 	`;
 

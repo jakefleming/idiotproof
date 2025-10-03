@@ -58,6 +58,47 @@
         margin-bottom: var(--spacing-sm, 0.5rem);
       }
 
+      // Variable font axis container
+      .variable-axis-container {
+        margin-bottom: var(--spacing-md, 1rem);
+        
+        label {
+          margin-bottom: var(--spacing-xs, 0.25rem);
+        }
+      }
+
+      // Slider container with nodes
+      .slider-container {
+        position: relative;
+        margin-bottom: var(--spacing-xs, 0.25rem);
+        height: calc(var(--slider-thumb-size, 16px) + var(--spacing-sm, 0.5rem) * 2); // Account for slider margins
+        
+        .variable-slider {
+          margin: var(--spacing-sm, 0.5rem) 0;
+          position: relative;
+          z-index: 5; // Thumb should be above nodes
+          width: 100%;
+        }
+        
+        .slider-node {
+          position: absolute;
+          top: calc(50% + var(--spacing-sm, 0.5rem) / 2); // Align with slider track center
+          width: var(--spacing-xs);
+          height: var(--spacing-xs);
+          background: var(--text-color-muted, #999);
+          border-radius: 100%;
+          cursor: pointer;
+          z-index: 5; // Above the track but below the thumb when active
+          transition: all 0.2s ease;
+          pointer-events: auto;
+          
+          &:hover, &.active {
+            background: var(--text-color);
+            z-index: 4; // Bring to front on hover
+          }
+        }
+      }
+
       .btn__wrapper {
         margin-bottom: var(--spacing-sm, 0.5rem);
       }
