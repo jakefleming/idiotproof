@@ -1,0 +1,128 @@
+// _fontproof.scss
+// Unobtrusive promo linking out to Font Proof (https://fontproof.com).
+// Two variants share one pill look:
+//   .fontproof-badge — floats bottom-left, muted at rest, hidden while the
+//                       settings sidebar is open and never printed.
+//   .fontproof-link  — static pill living in the settings sidebar footer.
+
+// Hidden by default; only revealed when the app is hosted (body.is-server,
+// set in index.js for non-local hostnames). Local/gulp users never see it,
+// with no flash on load.
+.fontproof-badge,
+.fontproof-link {
+  display: none;
+}
+
+body.is-server .fontproof-badge,
+body.is-server .fontproof-link {
+  display: inline-flex;
+}
+
+// Shared pill look
+.fontproof-badge,
+.fontproof-link {
+  align-items: center;
+  gap: var(--spacing-sm);
+
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--card-bg);
+  box-shadow: $shadow-sm;
+
+  font-size: $base-font-size;
+  line-height: 1;
+  color: var(--text-color-light);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition: opacity $transition-fast ease,
+              transform $transition-fast ease,
+              border-color $transition-fast ease,
+              color $transition-fast ease;
+
+  strong {
+    color: var(--text-color);
+    font-weight: 600;
+  }
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-1px);
+    border-color: var(--primary-color);
+    color: var(--text-color);
+    text-decoration: none;
+  }
+}
+
+.fontproof-logo {
+  width: auto;
+  height: 26px;
+  flex: 0 0 auto;
+  display: block;
+  color: var(--text-color);
+}
+
+.fontproof-pill__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.fontproof-pill__sub {
+  color: var(--text-color-muted);
+  font-size: 0.9em;
+}
+
+.fontproof-badge__arrow {
+  font-size: 14px;
+  color: var(--text-color-muted);
+  transition: color $transition-fast ease, transform $transition-fast ease;
+}
+
+.fontproof-badge:hover .fontproof-badge__arrow,
+.fontproof-badge:focus-visible .fontproof-badge__arrow,
+.fontproof-link:hover .fontproof-badge__arrow,
+.fontproof-link:focus-visible .fontproof-badge__arrow {
+  color: var(--primary-color);
+  transform: translate(1px, -1px);
+}
+
+// Floating badge
+.fontproof-badge {
+  position: fixed;
+  left: var(--spacing-md);
+  bottom: var(--spacing-md);
+  z-index: #{$z-index-fixed};
+  opacity: 0.55;
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+  }
+}
+
+// Hide the floating badge while the settings sidebar is open
+// (the sidebar carries its own .fontproof-link instead).
+body.settings-visible .fontproof-badge {
+  display: none;
+}
+
+// Sidebar footer link — static pill, sized to its content.
+.fontproof-link {
+  align-self: flex-start;
+}
+
+// On narrow screens, shrink the floating badge to just the dot + name.
+@media (max-width: #{$breakpoint-sm}) {
+  .fontproof-badge {
+    left: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+
+    .fontproof-pill__sub,
+    .fontproof-badge__arrow {
+      display: none;
+    }
+  }
+}

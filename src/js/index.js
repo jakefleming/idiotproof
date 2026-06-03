@@ -1,6 +1,6 @@
 import { CONFIG } from './config.js';
 import * as AppCore from './app-core.js';
-import { localStorageClear, saveEditableContent, saveInputValue } from './utils.js';
+import { localStorageClear, saveEditableContent, saveInputValue, isLocal } from './utils.js';
 
 // Global error handlers
 window.addEventListener('unhandledrejection', function(event) {
@@ -31,12 +31,14 @@ window.saveInputValue = saveInputValue;
 
 const init = (forceServerLoad = false) => {
 	try {
-	  if (forceServerLoad || !['localhost', '127.0.0.1', ''].includes(location.hostname)) {
+	  if (forceServerLoad || !isLocal()) {
 		AppCore.serverLoad();
+		// Hosted only (idiotproofed.com etc.) — reveals the Font Proof promo.
+		document.body.classList.add('is-server');
 	  } else {
 		AppCore.localLoad();
 	  }
-  
+
 	  AppCore.setupEventListeners();
 	  document.body.classList.add('loaded');
   

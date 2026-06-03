@@ -9,6 +9,11 @@ import { CONFIG } from './config.js';
   export const preserveUnique = (arr) => {
     return [...new Set(arr)];
   };
+
+  // True when running locally (gulp/file://), false when hosted (idiotproofed.com).
+  // Single source of truth for the local-vs-server fork used across the app.
+  export const isLocal = () =>
+    ['localhost', '127.0.0.1', ''].includes(location.hostname);
   
   export const showErrorMessage = (message) => {
     const el = document.getElementById('message');
