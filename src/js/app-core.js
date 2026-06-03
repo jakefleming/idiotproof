@@ -14,7 +14,8 @@ import { getFormattedDate,
 	saveInputValue,
 	getStoredContent,
 	calculateTypeScale,
-	initColorMode  } from './utils.js';
+	initColorMode,
+	isLocal  } from './utils.js';
 
 let font = null;
 const fontFormats = {
@@ -61,7 +62,7 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 		await document.fonts.ready;
 		await displayFontData(fontFamily);
   
-		if (['localhost', '127.0.0.1', ''].includes(location.hostname)) {
+		if (isLocal()) {
 		  localStorage.setItem('fontFamily', fontFamily);
 		  localStorage.setItem('fontFamilySource', fontFamilySource);
 		  console.log(`Font information saved to localStorage`);
