@@ -85,7 +85,7 @@ export const onFontLoaded = (loadedFont, fontFamilySource, fontFamily) => {
 	});
   };
 
-export const onReadFile = (event) => {
+export const onReadFile = (event, focusName) => {
 	const files = event.target.files;
 	const fileButtonParent = document.getElementById('section__header-file-buttons');
 	fileButtonParent.innerHTML = '';
@@ -98,10 +98,23 @@ export const onReadFile = (event) => {
 	generateFontButtons(Array.from(files), 'server')
 	  .then(container => {
 		fileButtonParent.appendChild(container);
-		// Activate the first button automatically
-		const firstButton = container.querySelector('.btn__setfont');
-		if (firstButton) {
-		  firstButton.click();
+
+		// Let users add more fonts to the watched set after the initial pick
+		if ('showOpenFilePicker' in window) {
+		  const addBtn = document.createElement('div');
+		  addBtn.className = 'btn__addfonts chip btn';
+		  addBtn.title = 'Add more fonts to watch';
+		  addBtn.textContent = '+ Add fonts';
+		  addBtn.onclick = () => watchFonts();
+		  container.appendChild(addBtn);
+		}
+
+		// Activate the focused font (the one just added/re-saved), else the first
+		const focusId = focusName ? `btn__setfont-${focusName.replace('.', '-')}` : null;
+		const button = (focusId && document.getElementById(focusId))
+		  || container.querySelector('.btn__setfont');
+		if (button) {
+		  button.click();
 		}
 	  });
 };
@@ -689,6 +702,21 @@ export const generateFontButton = async (font, mode = 'local') => {
 	// Add strike-through styling for unsupported font types
 	const fontTypeDisplay = isSupported ? fontType : `<span style="text-decoration: line-through;">${fontType}</span>`;
 	button.innerHTML = `${displayName}<span class="d-flex-grow text-small text-right">${fontTypeDisplay}</span>`;
+
+	// Watched fonts can be removed from the set
+	if (mode !== 'local' && watchedHandles.some(h => h.name === font.name)) {
+	  const removeBtn = document.createElement('span');
+	  removeBtn.className = 'btn__removefont text-small';
+	  removeBtn.title = 'Remove font';
+	  removeBtn.textContent = '✕';
+	  removeBtn.style.marginLeft = '0.5em';
+	  removeBtn.style.opacity = '0.5';
+	  removeBtn.onclick = (e) => {
+		e.stopPropagation();
+		removeWatchedFont(font.name);
+	  };
+	  button.appendChild(removeBtn);
+	}
 	
 	// Modified onclick handler to support shift-click for secondary font
 	button.onclick = (e) => {
@@ -1417,6 +1445,7 @@ export const serverLoad = () => {
 		<p>Drag & drop font files here or </p>
 		<label for="fontInput" class="file-input-label">Choose Files</label>
 		<input id="fontInput" type="file" class="file-input" multiple accept=".ttf,.otf,.woff,.woff2" />
+		${'showOpenFilePicker' in window ? '<p class="">Fonts reload automatically when re-saved</p>' : ''}
     <p class="">.woff2 variable fonts are not currently supported</p>
 	  </div>
 	`;
@@ -1442,6 +1471,16 @@ export const serverLoad = () => {
 	dragDropArea.addEventListener('drop', handleDrop, false);
   
 	fileInput.addEventListener('change', handleFiles, false);
+
+	// When the File System Access API exists, route "Choose Files" through the
+	// picker so fonts are watched for changes; the plain input stays as the
+	// fallback for Safari/Firefox.
+	if ('showOpenFilePicker' in window) {
+	  dragDropArea.querySelector('.file-input-label').addEventListener('click', (e) => {
+		e.preventDefault();
+		watchFonts();
+	  }, false);
+	}
   };
   
 function preventDefaults(e) {
@@ -1460,6 +1499,20 @@ function unhighlight(e) {
 function handleDrop(e) {
 	const dt = e.dataTransfer;
 	const files = dt.files;
+	const items = dt.items ? Array.from(dt.items).filter(i => i.kind === 'file') : [];
+
+	// Grab file handles so dropped fonts are watched for changes. Handles must
+	// be requested synchronously inside the drop event, before dt goes inert.
+	if ('showOpenFilePicker' in window && items.length && items[0].getAsFileSystemHandle) {
+	  Promise.all(items.map(i => i.getAsFileSystemHandle()))
+		.then(handles => watchHandles(handles))
+		.catch(err => {
+		  console.error('Error getting dropped file handles:', err);
+		  handleFiles(files);
+		});
+	  return;
+	}
+
 	handleFiles(files);
   }
   
@@ -1485,6 +1538,74 @@ function handleFiles(filesOrEvent) {
 	});
   }
   
+// Live-watch picked font files (hosted mode, Chrome/Edge only). Files stay on
+// disk — we poll the picker handles for lastModified changes and re-run the
+// normal load pipeline when the font is re-saved.
+let watchedHandles = [];
+let watchTimer = null;
+const watchStamps = new Map();
+
+async function watchFonts() {
+	let handles;
+	try {
+	  handles = await window.showOpenFilePicker({
+		multiple: true,
+		types: [{
+		  description: 'Fonts',
+		  accept: { 'font/ttf': ['.ttf'], 'font/otf': ['.otf'], 'font/woff': ['.woff'], 'font/woff2': ['.woff2'] },
+		}],
+	  });
+	} catch (err) {
+	  return; // user cancelled the picker
+	}
+	watchHandles(handles);
+  }
+
+async function watchHandles(handles) {
+	handles = (handles || []).filter(h => h && h.kind === 'file');
+	if (!handles.length) return;
+
+	// Merge with already-watched fonts (same name replaces, new ones append)
+	const byName = new Map(watchedHandles.map(h => [h.name, h]));
+	handles.forEach(h => byName.set(h.name, h));
+	watchedHandles = [...byName.values()];
+
+	watchStamps.clear();
+	await pollWatchedFonts(true, handles[handles.length - 1].name);
+	clearInterval(watchTimer);
+	watchTimer = setInterval(pollWatchedFonts, 1000);
+  }
+
+function removeWatchedFont(name) {
+	watchedHandles = watchedHandles.filter(h => h.name !== name);
+	watchStamps.delete(name);
+
+	// Last one removed: stop polling and restore the initial drag-drop state
+	if (!watchedHandles.length) {
+	  clearInterval(watchTimer);
+	  watchTimer = null;
+	  serverLoad();
+	  return;
+	}
+
+	// Keep the active font if it survives, otherwise focus the first one
+	const activeId = document.querySelector('.btn__setfont.active')?.id;
+	const stillActive = watchedHandles.find(h => `btn__setfont-${h.name.replace('.', '-')}` === activeId);
+	pollWatchedFonts(true, (stillActive || watchedHandles[0]).name);
+  }
+
+async function pollWatchedFonts(force = false, focusName = null) {
+	try {
+	  const files = await Promise.all(watchedHandles.map(h => h.getFile()));
+	  const changed = files.filter(f => watchStamps.get(f.name) !== f.lastModified);
+	  if (!changed.length && force !== true) return;
+	  files.forEach(f => watchStamps.set(f.name, f.lastModified));
+	  onReadFile({ target: { files } }, focusName || (changed[0] && changed[0].name));
+	} catch (err) {
+	  console.error('Error reading watched font:', err);
+	}
+  }
+
 function uploadFile(file) {
 	return new Promise((resolve) => {
 	  onReadFile({ target: { files: [file] } });
