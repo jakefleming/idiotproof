@@ -47,4 +47,6 @@ const init = (forceServerLoad = false) => {
 	}
   };
 
-document.addEventListener('DOMContentLoaded', () => init(false));
+// ?hosted forces the idiotproofed.com code path on localhost for testing.
+document.addEventListener('DOMContentLoaded', () =>
+  init(new URLSearchParams(location.search).has('hosted')));
