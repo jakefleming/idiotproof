@@ -33,7 +33,7 @@ const init = (forceServerLoad = false) => {
 	try {
 	  if (forceServerLoad || !isLocal()) {
 		AppCore.serverLoad();
-		// Hosted only (idiotproofed.com etc.) — reveals the Font Proof promo.
+		// Hosted only (idiotproofed.com etc.) — reveals the Hellbox promo.
 		document.body.classList.add('is-server');
 	  } else {
 		AppCore.localLoad();
